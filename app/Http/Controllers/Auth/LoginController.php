@@ -9,6 +9,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Session;
 use Auth;
+use Illuminate\Support\Facades\App;
 
 class LoginController extends Controller
 {
@@ -40,6 +41,13 @@ class LoginController extends Controller
                 $user = Auth::user();
                 $todayDate = Carbon::now()->toDayDateTimeString();
 
+                // جلب اللغة من قاعدة البيانات
+                $userLanguage = $user->language ?? 'en';
+                
+                // تحديث اللغة في Session و App
+                session()->put('locale', $userLanguage);
+                App::setLocale($userLanguage);
+
                 // Store user information in session
                 Session::put([
                     'name'         => $user->name,
@@ -59,15 +67,15 @@ class LoginController extends Controller
                 // Update last login
                 $user->update(['last_login' => $todayDate]);
 
-                flash()->success('Login successful :)');
+                flash()->success(__('messages.success_login'));
                 return redirect()->intended('home');
             } else {
-                flash()->error('Error: Wrong username or password :)');
+                flash()->error(__('messages.email_invalid'));
                 return redirect('login');
             }
         } catch (\Exception $e) {
             \Log::error($e);
-            flash()->error('An error occurred during login :)');
+            flash()->error('An error occurred during login');
             return redirect()->back();
         }
     }
@@ -81,9 +89,20 @@ class LoginController extends Controller
     /** Logout and forget session */
     public function logout(Request $request)
     {
+        // نأخذ اللغة الحالية قبل مسح Session
+        $currentLanguage = session()->get('locale', 'en');
+        
+        // مسح الـ Session
         $request->session()->flush();
+        
+        // تسجيل الخروج
         Auth::logout();
-        flash()->success('Logout successful :)');
+        
+        // نعيد اللغة تاني في Session الجديدة
+        session()->put('locale', $currentLanguage);
+        App::setLocale($currentLanguage);
+        
+        flash()->success(__('messages.sign_out'));
         return redirect('logout/page');
     }
 }

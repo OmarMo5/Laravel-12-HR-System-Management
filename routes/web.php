@@ -9,6 +9,8 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HRController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -21,8 +23,7 @@ Route::get('/', function () {
     }
     return redirect()->back();
 })->name('change.lang'); */
-Route::get('lang/{lang}', [App\Http\Controllers\HRController::class, 'changeLang'])->name('change.lang');
-
+Route::get('lang/{lang}', [HRController::class, 'changeLang'])->name('change.lang');
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('home', function () {
@@ -68,7 +69,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
 
     // -------------------------- pages ----------------------//
     Route::controller(AccountController::class)->group(function () {
-        Route::get('page/account/{user_id}', 'profileDetail')->middleware('auth');
+        Route::get('page/account/{user_id}', 'profileDetail')->middleware('auth')->name('page/account');
     });
 
     // -------------------------- hr ----------------------//

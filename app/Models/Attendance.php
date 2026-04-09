@@ -1,14 +1,16 @@
 <?php
-// app/Models/Attendance.php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Attendance extends Model
 {
     use HasFactory;
+
+    protected $table = 'attendances';
 
     protected $fillable = [
         'user_id',
@@ -25,9 +27,40 @@ class Attendance extends Model
 
     protected $casts = [
         'date' => 'date',
-        'check_in' => 'datetime',
-        'check_out' => 'datetime',
     ];
+
+    // Accessors to ensure correct timezone
+    public function getCheckInAttribute($value)
+    {
+        if ($value) {
+            return Carbon::parse($value)->setTimezone(config('app.timezone'))->format('H:i:s');
+        }
+        return null;
+    }
+
+    public function getCheckOutAttribute($value)
+    {
+        if ($value) {
+            return Carbon::parse($value)->setTimezone(config('app.timezone'))->format('H:i:s');
+        }
+        return null;
+    }
+
+    public function getFormattedCheckInAttribute()
+    {
+        if ($this->check_in) {
+            return Carbon::parse($this->check_in)->format('h:i A');
+        }
+        return '—';
+    }
+
+    public function getFormattedCheckOutAttribute()
+    {
+        if ($this->check_out) {
+            return Carbon::parse($this->check_out)->format('h:i A');
+        }
+        return '—';
+    }
 
     public function user()
     {

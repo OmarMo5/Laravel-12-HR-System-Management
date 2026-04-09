@@ -26,7 +26,6 @@ class RegisterController extends Controller
         return view('auth.register');
     }
 
-
     /** Store a new user */
     public function storeUser(Request $request)
     {
@@ -42,18 +41,22 @@ class RegisterController extends Controller
             $userId     = $latestUser ? (int) substr($latestUser->user_id, 4) + 1 : 1;
             $employeeId = 'KH_' . str_pad($userId, 3, '0', STR_PAD_LEFT);
 
+            // جلب اللغة من Session (اللي المستخدم اختارها قبل التسجيل)
+            $selectedLanguage = session()->get('locale', 'en');
+
             $register = new User();
-            $register->user_id      = $employeeId; // Add this line
+            $register->user_id      = $employeeId;
             $register->name         = $request->name;
             $register->email        = $request->email;
-            $register->join_date    = Carbon::now()->toDateString(); // Better to use date format
+            $register->join_date    = Carbon::now()->toDateString();
             $register->role_name    = 'User Normal';
             $register->status       = 'Active';
-            $register->avatar       = 'profile.png'; // Default avatar
+            $register->avatar       = 'profile.png';
+            $register->language     = $selectedLanguage; // تخزين اللغة المختارة
             $register->password     = Hash::make($request->password);
             $register->save();
 
-            flash()->success('Account created successfully :)');
+            flash()->success(__('messages.success_register'));
             return redirect('login');
         } catch (\Exception $e) {
             \Log::error('Registration error: ' . $e);

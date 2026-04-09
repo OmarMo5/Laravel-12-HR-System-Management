@@ -16,7 +16,6 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-
     protected $fillable = [
         'user_id',
         'name',
@@ -27,8 +26,6 @@ class User extends Authenticatable
         'phone_number',
         'location',
         'status',
-        'role_name',
-        'email',
         'role_name',
         'avatar',
         'position',
@@ -77,5 +74,13 @@ class User extends Authenticatable
                 $model->user_id = 'KH-' . sprintf("%04s", $nextID++);
             } while (self::where('user_id', $model->user_id)->exists());
         });
+    }
+
+    /**
+     * Relationship with Department
+     */
+    public function departmentRelation()
+    {
+        return $this->belongsTo(Department::class, 'department', 'department');
     }
 }
