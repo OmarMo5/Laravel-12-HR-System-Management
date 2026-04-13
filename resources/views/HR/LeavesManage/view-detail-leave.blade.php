@@ -37,7 +37,7 @@
                                     <div>
                                         <label class="inline-block mb-2 text-base font-medium">Employee Name</label>
                                         <input type="text"
-                                            class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100"
+                                            class="form-input border-slate-200 dark:border-zink-500 bg-white dark:bg-zink-700 text-slate-900 dark:text-white focus:outline-none focus:border-custom-500"
                                             value="{{ $leaveDetail->employee_name }}" disabled>
                                     </div>
                                 </div>
@@ -45,7 +45,7 @@
                                     <div>
                                         <label class="inline-block mb-2 text-base font-medium">Employee ID</label>
                                         <input type="text"
-                                            class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100"
+                                            class="form-input border-slate-200 dark:border-zink-500 bg-white dark:bg-zink-700 text-slate-900 dark:text-white focus:outline-none focus:border-custom-500"
                                             value="{{ $leaveDetail->staff_id }}" disabled>
                                     </div>
                                 </div>
@@ -54,7 +54,7 @@
                                     <div>
                                         <label class="inline-block mb-2 text-base font-medium">Leave Type</label>
                                         <input type="text"
-                                            class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100"
+                                            class="form-input border-slate-200 dark:border-zink-500 bg-white dark:bg-zink-700 text-slate-900 dark:text-white focus:outline-none focus:border-custom-500"
                                             value="{{ $leaveDetail->leave_type }}" disabled>
                                     </div>
                                 </div>
@@ -62,7 +62,7 @@
                                     <div>
                                         <label class="inline-block mb-2 text-base font-medium">Remaining Leaves</label>
                                         <input type="text"
-                                            class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100"
+                                            class="form-input border-slate-200 dark:border-zink-500 bg-white dark:bg-zink-700 text-slate-900 dark:text-white focus:outline-none focus:border-custom-500"
                                             value="{{ $leaveDetail->remaining_leave }}" disabled>
                                     </div>
                                 </div>
@@ -70,13 +70,13 @@
                                 <div class="xl:col-span-6">
                                     <label class="inline-block mb-2 text-base font-medium">From</label>
                                     <input type="text"
-                                        class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100"
+                                        class="form-input border-slate-200 dark:border-zink-500 bg-white dark:bg-zink-700 text-slate-900 dark:text-white focus:outline-none focus:border-custom-500"
                                         value="{{ $leaveDetail->date_from }}" disabled>
                                 </div>
                                 <div class="xl:col-span-6">
                                     <label class="inline-block mb-2 text-base font-medium">To</label>
                                     <input type="text"
-                                        class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100"
+                                        class="form-input border-slate-200 dark:border-zink-500 bg-white dark:bg-zink-700 text-slate-900 dark:text-white focus:outline-none focus:border-custom-500"
                                         value="{{ $leaveDetail->date_to }}" disabled>
                                 </div>
 
@@ -86,14 +86,14 @@
                                             <label class="inline-block mb-2 text-base font-medium">Leave Date
                                                 {{ $key + 1 }}</label>
                                             <input type="text"
-                                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100"
+                                                class="form-input border-slate-200 dark:border-zink-500 bg-white dark:bg-zink-700 text-slate-900 dark:text-white focus:outline-none focus:border-custom-500"
                                                 value="{{ $date }}" disabled>
                                         </div>
                                         <div class="xl:col-span-6">
                                             <label class="inline-block mb-2 text-base font-medium">Leave Day
                                                 {{ $key + 1 }}</label>
                                             <input type="text"
-                                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100"
+                                                class="form-input border-slate-200 dark:border-zink-500 bg-white dark:bg-zink-700 text-slate-900 dark:text-white focus:outline-none focus:border-custom-500"
                                                 value="{{ $leaveDay[$key] ?? '' }}" disabled>
                                         </div>
                                     @endforeach
@@ -103,7 +103,7 @@
                                     <div>
                                         <label class="inline-block mb-2 text-base font-medium">Number of Days</label>
                                         <input type="text"
-                                            class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100"
+                                            class="form-input border-slate-200 dark:border-zink-500 bg-white dark:bg-zink-700 text-slate-900 dark:text-white focus:outline-none focus:border-custom-500"
                                             value="{{ $leaveDetail->number_of_day }}" disabled>
                                     </div>
                                 </div>
@@ -112,7 +112,7 @@
                                     <div>
                                         <label class="inline-block mb-2 text-base font-medium">Reason</label>
                                         <textarea
-                                            class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100"
+                                            class="form-input border-slate-200 dark:border-zink-500 bg-white dark:bg-zink-700 text-slate-900 dark:text-white focus:outline-none focus:border-custom-500"
                                             rows="3" disabled>{{ $leaveDetail->reason }}</textarea>
                                     </div>
                                 </div>
@@ -123,7 +123,7 @@
                                             <label class="inline-block mb-2 text-base font-medium">Approved/Rejected
                                                 By</label>
                                             <input type="text"
-                                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100"
+                                                class="form-input border-slate-200 dark:border-zink-500 bg-white dark:bg-zink-700 text-slate-900 dark:text-white focus:outline-none focus:border-custom-500"
                                                 value="{{ $leaveDetail->approved_by }}" disabled>
                                         </div>
                                     </div>

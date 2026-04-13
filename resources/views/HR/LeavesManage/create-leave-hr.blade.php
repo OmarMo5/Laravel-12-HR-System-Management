@@ -30,9 +30,9 @@
                                     <div class="xl:col-span-6">
                                         <div>
                                             <label for="employee_name"
-                                                class="inline-block mb-2 text-base font-medium">{{ __('messages.employee') }}</label>
+                                                class="inline-block mb-2 text-base font-medium dark:text-zink-200">{{ __('messages.employee') }}</label>
                                             <select name="employee_name" id="employee_name"
-                                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500"
+                                                class="form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500"
                                                 data-choices="">
                                                 <option value="">{{ __('messages.select_employee') }}</option>
                                                 @foreach ($users as $key => $user)
@@ -47,9 +47,9 @@
                                     <div class="xl:col-span-6">
                                         <div>
                                             <label for="employeeId"
-                                                class="inline-block mb-2 text-base font-medium">{{ __('messages.employee_id') }}</label>
+                                                class="inline-block mb-2 text-base font-medium dark:text-zink-200">{{ __('messages.employee_id') }}</label>
                                             <input type="text" id="employeeId" name="employee_id"
-                                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500"
+                                                class="form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500"
                                                 readonly="">
                                         </div>
                                     </div>
@@ -57,9 +57,9 @@
                                     <div class="xl:col-span-6">
                                         <div>
                                             <label for="leave_type"
-                                                class="inline-block mb-2 text-base font-medium">{{ __('messages.leave_type') }}</label>
+                                                class="inline-block mb-2 text-base font-medium dark:text-zink-200">{{ __('messages.leave_type') }}</label>
                                             <select name="leave_type" id="leave_type"
-                                                class="leave_type form-input border-slate-200 focus:outline-none focus:border-custom-500"
+                                                class="leave_type form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500"
                                                 data-choices="" data-choices-search-false="">
                                                 <option value="">{{ __('messages.select_leave_type') }}</option>
                                                 @foreach ($leaveInformation as $info)
@@ -79,17 +79,17 @@
                                     <div class="xl:col-span-6">
                                         <div>
                                             <label for="remaining_leave"
-                                                class="inline-block mb-2 text-base font-medium">{{ __('messages.remaining_leaves') }}</label>
+                                                class="inline-block mb-2 text-base font-medium dark:text-zink-200">{{ __('messages.remaining_leaves') }}</label>
                                             <input type="text" name="remaining_leave" id="remaining_leave"
-                                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500"
+                                                class="form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500"
                                                 value="0" readonly="">
                                         </div>
                                     </div>
                                     <div class="xl:col-span-6">
                                         <label for="date_from"
-                                            class="inline-block mb-2 text-base font-medium">{{ __('messages.from') }}</label>
+                                            class="inline-block mb-2 text-base font-medium dark:text-zink-200">{{ __('messages.from') }}</label>
                                         <input type="text" name="date_from" id="date_from"
-                                            class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 @error('date_from') is-invalid @enderror "
+                                            class="form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500 @error('date_from') is-invalid @enderror"
                                             placeholder="{{ __('messages.select_date') }}" data-provider="flatpickr"
                                             data-date-format="d M, Y">
                                         @error('date_from')
@@ -100,9 +100,9 @@
                                     </div>
                                     <div class="xl:col-span-6">
                                         <label for="date_to"
-                                            class="inline-block mb-2 text-base font-medium">{{ __('messages.to') }}</label>
+                                            class="inline-block mb-2 text-base font-medium dark:text-zink-200">{{ __('messages.to') }}</label>
                                         <input type="text" name="date_to" id="date_to"
-                                            class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 @error('date_to') is-invalid @enderror "
+                                            class="form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500 @error('date_to') is-invalid @enderror"
                                             placeholder="{{ __('messages.select_date') }}" data-provider="flatpickr"
                                             data-date-format="d M, Y">
                                         @error('date_to')
@@ -117,9 +117,9 @@
                                     <div class="xl:col-span-12">
                                         <div>
                                             <label for="number_of_day"
-                                                class="inline-block mb-2 text-base font-medium">{{ __('messages.number_of_days') }}</label>
+                                                class="inline-block mb-2 text-base font-medium dark:text-zink-200">{{ __('messages.number_of_days') }}</label>
                                             <input type="text" name="number_of_day" id="number_of_day"
-                                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500"
+                                                class="form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500"
                                                 value="0" readonly="">
                                         </div>
                                     </div>
@@ -127,9 +127,9 @@
                                     <div class="md:col-span-2 xl:col-span-12">
                                         <div>
                                             <label for="reason"
-                                                class="inline-block mb-2 text-base font-medium">{{ __('messages.reason') }}</label>
+                                                class="inline-block mb-2 text-base font-medium dark:text-zink-200">{{ __('messages.reason') }}</label>
                                             <textarea name="reason"
-                                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 @error('reason') is-invalid @enderror"
+                                                class="form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500 @error('reason') is-invalid @enderror"
                                                 rows="3"></textarea>
                                             @error('reason')
                                                 <span class="invalid-feedback" role="alert">
@@ -141,7 +141,7 @@
                                 </div>
                                 <div class="flex justify-end gap-2 mt-4">
                                     <button type="reset" id="reset_btn"
-                                        class="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-700 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10">{{ __('messages.reset') }}</button>
+                                        class="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-700 dark:text-zink-100 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10">{{ __('messages.reset') }}</button>
                                     <button type="submit" id="apply_leave"
                                         class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">{{ __('messages.add_leave_button') }}</button>
                                 </div>
@@ -153,27 +153,29 @@
                 <div class="xl:col-span-3">
                     <div class="card" id="employeeLeaveInfo" style="display: none;">
                         <div class="card-body">
-                            <h6 class="mb-4 text-15">{{ __('messages.employee_leave_info') }} (<span
+                            <h6 class="mb-4 text-15 dark:text-zink-100">{{ __('messages.employee_leave_info') }} (<span
                                     id="selectedEmployeeName"></span>)
                             </h6>
                             <div id="leaveInfoContent">
-                                <p class="text-center text-slate-500">{{ __('messages.select_employee_to_view') }}</p>
+                                <p class="text-center text-slate-500 dark:text-zink-300">{{ __('messages.select_employee_to_view') }}</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="card mt-4">
                         <div class="card-body">
-                            <h6 class="mb-4 text-15">{{ __('messages.leave_information') }} ({{ date('Y') }})</h6>
+                            <h6 class="mb-4 text-15 dark:text-zink-100">{{ __('messages.leave_information') }} ({{ date('Y') }})</h6>
                             <div>
                                 <table class="w-full mb-0">
                                     <tbody>
                                         @foreach ($leaveInformation as $key => $value)
                                             <tr>
-                                                <td class="px-3.5 py-2.5 first:pl-0 last:pr-0 border-y border-transparent">
-                                                    {{ $value->leave_type }}</td>
-                                                <th class="px-3.5 py-2.5 first:pl-0 last:pr-0 border-y border-transparent">
-                                                    {{ $value->leave_days }}</th>
+                                                <td class="px-3.5 py-2.5 first:pl-0 last:pr-0 border-y border-transparent dark:text-zink-100">
+                                                    {{ $value->leave_type }}
+                                                </td>
+                                                <th class="px-3.5 py-2.5 first:pl-0 last:pr-0 border-y border-transparent dark:text-zink-100">
+                                                    {{ $value->leave_days }}
+                                                </th>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -202,7 +204,7 @@
             if (employeeId) {
                 $('#selectedEmployeeName').text(employeeName);
                 $('#employeeLeaveInfo').show();
-                $('#leaveInfoContent').html('<p class="text-center">{{ __('messages.loading') }}</p>');
+                $('#leaveInfoContent').html('<p class="text-center dark:text-zink-300">{{ __('messages.loading') }}</p>');
 
                 $.ajax({
                     url: employeeInfoUrl,
@@ -217,9 +219,9 @@
                             var html = '<table class="w-full mb-0">';
                             $.each(response.data, function(key, value) {
                                 html += '<tr>' +
-                                    '<td class="px-3.5 py-2.5 border-y border-transparent">' +
+                                    '<td class="px-3.5 py-2.5 border-y border-transparent dark:text-zink-100">' +
                                     key + '</td>' +
-                                    '<th class="px-3.5 py-2.5 border-y border-transparent">' +
+                                    '<th class="px-3.5 py-2.5 border-y border-transparent dark:text-zink-100">' +
                                     value + ' {{ __('messages.days') }}</th>' +
                                     '</tr>';
                             });
@@ -231,21 +233,21 @@
                             $('#leave_type').val('');
                         } else {
                             $('#leaveInfoContent').html(
-                                '<p class="text-center text-red-500">{{ __('messages.failed_to_load') }}</p>'
+                                '<p class="text-center text-red-500 dark:text-red-400">{{ __('messages.failed_to_load') }}</p>'
                             );
                         }
                     },
                     error: function(xhr, status, error) {
                         console.error(error);
                         $('#leaveInfoContent').html(
-                            '<p class="text-center text-red-500">{{ __('messages.error_loading') }}</p>'
+                            '<p class="text-center text-red-500 dark:text-red-400">{{ __('messages.error_loading') }}</p>'
                         );
                     }
                 });
             } else {
                 $('#employeeLeaveInfo').hide();
                 $('#leaveInfoContent').html(
-                    '<p class="text-center text-slate-500">{{ __('messages.select_employee_to_view') }}</p>');
+                    '<p class="text-center text-slate-500 dark:text-zink-300">{{ __('messages.select_employee_to_view') }}</p>');
             }
         });
 
@@ -312,7 +314,7 @@
             container.empty();
 
             if (numDays > 1) {
-                container.append('<h6 class="mb-3 text-15">{{ __('messages.leave_dates_details') }}</h6>');
+                container.append('<h6 class="mb-3 text-15 dark:text-zink-100">{{ __('messages.leave_dates_details') }}</h6>');
             }
 
             for (let i = 0; i < numDays; i++) {
@@ -327,14 +329,14 @@
                 let dateHtml = `
                 <div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-12 mb-4">
                     <div class="xl:col-span-6">
-                        <label class="inline-block mb-2 text-base font-medium">{{ __('messages.leave_date') }} ${i+1}</label>
+                        <label class="inline-block mb-2 text-base font-medium dark:text-zink-200">{{ __('messages.leave_date') }} ${i+1}</label>
                         <input type="text" name="leave_date[]"
-                            class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500"
+                            class="form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500"
                             value="${formattedDate}" readonly>
                     </div>
                     <div class="xl:col-span-6">
-                        <label class="inline-block mb-2 text-base font-medium">{{ __('messages.leave_day') }} ${i+1}</label>
-                        <select name="select_leave_day[]" class="form-input border-slate-200 focus:outline-none focus:border-custom-500 leave-day-select">
+                        <label class="inline-block mb-2 text-base font-medium dark:text-zink-200">{{ __('messages.leave_day') }} ${i+1}</label>
+                        <select name="select_leave_day[]" class="form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500 leave-day-select">
                             <option value="Full-Day Leave">{{ __('messages.full_day_leave') }}</option>
                             <option value="Half-Day Morning Leave">{{ __('messages.half_day_morning') }}</option>
                             <option value="Half-Day Afternoon Leave">{{ __('messages.half_day_afternoon') }}</option>
@@ -386,7 +388,7 @@
             $('#employeeLeaveInfo').hide();
             $('#apply_leave').prop('disabled', false);
             $('#leaveInfoContent').html(
-                '<p class="text-center text-slate-500">{{ __('messages.select_employee_to_view') }}</p>');
+                '<p class="text-center text-slate-500 dark:text-zink-300">{{ __('messages.select_employee_to_view') }}</p>');
         });
 
         // Initialize Choices for select elements if needed

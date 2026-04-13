@@ -424,6 +424,7 @@ return [
     'error_loading' => 'خطأ في تحميل البيانات',
     'no_remaining_leaves' => 'لا توجد إجازات متبقية لهذا النوع!',
     'leave_dates_details' => 'تفاصيل أيام الإجازة',
+    'add_leave_button' => 'منج أجازة',
 
     /* Login/Register */
     'welcome_back' => 'مرحباً بعودتك!',
@@ -439,7 +440,7 @@ return [
     'dont_have_account' => 'ليس لديك حساب؟',
     'already_have_account' => 'لديك حساب بالفعل؟',
     'create_free_account' => 'أنشئ حسابك المجاني',
-    'get_free_account' => 'احصل على حساب Starcode مجاني الآن',
+    'get_free_account' => 'احصل على حساب مجاني الآن',
     'enter_name' => 'أدخل الاسم',
     'enter_email' => 'أدخل البريد الإلكتروني',
     'password_confirmation' => 'تأكيد كلمة المرور',

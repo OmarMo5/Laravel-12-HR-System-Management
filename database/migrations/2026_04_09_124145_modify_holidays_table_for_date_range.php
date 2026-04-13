@@ -11,8 +11,15 @@ return new class extends Migration
     {
         // أولاً: نضيف العمودين الجدد
         Schema::table('holidays', function (Blueprint $table) {
-            $table->date('start_date')->nullable()->after('holiday_date');
-            $table->date('end_date')->nullable()->after('start_date');
+            /* $table->date('start_date')->nullable()->after('holiday_date');
+            $table->date('end_date')->nullable()->after('start_date'); */
+            if (!Schema::hasColumn('holidays', 'start_date')) {
+                $table->date('start_date')->nullable()->after('holiday_date');
+            }
+
+            if (!Schema::hasColumn('holidays', 'end_date')) {
+                $table->date('end_date')->nullable()->after('start_date');
+            }
         });
 
         // ثانياً: نحول البيانات القديمة من holiday_date إلى start_date و end_date
