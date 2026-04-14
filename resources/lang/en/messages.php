@@ -388,6 +388,7 @@ return [
     'leave_information' => 'Leave Information',
     'view_details' => 'View Details',
     'cannot_apply_leave' => 'You cannot apply for leave at this time',
+    'add_leave_button' => 'Assign Leave',
 
     /* HR Leaves */
     'leave_manage_hr' => 'Leave Manage (HR)',
@@ -440,7 +441,7 @@ return [
     'dont_have_account' => "Don't have an account ?",
     'already_have_account' => 'Already have an account ?',
     'create_free_account' => 'Create your free account',
-    'get_free_account' => 'Get your free Starcode account now',
+    'get_free_account' => 'Get your free account now',
     'enter_name' => 'Enter name',
     'enter_email' => 'Enter email',
     'password_confirmation' => 'Password Confirmation',

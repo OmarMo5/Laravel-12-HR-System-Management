@@ -10,7 +10,7 @@
     <meta content="Omar Mokhtar" name="author">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ URL::to('assets/images/favicon.ico') }}">
+    {{-- <link rel="shortcut icon" href="{{ URL::to('assets/images/favicon.ico') }}"> --}}
     <!-- Layout config Js -->
     <script src="{{ URL::to('assets/js/layout.js') }}"></script>
     <!-- StarCode CSS -->
@@ -463,7 +463,7 @@
                         <div>
                             <script>
                                 document.write(new Date().getFullYear())
-                            </script> OmarMokhtar.dev
+                            </script> HR System Al-Salam Asc.
                         </div>
                         <div class="hidden lg:block">
                             <div class="ltr:text-right rtl:text-left">

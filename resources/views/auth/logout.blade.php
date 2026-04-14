@@ -2,10 +2,10 @@
 @section('content')
     <div class="mb-0 w-screen lg:w-[500px] card shadow-lg border-none shadow-slate-100 relative">
         <div class="!px-10 !py-12 card-body">
-            <a href="#!">
+            {{-- <a href="#!">
                 <img src="{{ URL::to('assets/images/logo-light.png') }}" alt="" class="hidden h-6 mx-auto dark:block">
                 <img src="{{ URL::to('assets/images/logo-dark.png') }}" alt="" class="block h-6 mx-auto dark:hidden">
-            </a>
+            </a> --}}
             <div class="mt-8 text-center">
                 <div class="mb-4 text-center">
                     <i data-lucide="log-out" class="mx-auto text-purple-500 size-6 fill-purple-100"></i>
