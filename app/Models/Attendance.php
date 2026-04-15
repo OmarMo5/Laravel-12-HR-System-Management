@@ -66,4 +66,35 @@ class Attendance extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
+
+
+    /**
+     * Check if a date is weekend (Friday or Saturday)
+    */
+    public static function isWeekend($date)
+    {
+        $dayOfWeek = Carbon::parse($date)->dayOfWeek;
+        // 5 = Friday, 6 = Saturday (Carbon: 0=Sunday, 1=Monday, ..., 6=Saturday)
+        return $dayOfWeek == 5 || $dayOfWeek == 6;
+    }
+
+    /**
+     * Get working days between two dates (excluding Fridays and Saturdays)
+     */
+    public static function getWorkingDays($startDate, $endDate)
+    {
+        $workingDays = 0;
+        $current = Carbon::parse($startDate);
+        $end = Carbon::parse($endDate);
+        
+        while ($current <= $end) {
+            if (!self::isWeekend($current)) {
+                $workingDays++;
+            }
+            $current->addDay();
+        }
+        
+        return $workingDays;
+    }
+
 }

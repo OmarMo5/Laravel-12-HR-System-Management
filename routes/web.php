@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AttendendanceController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -16,13 +17,6 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
-// Language Route
-/* Route::get('lang/{lang}', function ($lang) {
-    if (in_array($lang, ['en', 'ar'])) {
-        session()->put('locale', $lang);
-    }
-    return redirect()->back();
-})->name('change.lang'); */
 Route::get('lang/{lang}', [HRController::class, 'changeLang'])->name('change.lang');
 
 Route::group(['middleware' => 'auth'], function () {
@@ -34,7 +28,6 @@ Route::group(['middleware' => 'auth'], function () {
 Auth::routes();
 
 Route::group(['namespace' => 'App\Http\Controllers\Auth'], function () {
-    // -----------------------------login----------------------------------------//
     Route::controller(LoginController::class)->group(function () {
         Route::get('/login', 'login')->name('login');
         Route::post('/login', 'authenticate');
@@ -42,19 +35,16 @@ Route::group(['namespace' => 'App\Http\Controllers\Auth'], function () {
         Route::get('logout/page', 'logoutPage')->name('logout/page');
     });
 
-    // ------------------------------ register ----------------------------------//
     Route::controller(RegisterController::class)->group(function () {
         Route::get('/register', 'register')->name('register');
         Route::post('/register', 'storeUser')->name('register');
     });
 
-    // ----------------------------- forget password ----------------------------//
     Route::controller(ForgotPasswordController::class)->group(function () {
         Route::get('forget-password', 'getEmail')->name('forget-password');
         Route::post('forget-password', 'postEmail')->name('forget-password');
     });
 
-    // ----------------------------- reset password -----------------------------//
     Route::controller(ResetPasswordController::class)->group(function () {
         Route::get('reset-password/{token}', 'getPassword');
         Route::post('reset-password', 'updatePassword');
@@ -62,17 +52,14 @@ Route::group(['namespace' => 'App\Http\Controllers\Auth'], function () {
 });
 
 Route::group(['namespace' => 'App\Http\Controllers'], function () {
-    // -------------------------- main dashboard ----------------------//
     Route::controller(HomeController::class)->group(function () {
         Route::get('/home', 'index')->middleware('auth')->name('home');
     });
 
-    // -------------------------- pages ----------------------//
     Route::controller(AccountController::class)->group(function () {
         Route::get('page/account/{user_id}', 'profileDetail')->middleware('auth')->name('page/account');
     });
 
-    // -------------------------- hr ----------------------//
     Route::middleware('auth')->prefix('hr/')->group(function () {
         Route::controller(AttendendanceController::class)->group(function () {
             Route::get('employee/attendance/dashboard', 'employeeAttendanceDashboard')->name('employee/attendance/dashboard');
@@ -88,19 +75,22 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
             Route::post('employee/update', 'employeeUpdateRecord')->name('hr/employee/update');
             Route::post('employee/delete', 'employeeDeleteRecord')->name('hr/employee/delete');
 
-
             // Holiday routes
             Route::get('holidays/page', 'holidayPage')->name('hr/holidays/page');
             Route::post('holidays/save', 'holidaySaveRecord')->name('hr/holidays/save');
             Route::post('holidays/delete', 'holidayDeleteRecord')->name('hr/holidays/delete');
 
-            // Leave routes
+            // Leave routes - Employee
             Route::get('leave/employee/page', 'leaveEmployee')->name('hr/leave/employee/page');
             Route::get('create/leave/employee/page', 'createLeaveEmployee')->name('hr/create/leave/employee/page');
             Route::post('create/leave/employee/save', 'saveRecordLeave')->name('hr/create/leave/employee/save');
             Route::get('view/detail/leave/{id}', 'viewDetailLeave')->name('hr/view/detail/leave');
 
-            // HR Leave routes
+            // Edit & Update Leave routes
+            Route::get('leave/edit/{id}', 'editLeave')->name('hr/leave/edit');
+            Route::post('leave/update/{id}', 'updateLeave')->name('hr/leave/update');
+
+            // Leave routes - HR
             Route::get('leave/hr/page', 'leaveHR')->name('hr/leave/hr/page');
             Route::get('create/leave/hr/page', 'createLeaveHR')->name('hr/create/leave/hr/page');
             Route::post('create/leave/hr/save', 'saveRecordLeaveHR')->name('hr/create/leave/hr/save');
@@ -109,12 +99,12 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
             Route::post('get/information/leave', 'getInformationLeave')->name('hr/get/information/leave');
             Route::post('get/employee/leave/info', 'getEmployeeLeaveInfo')->name('hr/get/employee/leave/info');
             Route::post('update/leave/status', 'updateLeaveStatus')->name('hr/update/leave/status');
+            
+            // Delete leave route
             Route::post('delete/leave', 'deleteLeave')->name('hr/delete/leave');
 
             // Attendance routes
-            /* Route::get('attendance/page', 'attendance')->name('hr/attendance/page');*/
             Route::get('attendance/main/page', 'attendanceMain')->name('hr/attendance/main/page');
-
             Route::get('attendance/page', 'attendance')->name('hr/attendance/page');
             Route::post('attendance/check-in', 'checkIn')->name('hr/attendance/check-in');
             Route::post('attendance/check-out', 'checkOut')->name('hr/attendance/check-out');
@@ -130,4 +120,12 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
             Route::post('department/delete', 'deleteRecordDepartment')->name('hr/department/delete');
         });
     });
+});
+
+// Notification Routes - MUST be OUTSIDE the previous group
+Route::middleware('auth')->group(function () {
+    Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('notifications/show/{id}', [NotificationController::class, 'show'])->name('notifications.show');
+    Route::post('notifications/mark-as-read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
+    Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
 });

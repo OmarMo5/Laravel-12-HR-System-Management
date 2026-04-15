@@ -35,7 +35,7 @@
                     </div>
                     
                     <form method="GET" action="{{ route('employee/attendance/history') }}" class="grid grid-cols-1 gap-4 md:grid-cols-12">
-                        <div class="md:col-span-5">
+                        <!-- <div class="md:col-span-5">
                             <label class="inline-block mb-2 text-sm font-medium">{{ __('messages.select_employee') }}</label>
                             <select name="employee_id" class="form-input w-full border-slate-200 focus:border-custom-500">
                                 <option value="all">{{ __('messages.all_employees') }}</option>
@@ -45,7 +45,7 @@
                                 </option>
                                 @endforeach
                             </select>
-                        </div>
+                        </div> -->
                         <div class="md:col-span-3">
                             <label class="inline-block mb-2 text-sm font-medium">{{ __('messages.month') }}</label>
                             <select name="month" class="form-input w-full border-slate-200 focus:border-custom-500">

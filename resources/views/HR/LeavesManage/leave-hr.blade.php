@@ -1,6 +1,5 @@
 @extends('layouts.master')
 @section('content')
-    <!-- Page-content -->
     <div
         class="group-data-[sidebar-size=lg]:ltr:md:ml-vertical-menu group-data-[sidebar-size=lg]:rtl:md:mr-vertical-menu group-data-[sidebar-size=md]:ltr:ml-vertical-menu-md group-data-[sidebar-size=md]:rtl:mr-vertical-menu-md group-data-[sidebar-size=sm]:ltr:ml-vertical-menu-sm group-data-[sidebar-size=sm]:rtl:mr-vertical-menu-sm pt-[calc(theme('spacing.header')_*_1)] pb-[calc(theme('spacing.header')_*_0.8)] px-4 group-data-[navbar=bordered]:pt-[calc(theme('spacing.header')_*_1.3)] group-data-[navbar=hidden]:pt-0 group-data-[layout=horizontal]:mx-auto group-data-[layout=horizontal]:max-w-screen-2xl group-data-[layout=horizontal]:px-0 group-data-[layout=horizontal]:group-data-[sidebar-size=lg]:ltr:md:ml-auto group-data-[layout=horizontal]:group-data-[sidebar-size=lg]:rtl:md:mr-auto group-data-[layout=horizontal]:md:pt-[calc(theme('spacing.header')_*_1.6)] group-data-[layout=horizontal]:px-3 group-data-[layout=horizontal]:group-data-[navbar=hidden]:pt-[calc(theme('spacing.header')_*_0.9)]">
         <div class="container-fluid group-data-[content=boxed]:max-w-boxed mx-auto">
@@ -94,31 +93,31 @@
                             <form method="GET" action="{{ route('hr/leave/hr/page') }}" class="flex flex-wrap gap-3">
                                 <div class="flex-1 min-w-[200px]">
                                     <input type="text" name="search" value="{{ $search ?? '' }}"
-                                        class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500"
+                                        class="form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500"
                                         placeholder="{{ __('messages.search_by_employee') }}">
                                 </div>
                                 <div class="w-[150px]">
                                     <select name="status"
-                                        class="form-input border-slate-200 focus:outline-none focus:border-custom-500">
+                                        class="form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500">
                                         <option value="">{{ __('messages.all_status') }}</option>
-                                        <option value="Pending" {{ $status == 'Pending' ? 'selected' : '' }}>
+                                        <option value="Pending" {{ ($status ?? '') == 'Pending' ? 'selected' : '' }}>
                                             {{ __('messages.pending') }}
                                         </option>
-                                        <option value="Approved" {{ $status == 'Approved' ? 'selected' : '' }}>
+                                        <option value="Approved" {{ ($status ?? '') == 'Approved' ? 'selected' : '' }}>
                                             {{ __('messages.approved') }}
                                         </option>
-                                        <option value="Rejected" {{ $status == 'Rejected' ? 'selected' : '' }}>
+                                        <option value="Rejected" {{ ($status ?? '') == 'Rejected' ? 'selected' : '' }}>
                                             {{ __('messages.rejected') }}
                                         </option>
                                     </select>
                                 </div>
                                 <div class="w-[180px]">
                                     <select name="leave_type"
-                                        class="form-input border-slate-200 focus:outline-none focus:border-custom-500">
+                                        class="form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500">
                                         <option value="">{{ __('messages.all_leave_types') }}</option>
                                         @foreach ($leaveTypes as $type)
                                             <option value="{{ $type->leave_type }}"
-                                                {{ $leaveType == $type->leave_type ? 'selected' : '' }}>
+                                                {{ ($leaveType ?? '') == $type->leave_type ? 'selected' : '' }}>
                                                 {{ $type->leave_type }}
                                             </option>
                                         @endforeach
@@ -170,7 +169,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($leaves as $index => $leave)
+                                @forelse($leaves as $index => $leaveItem)
                                     <tr>
                                         <td class="px-3.5 py-2.5 border-y border-slate-200 dark:border-zink-500">
                                             {{ $leaves->firstItem() + $index }}
@@ -180,41 +179,41 @@
                                                 <div
                                                     class="size-8 rounded-full bg-slate-200 flex items-center justify-center">
                                                     <span
-                                                        class="text-sm font-medium">{{ substr($leave->employee_name, 0, 2) }}</span>
+                                                        class="text-sm font-medium">{{ substr($leaveItem->employee_name, 0, 2) }}</span>
                                                 </div>
                                                 <div>
-                                                    <h6 class="text-sm">{{ $leave->employee_name }}</h6>
-                                                    <p class="text-xs text-slate-500">{{ $leave->staff_id }}</p>
+                                                    <h6 class="text-sm">{{ $leaveItem->employee_name }}</h6>
+                                                    <p class="text-xs text-slate-500">{{ $leaveItem->staff_id }}</p>
                                                 </div>
                                             </div>
                                         </td>
                                         <td class="px-3.5 py-2.5 border-y border-slate-200 dark:border-zink-500">
-                                            {{ $leave->leave_type }}
+                                            {{ $leaveItem->leave_type }}
                                         </td>
                                         <td class="px-3.5 py-2.5 border-y border-slate-200 dark:border-zink-500">
-                                            {{ Str::limit($leave->reason, 30) }}
+                                            {{ Str::limit($leaveItem->reason, 30) }}
                                         </td>
                                         <td class="px-3.5 py-2.5 border-y border-slate-200 dark:border-zink-500">
-                                            {{ $leave->number_of_day }}
+                                            {{ $leaveItem->number_of_day }}
                                         </td>
                                         <td class="px-3.5 py-2.5 border-y border-slate-200 dark:border-zink-500">
-                                            {{ $leave->date_from }}
+                                            {{ $leaveItem->date_from }}
                                         </td>
                                         <td class="px-3.5 py-2.5 border-y border-slate-200 dark:border-zink-500">
-                                            {{ $leave->date_to }}
+                                            {{ $leaveItem->date_to }}
                                         </td>
                                         <td class="px-3.5 py-2.5 border-y border-slate-200 dark:border-zink-500">
-                                            @if ($leave->status == 'Approved')
+                                            @if ($leaveItem->status == 'Approved')
                                                 <span
                                                     class="px-2.5 py-0.5 inline-block text-xs font-medium rounded border bg-green-100 border-green-100 text-green-500 dark:bg-green-400/20 dark:border-transparent">
                                                     {{ __('messages.approved') }}
                                                 </span>
-                                            @elseif($leave->status == 'Pending')
+                                            @elseif($leaveItem->status == 'Pending')
                                                 <span
                                                     class="px-2.5 py-0.5 inline-block text-xs font-medium rounded border bg-yellow-100 border-yellow-100 text-yellow-500 dark:bg-yellow-400/20 dark:border-transparent">
                                                     {{ __('messages.pending') }}
                                                 </span>
-                                            @elseif($leave->status == 'Rejected')
+                                            @elseif($leaveItem->status == 'Rejected')
                                                 <span
                                                     class="px-2.5 py-0.5 inline-block text-xs font-medium rounded border bg-red-100 border-red-100 text-red-500 dark:bg-red-400/20 dark:border-transparent">
                                                     {{ __('messages.rejected') }}
@@ -223,29 +222,35 @@
                                         </td>
                                         <td class="px-3.5 py-2.5 border-y border-slate-200 dark:border-zink-500">
                                             <div class="flex gap-2">
-                                                <a href="{{ route('hr/view/detail/leave', $leave->id) }}"
+                                                <a href="{{ route('hr/view/detail/leave', $leaveItem->id) }}"
                                                     class="flex items-center justify-center transition-all duration-200 ease-linear rounded-md size-8 text-slate-500 bg-slate-100 hover:text-white hover:bg-slate-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:text-white dark:hover:bg-zink-500"
                                                     title="{{ __('messages.view_details') }}">
                                                     <i data-lucide="eye" class="size-4"></i>
                                                 </a>
 
-                                                @if ($leave->status == 'Pending')
+                                                <a href="{{ route('hr/leave/edit', $leaveItem->id) }}"
+                                                    class="flex items-center justify-center transition-all duration-200 ease-linear rounded-md size-8 text-custom-500 bg-custom-100 hover:text-white hover:bg-custom-500 dark:bg-custom-500/20 dark:hover:bg-custom-500"
+                                                    title="{{ __('messages.edit') }}">
+                                                    <i data-lucide="edit" class="size-4"></i>
+                                                </a>
+
+                                                @if ($leaveItem->status == 'Pending')
                                                     <button type="button"
-                                                        onclick="updateLeaveStatus({{ $leave->id }}, 'Approved')"
+                                                        onclick="updateLeaveStatus({{ $leaveItem->id }}, 'Approved')"
                                                         class="flex items-center justify-center text-green-500 transition-all duration-200 ease-linear bg-green-100 rounded-md size-8 hover:text-white hover:bg-green-500 dark:bg-green-500/20 dark:hover:bg-green-500"
                                                         title="{{ __('messages.approve') }}">
                                                         <i data-lucide="check" class="size-4"></i>
                                                     </button>
 
                                                     <button type="button"
-                                                        onclick="updateLeaveStatus({{ $leave->id }}, 'Rejected')"
+                                                        onclick="updateLeaveStatus({{ $leaveItem->id }}, 'Rejected')"
                                                         class="flex items-center justify-center text-red-500 transition-all duration-200 ease-linear bg-red-100 rounded-md size-8 hover:text-white hover:bg-red-500 dark:bg-red-500/20 dark:hover:bg-red-500"
                                                         title="{{ __('messages.reject') }}">
                                                         <i data-lucide="x" class="size-4"></i>
                                                     </button>
                                                 @endif
 
-                                                <button type="button" onclick="deleteLeave({{ $leave->id }})"
+                                                <button type="button" onclick="confirmDelete({{ $leaveItem->id }})"
                                                     class="flex items-center justify-center text-red-500 transition-all duration-200 ease-linear bg-red-100 rounded-md size-8 hover:text-white hover:bg-red-500 dark:bg-red-500/20 dark:hover:bg-red-500"
                                                     title="{{ __('messages.delete') }}">
                                                     <i data-lucide="trash-2" class="size-4"></i>
@@ -273,51 +278,39 @@
             </div>
         </div>
     </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div id="deleteModal" modal-center
-        class="fixed flex flex-col hidden transition-all duration-300 -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 w-full max-w-lg max-h-fit bg-white rounded-lg dark:bg-zink-600 z-[9999]">
-        <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-zink-500">
-            <h5 class="text-16">{{ __('messages.confirm_delete') }}</h5>
-            <button type="button" class="text-2xl text-slate-400 close" data-modal-close="deleteModal">
-                <i data-lucide="x" class="size-4"></i>
-            </button>
-        </div>
-        <div class="p-4">
-            <p class="text-slate-500 dark:text-zink-200">{{ __('messages.delete_confirmation') }}</p>
-        </div>
-        <div class="flex justify-end p-4 border-t border-slate-200 dark:border-zink-500">
-            <button type="button" data-modal-close="deleteModal"
-                class="text-slate-500 bg-white btn hover:text-slate-700 hover:bg-slate-100 focus:text-slate-700 focus:bg-slate-100 active:text-slate-700 active:bg-slate-100 dark:bg-zink-600 dark:text-zink-200 dark:hover:bg-zink-500 dark:focus:bg-zink-500 dark:active:bg-zink-500">{{ __('messages.cancel') }}</button>
-            <form id="deleteForm" method="POST" style="display: inline;">
-                @csrf
-                <button type="submit"
-                    class="text-white bg-red-500 border-red-500 btn hover:text-white hover:bg-red-600 hover:border-red-600 focus:text-white focus:bg-red-600 focus:border-red-600 focus:ring focus:ring-red-100 active:text-white active:bg-red-600 active:border-red-600 active:ring active:ring-red-100 dark:ring-custom-400/20 ml-2">{{ __('messages.delete') }}</button>
-            </form>
-        </div>
-    </div>
 @endsection
 
 @section('script')
     <script>
         function updateLeaveStatus(id, status) {
-            let statusText = status === 'Approved' ? '{{ __('messages.approve') }}' : '{{ __('messages.reject') }}';
-            let confirmText = status === 'Approved' ? '{{ __('messages.yes_approve') }}' :
-                '{{ __('messages.yes_reject') }}';
+            let confirmText = status === 'Approved' ? '{{ __('messages.yes_approve') }}' : '{{ __('messages.yes_reject') }}';
             let confirmColor = status === 'Approved' ? '#28a745' : '#dc3545';
-            let message = status === 'Approved' ? '{{ __('messages.want_to_approve') }}' :
-                '{{ __('messages.want_to_reject') }}';
+            let titleText = status === 'Approved' ? '{{ __('messages.approve_leave') ?? 'Approve Leave' }}' : '{{ __('messages.reject_leave') ?? 'Reject Leave' }}';
+            let message = status === 'Approved' ? '{{ __('messages.want_to_approve') }}' : '{{ __('messages.want_to_reject') }}';
+            let icon = status === 'Approved' ? 'question' : 'warning';
 
             Swal.fire({
-                title: '{{ __('messages.are_you_sure') }}',
+                title: titleText,
                 text: message,
-                icon: 'warning',
+                icon: icon,
                 showCancelButton: true,
                 confirmButtonColor: confirmColor,
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: confirmText
+                cancelButtonColor: '#64748b',
+                confirmButtonText: confirmText,
+                cancelButtonText: '{{ __('messages.cancel') }}',
+                backdrop: true,
+                allowOutsideClick: false
             }).then((result) => {
                 if (result.isConfirmed) {
+                    Swal.fire({
+                        title: '{{ __('messages.processing') }}',
+                        text: '{{ __('messages.please_wait') }}',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    
                     $.ajax({
                         url: "{{ route('hr/update/leave/status') }}",
                         type: "POST",
@@ -328,38 +321,66 @@
                         },
                         success: function(response) {
                             if (response.response_code == 200) {
-                                Swal.fire(
-                                    '{{ __('messages.updated') }}',
-                                    '{{ __('messages.status_updated') }}',
-                                    'success'
-                                ).then(() => {
+                                Swal.fire({
+                                    title: '{{ __('messages.success') }}',
+                                    text: '{{ __('messages.status_updated') }}',
+                                    icon: 'success',
+                                    confirmButtonColor: '#28a745',
+                                    confirmButtonText: '{{ __('messages.ok') }}'
+                                }).then(() => {
                                     location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: '{{ __('messages.error') }}',
+                                    text: response.message || '{{ __('messages.update_failed') }}',
+                                    icon: 'error',
+                                    confirmButtonColor: '#dc3545'
                                 });
                             }
                         },
                         error: function() {
-                            Swal.fire(
-                                '{{ __('messages.error') }}',
-                                '{{ __('messages.update_failed') }}',
-                                'error'
-                            );
+                            Swal.fire({
+                                title: '{{ __('messages.error') }}',
+                                text: '{{ __('messages.update_failed') }}',
+                                icon: 'error',
+                                confirmButtonColor: '#dc3545'
+                            });
                         }
                     });
                 }
             });
         }
 
-        function deleteLeave(id) {
+        function confirmDelete(id) {
             Swal.fire({
-                title: '{{ __('messages.are_you_sure') }}',
-                text: '{{ __('messages.cannot_revert') }}',
+                title: '{{ __('messages.delete_leave') ?? 'Delete Leave' }}',
+                text: '{{ __('messages.delete_confirmation_message') ?? 'Are you sure you want to delete this leave? This action cannot be undone!' }}',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#dc3545',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: '{{ __('messages.yes_delete') }}'
+                cancelButtonColor: '#64748b',
+                confirmButtonText: '{{ __('messages.yes_delete') }}',
+                cancelButtonText: '{{ __('messages.cancel') }}',
+                backdrop: true,
+                allowOutsideClick: false,
+                showClass: {
+                    popup: 'animate__animated animate__fadeInDown'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutUp'
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
+                    Swal.fire({
+                        title: '{{ __('messages.processing') }}',
+                        text: '{{ __('messages.deleting_please_wait') }}',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    
                     $.ajax({
                         url: "{{ route('hr/delete/leave') }}",
                         type: "POST",
@@ -368,20 +389,35 @@
                             _token: $('meta[name="csrf-token"]').attr('content')
                         },
                         success: function(response) {
-                            Swal.fire(
-                                '{{ __('messages.deleted') }}',
-                                '{{ __('messages.record_deleted') }}',
-                                'success'
-                            ).then(() => {
-                                location.reload();
-                            });
+                            if (response.success) {
+                                Swal.fire({
+                                    title: '{{ __('messages.deleted') }}',
+                                    text: response.message || '{{ __('messages.record_deleted') }}',
+                                    icon: 'success',
+                                    confirmButtonColor: '#28a745',
+                                    confirmButtonText: '{{ __('messages.ok') }}',
+                                    timer: 2000,
+                                    timerProgressBar: true
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: '{{ __('messages.error') }}',
+                                    text: response.message || '{{ __('messages.delete_failed') }}',
+                                    icon: 'error',
+                                    confirmButtonColor: '#dc3545'
+                                });
+                            }
                         },
-                        error: function() {
-                            Swal.fire(
-                                '{{ __('messages.error') }}',
-                                '{{ __('messages.delete_failed') }}',
-                                'error'
-                            );
+                        error: function(xhr) {
+                            let errorMsg = xhr.responseJSON?.message || '{{ __('messages.delete_failed') }}';
+                            Swal.fire({
+                                title: '{{ __('messages.error') }}',
+                                text: errorMsg,
+                                icon: 'error',
+                                confirmButtonColor: '#dc3545'
+                            });
                         }
                     });
                 }

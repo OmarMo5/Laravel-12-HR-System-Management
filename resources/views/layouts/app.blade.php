@@ -9,7 +9,7 @@
     <meta content="Minimal Admin & Dashboard Template" name="description">
     <meta content="Omar Mokhtar" name="author">
     <!-- App favicon -->
-    {{-- <link rel="shortcut icon" href="{{ URL::to('assets/images/favicon1.ico') }}"> --}}
+    <!-- <link rel="shortcut icon" href="{{ URL::to('assets/images/favicon1.ico') }}"> -->
     <!-- Layout config Js -->
     <script src="{{ URL::to('assets/js/layout.js') }}"></script>
     <!-- StarCode CSS -->

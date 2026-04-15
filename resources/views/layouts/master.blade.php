@@ -10,11 +10,14 @@
     <meta content="Omar Mokhtar" name="author">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- App favicon -->
-    {{-- <link rel="shortcut icon" href="{{ URL::to('assets/images/favicon.ico') }}"> --}}
+    <!-- <link rel="shortcut icon" href="{{ URL::to('assets/images/favicon.ico') }}"> -->
     <!-- Layout config Js -->
     <script src="{{ URL::to('assets/js/layout.js') }}"></script>
     <!-- StarCode CSS -->
     <link rel="stylesheet" href="{{ URL::to('assets/css/starcode2.css') }}">
+    <!-- SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
 
     <style>
         .invalid-feedback {
@@ -134,7 +137,7 @@
                                     class="inline-flex justify-center items-center p-0 text-topbar-item transition-all w-[37.5px] h-[37.5px] duration-200 ease-linear bg-topbar rounded-md dropdown-toggle btn"
                                     id="flagsDropdown" data-bs-toggle="dropdown">
 
-                                    <img src="{{ $lang == 'ar' ? URL::to('assets/images/flag/us.svg') : URL::to('assets/images/flag/us.svg') }}"
+                                    <img src="{{ $lang == 'ar' ? URL::to('assets/images/flag/Flag_of_Egypt.svg') : URL::to('assets/images/flag/Flag_of_Egypt.svg') }}"
                                         id="header-lang-img" class="h-5 rounded-sm">
 
                                 </button>
@@ -157,7 +160,7 @@
                                     <a href="{{ route('change.lang', 'ar') }}"
                                         class="flex items-center gap-3 group/items">
 
-                                        <img src="{{ URL::to('assets/images/flag/us.svg') }}"
+                                        <img src="{{ URL::to('assets/images/flag/Flag_of_Egypt.svg') }}"
                                             class="object-cover h-4 rounded-full">
 
                                         <h6 class="text-slate-600 dark:text-zink-200">
@@ -178,7 +181,7 @@
                                 </button>
                             </div>
 
-                            <div class="relative flex items-center dropdown h-header">
+                            <!-- <div class="relative flex items-center dropdown h-header">
                                 <button type="button"
                                     class="inline-flex justify-center relative items-center p-0 text-topbar-item transition-all w-[37.5px] h-[37.5px] duration-200 ease-linear bg-topbar rounded-md dropdown-toggle btn hover:bg-topbar-item-bg-hover hover:text-topbar-item-hover group-data-[topbar=dark]:bg-topbar-dark group-data-[topbar=dark]:hover:bg-topbar-item-bg-hover-dark group-data-[topbar=dark]:hover:text-topbar-item-hover-dark group-data-[topbar=brand]:bg-topbar-brand group-data-[topbar=brand]:hover:bg-topbar-item-bg-hover-brand group-data-[topbar=brand]:hover:text-topbar-item-hover-brand group-data-[topbar=dark]:dark:bg-zink-700 group-data-[topbar=dark]:dark:hover:bg-zink-600 group-data-[topbar=brand]:text-topbar-item-brand group-data-[topbar=dark]:dark:hover:text-zink-50 group-data-[topbar=dark]:dark:text-zink-200 group-data-[topbar=dark]:text-topbar-item-dark"
                                     id="notificationDropdown" data-bs-toggle="dropdown">
@@ -324,6 +327,11 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div> -->
+                            <div class="relative flex items-center dropdown h-header">
+                                @auth
+                                    <x-notification-dropdown />
+                                @endauth
                             </div>
 
                             <div class="relative items-center hidden h-header md:flex">
@@ -768,6 +776,11 @@
 
     <!-- App js -->
     <script src="{{ URL::to('assets/js/app.js') }}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     @yield('script')
 </body>
 

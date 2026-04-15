@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Mail\HolidayNotificationMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
-
+use App\Models\Notification;
 
 class HRController extends Controller
 {
@@ -68,7 +68,6 @@ class HRController extends Controller
     /** Save (Create) Employee */
     public function employeeSaveRecord(Request $request)
     {
-        // ── Validation ──────────────────────────────────────────────────────
         $validator = Validator::make($request->all(), [
             'avatar'       => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'name'         => 'required|string|max:255',
@@ -86,7 +85,6 @@ class HRController extends Controller
             'user_id'      => 'required|string|unique:users,user_id',
         ]);
 
-        // إذا فشل الـ Validation نرجع بدون إغلاق الـ Modal
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator, 'create')
@@ -130,7 +128,6 @@ class HRController extends Controller
     /** Update Employee */
     public function employeeUpdateRecord(Request $request)
     {
-        // ── Validation ──────────────────────────────────────────────────────
         $validator = Validator::make($request->all(), [
             'name'         => 'required|string|max:255',
             'email'        => 'required|string|email|max:255|unique:users,email,' . $request->id,
@@ -157,7 +154,6 @@ class HRController extends Controller
         try {
             $user = User::findOrFail($request->id);
 
-            // Handle avatar upload
             if ($request->hasFile('avatar')) {
                 if (!empty($user->avatar) && file_exists(public_path('assets/images/user/' . $user->avatar))) {
                     unlink(public_path('assets/images/user/' . $user->avatar));
@@ -179,7 +175,6 @@ class HRController extends Controller
             $user->experience   = $request->experience;
             $user->designation  = $request->designation;
 
-            // تحديث الباسورد فقط لو تم إدخاله
             if (!empty($request->password)) {
                 $user->password = Hash::make($request->password);
             }
@@ -228,11 +223,10 @@ class HRController extends Controller
     public function holidayPage(Request $request)
     {
         $search = $request->input('search');
-        $date_search = $request->input('date_search'); // البحث بالتاريخ
-        
+        $date_search = $request->input('date_search');
+
         $holidayList = Holiday::query();
         
-        // البحث بالنص (الاسم أو النوع)
         if ($search) {
             $holidayList->where(function($query) use ($search) {
                 $query->where('holiday_name', 'like', '%' . $search . '%')
@@ -240,9 +234,7 @@ class HRController extends Controller
             });
         }
         
-        // البحث بالتاريخ (يدعم يوم واحد أو رينج)
         if ($date_search) {
-            // لو التاريخ فيه " to " يبقى رينج
             if (strpos($date_search, ' to ') !== false) {
                 $range = explode(' to ', $date_search);
                 if (count($range) == 2) {
@@ -258,7 +250,6 @@ class HRController extends Controller
                     });
                 }
             } else {
-                // يوم واحد - يجيب أي إجازة فيها التاريخ ده
                 $holidayList->where(function($query) use ($date_search) {
                     $query->where('start_date', '<=', $date_search)
                         ->where('end_date', '>=', $date_search);
@@ -271,7 +262,7 @@ class HRController extends Controller
         return view('HR.holidays', compact('holidayList', 'search', 'date_search'));
     }
 
-    /** Save Holiday (Supports Single Date or Date Range) */
+    /** Save Holiday */
     public function holidaySaveRecord(Request $request)
     {
         $request->validate([
@@ -281,7 +272,6 @@ class HRController extends Controller
         ]);
 
         try {
-            // تحليل التواريخ من المدخل
             $dates = $this->parseDateRange($request->date_range);
             
             if (empty($dates)) {
@@ -295,18 +285,14 @@ class HRController extends Controller
             $isNewRecord = empty($request->idUpdate);
 
             if ($isNewRecord) {
-                // إضافة جديدة
                 $holiday = Holiday::create([
                     'holiday_type' => $request->holiday_type,
                     'holiday_name' => $request->holiday_name,
                     'start_date'   => $startDate,
                     'end_date'     => $endDate,
                 ]);
-
-                // بعت إيميل للموظفين
                 $this->sendHolidayNotificationToEmployees($holiday);
             } else {
-                // تعديل
                 $holiday = Holiday::findOrFail($request->idUpdate);
                 $holiday->update([
                     'holiday_type' => $request->holiday_type,
@@ -326,33 +312,24 @@ class HRController extends Controller
         }
     }
 
-    /**
-     * Parse date range string (supports single date or "YYYY-MM-DD to YYYY-MM-DD")
-     * Returns array with 'start' and 'end' dates
-     */
     private function parseDateRange($dateRange)
     {
-        // لو فيه " to " يبقى رينج
         if (strpos($dateRange, ' to ') !== false) {
             $range = explode(' to ', $dateRange);
             if (count($range) == 2) {
                 $start = Carbon::parse(trim($range[0]));
                 $end   = Carbon::parse(trim($range[1]));
-
-                // لو تاريخ البداية بعد تاريخ النهاية، بدلهم
                 if ($start->gt($end)) {
                     $temp = $start;
                     $start = $end;
                     $end = $temp;
                 }
-
                 return [
                     'start' => $start->format('Y-m-d'),
                     'end'   => $end->format('Y-m-d'),
                 ];
             }
         } else {
-            // يوم واحد
             $singleDate = Carbon::parse(trim($dateRange));
             if ($singleDate) {
                 return [
@@ -361,11 +338,9 @@ class HRController extends Controller
                 ];
             }
         }
-
         return null;
     }
 
-    /** Send holiday notification to all employees */
     private function sendHolidayNotificationToEmployees($holiday)
     {
         try {
@@ -384,9 +359,7 @@ class HRController extends Controller
             foreach ($employees as $employee) {
                 if ($employee->email && filter_var($employee->email, FILTER_VALIDATE_EMAIL)) {
                     try {
-                        // هنا بنبعت الـ Holiday object كامل عشان فيه start_date و end_date
                         Mail::to($employee->email)->send(new HolidayNotificationMail($holiday));
-                        //Mail::to("omarmo5tar12@gmail.com")->queue(new HolidayNotificationMail($holiday));
                         $successCount++;
                     } catch (\Exception $e) {
                         $failCount++;
@@ -588,6 +561,113 @@ class HRController extends Controller
         ));
     }
 
+    /**
+     * Show edit leave form
+     */
+    public function editLeave($id)
+    {
+        $leave = Leave::findOrFail($id);
+        
+        $leaveDate = json_decode($leave->leave_date, true);
+        $leaveDay = json_decode($leave->leave_day, true);
+        
+        $leaveInformation = LeaveInformation::all();
+        $staffId = $leave->staff_id;
+        $remainingLeaves = [];
+        
+        foreach ($leaveInformation as $info) {
+            $usedLeaves = Leave::where('staff_id', $staffId)
+                ->where('leave_type', $info->leave_type)
+                ->whereIn('status', ['Approved', 'Pending'])
+                ->where('id', '!=', $id)
+                ->sum('number_of_day');
+            $remainingLeaves[$info->leave_type] = max(0, $info->leave_days - $usedLeaves);
+        }
+        
+        $users = User::all();
+        
+        return view('HR.LeavesManage.edit-leave', compact('leave', 'leaveDate', 'leaveDay', 'leaveInformation', 'remainingLeaves', 'users'));
+    }
+
+    /**
+     * Update Leave Record
+     */
+    public function updateLeave(Request $request, $id)
+    {
+        $request->validate([
+            'leave_type' => 'required|string',
+            'date_from'  => 'required',
+            'date_to'    => 'required',
+            'reason'     => 'required',
+            'number_of_day' => 'required|numeric|min:0.5',
+        ]);
+
+        try {
+            $leave = Leave::findOrFail($id);
+            $oldStatus = $leave->status;
+            
+            $leaveInfo = LeaveInformation::where('leave_type', $request->leave_type)->first();
+            
+            $usedLeaves = Leave::where('staff_id', $leave->staff_id)
+                ->where('leave_type', $request->leave_type)
+                ->whereIn('status', ['Approved', 'Pending'])
+                ->where('id', '!=', $id)
+                ->sum('number_of_day');
+            
+            if (in_array($oldStatus, ['Approved', 'Pending'])) {
+                $usedLeaves += $leave->number_of_day;
+            }
+            
+            $remainingDays = $leaveInfo->leave_days - $usedLeaves;
+            
+            if ($remainingDays < $request->number_of_day && $request->number_of_day > $leave->number_of_day) {
+                $extraNeeded = $request->number_of_day - $leave->number_of_day;
+                if ($remainingDays < $extraNeeded) {
+                    flash()->error('Insufficient leave balance! Remaining: ' . max(0, $remainingDays));
+                    return redirect()->back()->withInput();
+                }
+            }
+            
+            $leaveDates = $request->leave_date ?? [];
+            $leaveDays = $request->select_leave_day ?? [];
+            
+            $leave->leave_type = $request->leave_type;
+            $leave->date_from = $request->date_from;
+            $leave->date_to = $request->date_to;
+            $leave->number_of_day = $request->number_of_day;
+            $leave->reason = $request->reason;
+            
+            if (!empty($leaveDates)) {
+                $leave->leave_date = json_encode($leaveDates);
+            }
+            if (!empty($leaveDays)) {
+                $leave->leave_day = json_encode($leaveDays);
+            }
+            
+            $newUsedLeaves = Leave::where('staff_id', $leave->staff_id)
+                ->where('leave_type', $request->leave_type)
+                ->whereIn('status', ['Approved', 'Pending'])
+                ->where('id', '!=', $id)
+                ->sum('number_of_day');
+            $newUsedLeaves += $request->number_of_day;
+            
+            $leave->remaining_leave = max(0, $leaveInfo->leave_days - $newUsedLeaves);
+            $leave->save();
+            
+            flash()->success('Leave updated successfully :)');
+            
+            if (auth()->user()->role_name == 'HR' || auth()->user()->role_name == 'Admin') {
+                return redirect()->route('hr/leave/hr/page');
+            }
+            return redirect()->route('hr/leave/employee/page');
+            
+        } catch (\Exception $e) {
+            \Log::error('Error updating leave: ' . $e->getMessage());
+            flash()->error('Failed to update leave: ' . $e->getMessage());
+            return redirect()->back()->withInput();
+        }
+    }
+
     /** Leave HR - List all leaves */
     public function leaveHR(Request $request)
     {
@@ -697,7 +777,7 @@ class HRController extends Controller
     }
 
     /** Update Leave Status */
-    public function updateLeaveStatus(Request $request)
+    /* public function updateLeaveStatus(Request $request)
     {
         try {
             $leave         = Leave::findOrFail($request->id);
@@ -723,21 +803,159 @@ class HRController extends Controller
                 'message'       => 'Failed to update status',
             ], 500);
         }
-    }
+    } */
+   public function updateLeaveStatus(Request $request)
+{
+    try {
+        $leave = Leave::findOrFail($request->id);
+        $oldStatus = $leave->status;
+        $newStatus = $request->status;
+        
+        $leave->status = $newStatus;
+        $leave->approved_by = Session::get('name');
+        $leave->save();
 
-    /** Delete Leave */
+        // Send notification to employee
+        $this->sendLeaveStatusNotification($leave, $oldStatus, $newStatus);
+
+        return response()->json([
+            'response_code' => 200,
+            'status' => 'success',
+            'message' => 'Leave status updated successfully',
+        ]);
+
+    } catch (\Exception $e) {
+        \Log::error('Error updating leave status: ' . $e->getMessage());
+        return response()->json([
+            'response_code' => 500,
+            'status' => 'error',
+            'message' => 'Failed to update status: ' . $e->getMessage(),
+        ], 500);
+    }
+}
+/**
+ * Send notification to employee when leave status changes
+ */
+private function sendLeaveStatusNotification($leave, $oldStatus, $newStatus)
+{
+    try {
+        if ($oldStatus == $newStatus) {
+            return;
+        }
+
+        $employee = User::where('user_id', $leave->staff_id)->first();
+        
+        if (!$employee) {
+            \Log::error('Employee not found for notification: ' . $leave->staff_id);
+            return;
+        }
+
+        if ($newStatus == 'Approved') {
+            $title = '✅ تم قبول الإجازة';
+            $titleEn = '✅ Leave Approved';
+            $message = "عزيزي {$employee->name}، تم قبول طلب الإجازة ({$leave->leave_type}) من {$leave->date_from} إلى {$leave->date_to} بواسطة " . Session::get('name');
+            $messageEn = "Dear {$employee->name}, your {$leave->leave_type} leave request from {$leave->date_from} to {$leave->date_to} has been APPROVED by " . Session::get('name');
+            $type = 'leave_approved';
+        } elseif ($newStatus == 'Rejected') {
+            $title = '❌ تم رفض الإجازة';
+            $titleEn = '❌ Leave Rejected';
+            $message = "عزيزي {$employee->name}، تم رفض طلب الإجازة ({$leave->leave_type}) من {$leave->date_from} إلى {$leave->date_to} بواسطة " . Session::get('name');
+            $messageEn = "Dear {$employee->name}, your {$leave->leave_type} leave request from {$leave->date_from} to {$leave->date_to} has been REJECTED by " . Session::get('name');
+            $type = 'leave_rejected';
+        } else {
+            return;
+        }
+
+        // Use the appropriate language based on user preference
+        $finalTitle = app()->getLocale() == 'ar' ? $title : $titleEn;
+        $finalMessage = app()->getLocale() == 'ar' ? $message : $messageEn;
+
+        Notification::create([
+            'user_id' => $leave->staff_id,
+            'type' => $type,
+            'title' => $finalTitle,
+            'message' => $finalMessage,
+            'leave_id' => $leave->id,
+            'is_read' => false,
+        ]);
+
+        \Log::info('Notification sent to employee: ' . $leave->staff_id);
+
+    } catch (\Exception $e) {
+        \Log::error('Error sending notification: ' . $e->getMessage());
+    }
+}
+
+    /**
+     * Delete Leave - COMPLETE WORKING VERSION
+     */
     public function deleteLeave(Request $request)
     {
         try {
-            $leave = Leave::findOrFail($request->id);
+            // Get the leave ID from request (supports both 'id' and 'id_delete')
+            $leaveId = $request->id ?? $request->id_delete;
+            
+            if (!$leaveId) {
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Leave ID is required'
+                    ], 400);
+                }
+                flash()->error('Leave ID is required');
+                return redirect()->back();
+            }
+            
+            $leave = Leave::findOrFail($leaveId);
+            $userRole = auth()->user()->role_name;
+            $loggedInUserId = auth()->user()->user_id;
+            
+            $canDelete = false;
+            
+            // HR or Admin can delete ANY leave (regardless of status)
+            if ($userRole == 'HR' || $userRole == 'Admin') {
+                $canDelete = true;
+            } 
+            // Employee can only delete their own leaves that are still PENDING
+            elseif ($leave->staff_id == $loggedInUserId && $leave->status == 'Pending') {
+                $canDelete = true;
+            }
+            
+            if (!$canDelete) {
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'You are not authorized to delete this leave.'
+                    ], 403);
+                }
+                flash()->error('You are not authorized to delete this leave.');
+                return redirect()->back();
+            }
+            
+            // Delete the leave
             $leave->delete();
-
-            flash()->success('Leave deleted successfully :)');
+            
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Leave deleted successfully'
+                ]);
+            }
+            
+            flash()->success('Leave deleted successfully');
             return redirect()->back();
-
+            
         } catch (\Exception $e) {
-            \Log::error($e);
-            flash()->error('Failed to delete leave :)');
+            \Log::error('Error deleting leave: ' . $e->getMessage());
+            
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to delete leave: ' . $e->getMessage()
+                ], 500);
+            }
+            
+            flash()->error('Failed to delete leave: ' . $e->getMessage());
             return redirect()->back();
         }
     }
@@ -1004,10 +1222,78 @@ class HRController extends Controller
         }
     }
 
-    /** Attendance Main */
-    public function attendanceMain()
+    private function getWorkingDaysInMonth($year, $month)
     {
-        return view('HR.Attendance.attendance-main');
+        $workingDays = 0;
+        $daysInMonth = Carbon::create($year, $month, 1)->daysInMonth;
+        
+        for ($d = 1; $d <= $daysInMonth; $d++) {
+            $date = Carbon::create($year, $month, $d, 0, 0, 0, 'Africa/Cairo');
+            if ($date->dayOfWeek != 5 && $date->dayOfWeek != 6) {
+                $workingDays++;
+            }
+        }
+        
+        return $workingDays;
+    }
+
+    public function attendanceMain(Request $request)
+    {
+        $now    = Carbon::now('Africa/Cairo');
+        $month  = (int) $request->get('month', $now->month);
+        $year   = (int) $request->get('year',  $now->year);
+        $search = $request->get('search', '');
+
+        $startDate   = Carbon::create($year, $month, 1, 0, 0, 0, 'Africa/Cairo')->startOfMonth();
+        $endDate     = Carbon::create($year, $month, 1, 0, 0, 0, 'Africa/Cairo')->endOfMonth();
+        $daysInMonth = $endDate->day;
+
+        $today          = $now->toDateString();
+        $totalEmployees = User::where('status', 'Active')->count();
+        $presentToday   = Attendance::whereDate('date', $today)
+            ->whereIn('status', ['present', 'late', 'early_departure', 'late_early', 'approved'])
+            ->distinct('user_id')
+            ->count('user_id');
+        $absentToday    = max(0, $totalEmployees - $presentToday);
+
+        $workingDays = $this->getWorkingDaysInMonth($year, $month);
+
+        $users = User::where('status', 'Active')
+            ->when($search, fn($q) => $q->where('name', 'like', "%{$search}%")
+                ->orWhere('user_id', 'like', "%{$search}%"))
+            ->orderBy('name')
+            ->paginate(15)
+            ->withQueryString();
+
+        $userIds     = $users->pluck('user_id')->toArray();
+        $attendances = Attendance::whereIn('user_id', $userIds)
+            ->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
+            ->get()
+            ->groupBy('user_id');
+
+        $attendanceMatrix = [];
+        foreach ($userIds as $uid) {
+            $attendanceMatrix[$uid] = [];
+            $records = $attendances->get($uid, collect());
+            foreach ($records as $rec) {
+                $day = (int) Carbon::parse($rec->date)->format('j');
+                $attendanceMatrix[$uid][$day] = $rec->status;
+            }
+        }
+
+        $weekends = [];
+        for ($d = 1; $d <= $daysInMonth; $d++) {
+            $dayObj = Carbon::create($year, $month, $d, 0, 0, 0, 'Africa/Cairo');
+            if ($dayObj->dayOfWeek == 5 || $dayObj->dayOfWeek == 6) {
+                $weekends[] = $d;
+            }
+        }
+
+        return view('HR.Attendance.attendance-main', compact(
+            'users', 'month', 'year', 'daysInMonth', 'attendanceMatrix',
+            'weekends', 'totalEmployees', 'presentToday', 'absentToday',
+            'workingDays', 'search', 'startDate', 'endDate'
+        ));
     }
 
     /** Department Page */

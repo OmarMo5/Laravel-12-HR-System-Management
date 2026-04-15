@@ -1,6 +1,5 @@
 @extends('layouts.master')
 @section('content')
-    <!-- Page-content -->
     <div
         class="group-data-[sidebar-size=lg]:ltr:md:ml-vertical-menu group-data-[sidebar-size=lg]:rtl:md:mr-vertical-menu group-data-[sidebar-size=md]:ltr:ml-vertical-menu-md group-data-[sidebar-size=md]:rtl:mr-vertical-menu-md group-data-[sidebar-size=sm]:ltr:ml-vertical-menu-sm group-data-[sidebar-size=sm]:rtl:mr-vertical-menu-sm pt-[calc(theme('spacing.header')_*_1)] pb-[calc(theme('spacing.header')_*_0.8)] px-4 group-data-[navbar=bordered]:pt-[calc(theme('spacing.header')_*_1.3)] group-data-[navbar=hidden]:pt-0 group-data-[layout=horizontal]:mx-auto group-data-[layout=horizontal]:max-w-screen-2xl group-data-[layout=horizontal]:px-0 group-data-[layout=horizontal]:group-data-[sidebar-size=lg]:ltr:md:ml-auto group-data-[layout=horizontal]:group-data-[sidebar-size=lg]:rtl:md:mr-auto group-data-[layout=horizontal]:md:pt-[calc(theme('spacing.header')_*_1.6)] group-data-[layout=horizontal]:px-3 group-data-[layout=horizontal]:group-data-[navbar=hidden]:pt-[calc(theme('spacing.header')_*_0.9)]">
         <div class="container-fluid group-data-[content=boxed]:max-w-boxed mx-auto">
@@ -93,7 +92,7 @@
                                 class="flex flex-wrap gap-3">
                                 <div class="flex-1 min-w-[200px]">
                                     <input type="text" name="search" value="{{ $search ?? '' }}"
-                                        class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500"
+                                        class="form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500"
                                         placeholder="{{ __('messages.search_by_leave_type') }}">
                                 </div>
                                 <button type="submit" class="text-white btn bg-custom-500 border-custom-500">
@@ -179,11 +178,27 @@
                                             @endif
                                         </td>
                                         <td class="px-3.5 py-2.5 border-y border-slate-200 dark:border-zink-500">
-                                            <a href="{{ route('hr/view/detail/leave', $item->id) }}"
-                                                class="flex items-center justify-center transition-all duration-200 ease-linear rounded-md size-8 text-slate-500 bg-slate-100 hover:text-white hover:bg-slate-500"
-                                                title="{{ __('messages.view_details') }}">
-                                                <i data-lucide="eye" class="size-4"></i>
-                                            </a>
+                                            <div class="flex gap-2">
+                                                <a href="{{ route('hr/view/detail/leave', $item->id) }}"
+                                                    class="flex items-center justify-center transition-all duration-200 ease-linear rounded-md size-8 text-slate-500 bg-slate-100 hover:text-white hover:bg-slate-500"
+                                                    title="{{ __('messages.view_details') }}">
+                                                    <i data-lucide="eye" class="size-4"></i>
+                                                </a>
+                                                
+                                                @if($item->status == 'Pending')
+                                                    <a href="{{ route('hr/leave/edit', $item->id) }}"
+                                                        class="flex items-center justify-center transition-all duration-200 ease-linear rounded-md size-8 text-custom-500 bg-custom-100 hover:text-white hover:bg-custom-500"
+                                                        title="{{ __('messages.edit') }}">
+                                                        <i data-lucide="edit" class="size-4"></i>
+                                                    </a>
+                                                    
+                                                    <button type="button" onclick="confirmDelete({{ $item->id }})"
+                                                        class="flex items-center justify-center text-red-500 transition-all duration-200 ease-linear bg-red-100 rounded-md size-8 hover:text-white hover:bg-red-500"
+                                                        title="{{ __('messages.delete') }}">
+                                                        <i data-lucide="trash-2" class="size-4"></i>
+                                                    </button>
+                                                @endif
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty
@@ -206,4 +221,80 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('script')
+    <script>
+        function confirmDelete(id) {
+            Swal.fire({
+                title: '{{ __('messages.delete_leave') ?? 'Delete Leave' }}',
+                text: '{{ __('messages.delete_confirmation_message') ?? 'Are you sure you want to delete this leave? This action cannot be undone!' }}',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: '{{ __('messages.yes_delete') }}',
+                cancelButtonText: '{{ __('messages.cancel') }}',
+                backdrop: true,
+                allowOutsideClick: false,
+                showClass: {
+                    popup: 'animate__animated animate__fadeInDown'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutUp'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: '{{ __('messages.processing') }}',
+                        text: '{{ __('messages.deleting_please_wait') }}',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    
+                    $.ajax({
+                        url: "{{ route('hr/delete/leave') }}",
+                        type: "POST",
+                        data: {
+                            id: id,
+                            _token: $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: '{{ __('messages.deleted') }}',
+                                    text: response.message || '{{ __('messages.record_deleted') }}',
+                                    icon: 'success',
+                                    confirmButtonColor: '#28a745',
+                                    confirmButtonText: '{{ __('messages.ok') }}',
+                                    timer: 2000,
+                                    timerProgressBar: true
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: '{{ __('messages.error') }}',
+                                    text: response.message || '{{ __('messages.delete_failed') }}',
+                                    icon: 'error',
+                                    confirmButtonColor: '#dc3545'
+                                });
+                            }
+                        },
+                        error: function(xhr) {
+                            let errorMsg = xhr.responseJSON?.message || '{{ __('messages.delete_failed') }}';
+                            Swal.fire({
+                                title: '{{ __('messages.error') }}',
+                                text: errorMsg,
+                                icon: 'error',
+                                confirmButtonColor: '#dc3545'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    </script>
 @endsection
