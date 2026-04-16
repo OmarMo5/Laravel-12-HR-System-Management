@@ -550,4 +550,7 @@ return [
     'mark_all_read' => 'Mark all as read',
     'no_notifications' => 'No notifications',
     'view_all_notifications' => 'View all notifications',
+
+    'average' => 'average',
+    'excellent' => 'excellent',
 ];

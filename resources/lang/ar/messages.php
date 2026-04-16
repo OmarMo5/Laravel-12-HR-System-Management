@@ -549,4 +549,7 @@ return [
     'mark_all_read' => 'تحديد الكل كمقروء',
     'no_notifications' => 'لا توجد إشعارات',
     'view_all_notifications' => 'عرض كل الإشعارات',
+
+    'average' => 'متوسط',
+    'excellent' => 'ممتاز',
 ];

@@ -29,12 +29,12 @@
                             <i data-lucide="users" class="size-5 text-custom-500"></i>
                         </div>
                         <div>
-                            <h6 class="text-15 font-semibold">{{ __('messages.employee_filter') }}</h6>
+                            <!-- <h6 class="text-15 font-semibold">{{ __('messages.employee_filter') }}</h6> -->
                             <p class="text-xs text-slate-500">{{ __('messages.view_attendance_by_employee') }}</p>
                         </div>
                     </div>
                     
-                    <form method="GET" action="{{ route('employee/attendance/history') }}" class="grid grid-cols-1 gap-4 md:grid-cols-12">
+                    <form method="GET" action="{{ route('employee/attendance/history') }}" class="grid grid-cols-1 gap-4 md:grid-cols-12" id="filterForm">
                         <!-- <div class="md:col-span-5">
                             <label class="inline-block mb-2 text-sm font-medium">{{ __('messages.select_employee') }}</label>
                             <select name="employee_id" class="form-input w-full border-slate-200 focus:border-custom-500">
@@ -95,7 +95,7 @@
             </div>
             @endif
 
-            <!-- Monthly Overview Card - تصميم تقويم مرتب -->
+            <!-- Monthly Overview Card - ترتيب الأيام من الأربعاء للثلاثاء -->
             <div class="card mb-5">
                 <div class="card-body">
                     <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
@@ -103,38 +103,59 @@
                             <h6 class="text-15 font-semibold">{{ __('messages.monthly_overview') }}</h6>
                             <p class="text-xs text-slate-500">{{ DateTime::createFromFormat('!m', $month)->format('F') }} {{ $year }}</p>
                         </div>
-                        <div class="flex gap-2">
+                        <div class="flex gap-2 flex-wrap">
                             <span class="inline-flex items-center gap-1 text-xs"><span class="w-2 h-2 rounded-full bg-green-500"></span> {{ __('messages.present') }}</span>
                             <span class="inline-flex items-center gap-1 text-xs"><span class="w-2 h-2 rounded-full bg-yellow-500"></span> {{ __('messages.late') }}</span>
                             <span class="inline-flex items-center gap-1 text-xs"><span class="w-2 h-2 rounded-full bg-orange-500"></span> {{ __('messages.early') }}</span>
                             <span class="inline-flex items-center gap-1 text-xs"><span class="w-2 h-2 rounded-full bg-red-500"></span> {{ __('messages.absent') }}</span>
+                            <span class="inline-flex items-center gap-1 text-xs"><span class="w-2 h-2 rounded-full bg-purple-500"></span> {{ __('messages.weekend') }}</span>
                         </div>
                     </div>
 
-                    <!-- تقويم الشهر - 7 أعمدة ثابتة بدون اسكرول -->
-                    <div class="w-full overflow-hidden">
-                        <div class="grid grid-cols-7 gap-1 text-center">
-                            <!-- أيام الأسبوع -->
-                            <div class="text-xs font-semibold py-2 bg-slate-100 dark:bg-zink-600 rounded-t-lg">{{ __('messages.mon') }}</div>
-                            <div class="text-xs font-semibold py-2 bg-slate-100 dark:bg-zink-600 rounded-t-lg">{{ __('messages.tue') }}</div>
+                    <!-- Calendar - 7 columns (Wednesday to Tuesday) -->
+                    <div class="w-full overflow-x-auto">
+                        <div class="grid grid-cols-7 gap-1 text-center min-w-[560px]">
+                            <!-- Weekdays order: Wed, Thu, Fri, Sat, Sun, Mon, Tue -->
                             <div class="text-xs font-semibold py-2 bg-slate-100 dark:bg-zink-600 rounded-t-lg">{{ __('messages.wed') }}</div>
                             <div class="text-xs font-semibold py-2 bg-slate-100 dark:bg-zink-600 rounded-t-lg">{{ __('messages.thu') }}</div>
-                            <div class="text-xs font-semibold py-2 bg-slate-100 dark:bg-zink-600 rounded-t-lg">{{ __('messages.fri') }}</div>
+                            <div class="text-xs font-semibold py-2 bg-red-100 text-red-600 dark:bg-red-500/20 rounded-t-lg">{{ __('messages.fri') }}</div>
                             <div class="text-xs font-semibold py-2 bg-red-100 text-red-600 dark:bg-red-500/20 rounded-t-lg">{{ __('messages.sat') }}</div>
-                            <div class="text-xs font-semibold py-2 bg-red-100 text-red-600 dark:bg-red-500/20 rounded-t-lg">{{ __('messages.sun') }}</div>
+                            <div class="text-xs font-semibold py-2 bg-slate-100 dark:bg-zink-600 rounded-t-lg">{{ __('messages.sun') }}</div>
+                            <div class="text-xs font-semibold py-2 bg-slate-100 dark:bg-zink-600 rounded-t-lg">{{ __('messages.mon') }}</div>
+                            <div class="text-xs font-semibold py-2 bg-slate-100 dark:bg-zink-600 rounded-t-lg">{{ __('messages.tue') }}</div>
 
-                            <!-- الخلايا الفارغة قبل أول يوم في الشهر -->
-                            @for($i = 0; $i < $firstDayOfWeek; $i++)
+                            @php
+                                // Create date for first day of month
+                                $firstDayOfMonth = Carbon\Carbon::create($year, $month, 1, 0, 0, 0, 'Africa/Cairo');
+                                // Get day of week (0=Sunday, 1=Monday, 2=Tuesday, 3=Wednesday, 4=Thursday, 5=Friday, 6=Saturday)
+                                $firstDayWeekday = $firstDayOfMonth->dayOfWeek;
+                                
+                                // Calculate offset to start from Wednesday (3)
+                                // If first day is Wednesday (3), offset = 0
+                                // If first day is Thursday (4), offset = 1 (one empty cell before)
+                                // If first day is Friday (5), offset = 2
+                                // If first day is Saturday (6), offset = 3
+                                // If first day is Sunday (0), offset = 4
+                                // If first day is Monday (1), offset = 5
+                                // If first day is Tuesday (2), offset = 6
+                                $offset = ($firstDayWeekday - 3 + 7) % 7;
+                            @endphp
+
+                            <!-- Empty cells before first day of month -->
+                            @for($i = 0; $i < $offset; $i++)
                                 <div class="py-3 bg-slate-50 dark:bg-zink-700/30 rounded opacity-40"></div>
                             @endfor
 
-                            <!-- أيام الشهر -->
+                            <!-- Days of month -->
                             @for($day = 1; $day <= $daysInMonth; $day++)
                                 @php
                                     $currentDate = Carbon\Carbon::create($year, $month, $day, 0, 0, 0, 'Africa/Cairo');
                                     $attendanceForDay = $attendances->first(function($item) use ($currentDate) {
                                         return Carbon\Carbon::parse($item->date)->format('Y-m-d') == $currentDate->format('Y-m-d');
                                     });
+                                    
+                                    // Check if weekend (Friday = 5, Saturday = 6)
+                                    $isWeekend = ($currentDate->dayOfWeek == 5 || $currentDate->dayOfWeek == 6);
                                     
                                     $bgColor = 'bg-white dark:bg-zink-700';
                                     $textColor = 'text-slate-700 dark:text-zink-100';
@@ -165,9 +186,9 @@
                                                 break;
                                         }
                                     } else {
-                                        if ($currentDate->isWeekend()) {
-                                            $bgColor = 'bg-red-50 dark:bg-red-500/5';
-                                            $textColor = 'text-red-400';
+                                        if ($isWeekend) {
+                                            $bgColor = 'bg-purple-50 dark:bg-purple-500/10';
+                                            $textColor = 'text-purple-500';
                                         }
                                     }
                                 @endphp
@@ -175,7 +196,7 @@
                                     class="day-cell py-3 {{ $bgColor }} {{ $ringClass }} rounded-lg cursor-pointer hover:scale-105 hover:shadow-md transition-all duration-200 group relative"
                                     data-day="{{ $day }}"
                                     data-date="{{ $currentDate->format('Y-m-d') }}"
-                                    data-status="{{ $attendanceForDay ? ucfirst($attendanceForDay->status) : ($currentDate->isWeekend() ? 'Weekend' : 'Absent') }}"
+                                    data-status="{{ $attendanceForDay ? ucfirst($attendanceForDay->status) : ($isWeekend ? 'Weekend' : 'Absent') }}"
                                     data-checkin="{{ $attendanceForDay && $attendanceForDay->check_in ? Carbon\Carbon::parse($attendanceForDay->check_in)->format('h:i A') : '—' }}"
                                     data-checkout="{{ $attendanceForDay && $attendanceForDay->check_out ? Carbon\Carbon::parse($attendanceForDay->check_out)->format('h:i A') : '—' }}"
                                     data-hours="{{ $attendanceForDay && $attendanceForDay->working_hours ? number_format($attendanceForDay->working_hours, 1) : '0' }}"
@@ -195,7 +216,7 @@
                                                 {{ __('messages.check_out') }}: {{ Carbon\Carbon::parse($attendanceForDay->check_out)->format('h:i A') }}
                                             @endif
                                         @else
-                                            {{ $currentDate->isWeekend() ? __('messages.weekend') : __('messages.absent') }}
+                                            {{ $isWeekend ? __('messages.weekend') : __('messages.absent') }}
                                         @endif
                                     </div>
                                 </div>
@@ -205,6 +226,7 @@
                 </div>
             </div>
 
+            <!-- باقي الكود كما هو (Summary Cards, Attendance Table, Modal, Scripts) -->
             <!-- Summary Statistics Cards -->
             @php
                 $totalRecords = $attendances->total();
@@ -216,74 +238,92 @@
             @endphp
 
             <div class="grid grid-cols-2 gap-3 mb-5 lg:grid-cols-6">
-                <div class="card bg-gradient-to-br from-blue-500 to-blue-600 text-white">
-                    <div class="card-body py-2.5">
+                <!-- Total Days Card -->
+                <div class="card border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-all bg-white dark:bg-zink-700">
+                    <div class="card-body py-3">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-xs text-white/80">{{ __('messages.total_days') }}</p>
-                                <h4 class="text-xl font-bold">{{ $totalRecords }}</h4>
+                                <p class="text-xs text-slate-500 dark:text-zink-300 font-medium">{{ __('messages.total_days') }}</p>
+                                <h4 class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $totalRecords }}</h4>
                             </div>
-                            <i data-lucide="calendar" class="size-7 text-white/60"></i>
+                            <div class="bg-blue-100 dark:bg-blue-900/30 rounded-full p-2.5">
+                                <i data-lucide="calendar" class="size-5 text-blue-600 dark:text-blue-400"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="card bg-gradient-to-br from-green-500 to-green-600 text-white">
-                    <div class="card-body py-2.5">
+                <!-- Present Days Card -->
+                <div class="card border-l-4 border-l-green-500 shadow-sm hover:shadow-md transition-all bg-white dark:bg-zink-700">
+                    <div class="card-body py-3">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-xs text-white/80">{{ __('messages.present') }}</p>
-                                <h4 class="text-xl font-bold">{{ $presentCount }}</h4>
+                                <p class="text-xs text-slate-500 dark:text-zink-300 font-medium">{{ __('messages.present') }}</p>
+                                <h4 class="text-2xl font-bold text-green-600 dark:text-green-400">{{ $presentCount }}</h4>
                             </div>
-                            <i data-lucide="check-circle" class="size-7 text-white/60"></i>
+                            <div class="bg-green-100 dark:bg-green-900/30 rounded-full p-2.5">
+                                <i data-lucide="check-circle" class="size-5 text-green-600 dark:text-green-400"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="card bg-gradient-to-br from-yellow-500 to-yellow-600 text-white">
-                    <div class="card-body py-2.5">
+                <!-- Late Days Card -->
+                <div class="card border-l-4 border-l-yellow-500 shadow-sm hover:shadow-md transition-all bg-white dark:bg-zink-700">
+                    <div class="card-body py-3">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-xs text-white/80">{{ __('messages.late') }}</p>
-                                <h4 class="text-xl font-bold">{{ $lateCount }}</h4>
+                                <p class="text-xs text-slate-500 dark:text-zink-300 font-medium">{{ __('messages.late') }}</p>
+                                <h4 class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ $lateCount }}</h4>
                             </div>
-                            <i data-lucide="alert-triangle" class="size-7 text-white/60"></i>
+                            <div class="bg-yellow-100 dark:bg-yellow-900/30 rounded-full p-2.5">
+                                <i data-lucide="alert-triangle" class="size-5 text-yellow-600 dark:text-yellow-400"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="card bg-gradient-to-br from-orange-500 to-orange-600 text-white">
-                    <div class="card-body py-2.5">
+                <!-- Early Departure Card -->
+                <div class="card border-l-4 border-l-orange-500 shadow-sm hover:shadow-md transition-all bg-white dark:bg-zink-700">
+                    <div class="card-body py-3">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-xs text-white/80">{{ __('messages.early_departure') }}</p>
-                                <h4 class="text-xl font-bold">{{ $earlyCount }}</h4>
+                                <p class="text-xs text-slate-500 dark:text-zink-300 font-medium">{{ __('messages.early_departure') }}</p>
+                                <h4 class="text-2xl font-bold text-orange-600 dark:text-orange-400">{{ $earlyCount }}</h4>
                             </div>
-                            <i data-lucide="log-out" class="size-7 text-white/60"></i>
+                            <div class="bg-orange-100 dark:bg-orange-900/30 rounded-full p-2.5">
+                                <i data-lucide="log-out" class="size-5 text-orange-600 dark:text-orange-400"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="card bg-gradient-to-br from-purple-500 to-purple-600 text-white">
-                    <div class="card-body py-2.5">
+                <!-- Total Hours Card -->
+                <div class="card border-l-4 border-l-purple-500 shadow-sm hover:shadow-md transition-all bg-white dark:bg-zink-700">
+                    <div class="card-body py-3">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-xs text-white/80">{{ __('messages.total_hours') }}</p>
-                                <h4 class="text-xl font-bold">{{ number_format($totalHours, 1) }}</h4>
+                                <p class="text-xs text-slate-500 dark:text-zink-300 font-medium">{{ __('messages.total_hours') }}</p>
+                                <h4 class="text-2xl font-bold text-purple-600 dark:text-purple-400">{{ number_format($totalHours, 1) }}</h4>
                             </div>
-                            <i data-lucide="clock" class="size-7 text-white/60"></i>
+                            <div class="bg-purple-100 dark:bg-purple-900/30 rounded-full p-2.5">
+                                <i data-lucide="clock" class="size-5 text-purple-600 dark:text-purple-400"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="card bg-gradient-to-br from-cyan-500 to-cyan-600 text-white">
-                    <div class="card-body py-2.5">
+                <!-- Average Hours Card -->
+                <div class="card border-l-4 border-l-cyan-500 shadow-sm hover:shadow-md transition-all bg-white dark:bg-zink-700">
+                    <div class="card-body py-3">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-xs text-white/80">{{ __('messages.avg_hours') }}</p>
-                                <h4 class="text-xl font-bold">{{ number_format($avgHours, 1) }}</h4>
+                                <p class="text-xs text-slate-500 dark:text-zink-300 font-medium">{{ __('messages.avg_hours') }}</p>
+                                <h4 class="text-2xl font-bold text-cyan-600 dark:text-cyan-400">{{ number_format($avgHours, 1) }}</h4>
                             </div>
-                            <i data-lucide="trending-up" class="size-7 text-white/60"></i>
+                            <div class="bg-cyan-100 dark:bg-cyan-900/30 rounded-full p-2.5">
+                                <i data-lucide="trending-up" class="size-5 text-cyan-600 dark:text-cyan-400"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -315,42 +355,52 @@
                                     <th class="px-3 py-2 text-left text-xs font-semibold">{{ __('messages.day') }}</th>
                                     <th class="px-3 py-2 text-left text-xs font-semibold">{{ __('messages.check_in') }}</th>
                                     <th class="px-3 py-2 text-left text-xs font-semibold">{{ __('messages.check_out') }}</th>
-                                    <th class="px-3 py-2 text-left text-xs font-semibold">{{ __('messages.status') }}</th>
+                                    <!-- <th class="px-3 py-2 text-left text-xs font-semibold">{{ __('messages.status') }}</th> -->
                                     <th class="px-3 py-2 text-left text-xs font-semibold">{{ __('messages.hours') }}</th>
                                     <th class="px-3 py-2 text-left text-xs font-semibold">{{ __('messages.overtime') }}</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="attendanceTableBody">
                                 @forelse($attendances as $index => $attendance)
                                 <tr class="hover:bg-slate-50 dark:hover:bg-zink-600/50 transition-colors">
                                     <td class="px-3 py-2 border-b text-xs">{{ $attendances->firstItem() + $index }}</td>
                                     <td class="px-3 py-2 border-b text-xs">{{ Carbon\Carbon::parse($attendance->date)->format('d M, Y') }}</td>
-                                    <td class="px-3 py-2 border-b text-xs">{{ Carbon\Carbon::parse($attendance->date)->format('D') }}</td>
+                                    <td class="px-3 py-2 border-b text-xs">
+                                        @php
+                                            $dayOfWeek = Carbon\Carbon::parse($attendance->date)->dayOfWeek;
+                                            $isWeekend = ($dayOfWeek == 5 || $dayOfWeek == 6);
+                                        @endphp
+                                        <span class="{{ $isWeekend ? 'text-purple-600 font-semibold' : '' }}">
+                                            {{ Carbon\Carbon::parse($attendance->date)->format('D') }}
+                                        </span>
+                                    </td>
                                     <td class="px-3 py-2 border-b text-xs font-mono">
                                         {{ $attendance->check_in ? Carbon\Carbon::parse($attendance->check_in)->format('h:i A') : '—' }}
                                     </td>
                                     <td class="px-3 py-2 border-b text-xs font-mono">
                                         {{ $attendance->check_out ? Carbon\Carbon::parse($attendance->check_out)->format('h:i A') : '—' }}
                                     </td>
-                                    <td class="px-3 py-2 border-b">
+                                    <!-- <td class="px-3 py-2 border-b">
                                         @php
                                             $statusStyles = [
                                                 'present' => 'bg-green-100 text-green-700',
                                                 'late' => 'bg-yellow-100 text-yellow-700',
                                                 'early_departure' => 'bg-orange-100 text-orange-700',
                                                 'late_early' => 'bg-red-100 text-red-700',
+                                                'absent' => 'bg-slate-100 text-slate-600',
                                             ];
                                             $statusLabels = [
                                                 'present' => __('messages.present'),
                                                 'late' => __('messages.late'),
                                                 'early_departure' => __('messages.early'),
                                                 'late_early' => __('messages.late_early'),
+                                                'absent' => __('messages.absent'),
                                             ];
                                         @endphp
                                         <span class="px-2 py-0.5 text-xs font-medium rounded-full {{ $statusStyles[$attendance->status] ?? 'bg-slate-100 text-slate-600' }}">
                                             {{ $statusLabels[$attendance->status] ?? ucfirst($attendance->status) }}
                                         </span>
-                                    </td>
+                                    </td> -->
                                     <td class="px-3 py-2 border-b text-xs font-semibold">
                                         {{ $attendance->working_hours ? number_format($attendance->working_hours, 1) . 'h' : '—' }}
                                     </td>
@@ -414,7 +464,6 @@
 
 @section('script')
 <style>
-/* تثبيت عرض التقويم */
 .grid-cols-7 {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
@@ -424,7 +473,6 @@
     transition: all 0.2s ease;
 }
 
-/* تحسين ظهور الـ tooltip */
 .day-cell .group-hover\:block {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     border-radius: 6px;
@@ -433,26 +481,37 @@
     min-width: 110px;
 }
 
-/* تحسين الجدول */
 #attendanceTable th, #attendanceTable td {
     white-space: nowrap;
 }
 
-/* تحسين المودال */
 #dayDetailsModal {
     z-index: 999999;
 }
+
+.bg-purple-50 {
+    background-color: #faf5ff;
+}
+.dark .bg-purple-50 {
+    background-color: rgba(139, 92, 246, 0.1);
+}
+.text-purple-500 {
+    color: #8b5cf6;
+}
+.text-purple-600 {
+    color: #7c3aed;
+}
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
 <script>
-// Initialize Lucide icons
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }
 });
 
-// Show day details
 function showDayDetails(element) {
     let day = $(element).data('day');
     let date = $(element).data('date');
@@ -477,8 +536,8 @@ function showDayDetails(element) {
         statusColor = 'text-red-600';
         statusBg = 'bg-red-100';
     } else if (status === 'Weekend') {
-        statusColor = 'text-red-400';
-        statusBg = 'bg-red-50';
+        statusColor = 'text-purple-600';
+        statusBg = 'bg-purple-100';
     } else if (status === 'Absent') {
         statusColor = 'text-slate-500';
         statusBg = 'bg-slate-100';
@@ -524,37 +583,68 @@ function showDayDetails(element) {
     }
 }
 
-// Close day modal
 function closeDayModal() {
     $('#dayDetailsModal').addClass('hidden').css('display', 'none');
 }
 
-// Export to Excel
 function exportToExcel() {
-    let table = document.getElementById('attendanceTable');
-    let html = table.outerHTML;
-    let url = 'data:application/vnd.ms-excel,' + encodeURIComponent(html);
-    let link = document.createElement('a');
-    link.download = 'attendance_{{ $month }}_{{ $year }}.xls';
-    link.href = url;
-    link.click();
+    try {
+        const table = document.getElementById('attendanceTable');
+        const cloneTable = table.cloneNode(true);
+        const rows = cloneTable.querySelectorAll('tr');
+        const excelData = [];
+        
+        const headerCells = rows[0].querySelectorAll('th');
+        const headers = [];
+        headerCells.forEach(cell => {
+            headers.push(cell.innerText.trim());
+        });
+        excelData.push(headers);
+        
+        for (let i = 1; i < rows.length; i++) {
+            const row = rows[i];
+            const cells = row.querySelectorAll('td');
+            if (cells.length > 0) {
+                const rowData = [];
+                cells.forEach(cell => {
+                    rowData.push(cell.innerText.trim());
+                });
+                excelData.push(rowData);
+            }
+        }
+        
+        const ws = XLSX.utils.aoa_to_sheet(excelData);
+        ws['!cols'] = [{wch:6},{wch:14},{wch:8},{wch:12},{wch:12},{wch:12},{wch:10},{wch:10}];
+        
+        const wb = XLSX.utils.book_new();
+        const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        const sheetName = `Attendance_${monthNames[{{ $month - 1 }}]}_{{ $year }}`;
+        XLSX.utils.book_append_sheet(wb, ws, sheetName.substring(0, 31));
+        XLSX.writeFile(wb, `attendance_${monthNames[{{ $month - 1 }}]}_{{ $year }}.xlsx`);
+        
+    } catch (error) {
+        let html = document.getElementById('attendanceTable').outerHTML;
+        let url = 'data:application/vnd.ms-excel,' + encodeURIComponent(html);
+        let link = document.createElement('a');
+        const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        link.download = `attendance_${monthNames[{{ $month - 1 }}]}_{{ $year }}.xls`;
+        link.href = url;
+        link.click();
+    }
 }
 
-// Close modal when clicking outside
 $(document).on('click', function(e) {
     if ($(e.target).is('#dayDetailsModal')) {
         closeDayModal();
     }
 });
 
-// Close modal on escape key
 $(document).on('keydown', function(e) {
     if (e.key === 'Escape') {
         closeDayModal();
     }
 });
 
-// Auto-submit filter on change
 $('select[name="month"], select[name="year"], select[name="employee_id"]').on('change', function() {
     $(this).closest('form').submit();
 });

@@ -5,7 +5,7 @@
                 <th class="px-3.5 py-2.5 font-semibold text-left">{{ __('messages.date') }}</th>
                 <th class="px-3.5 py-2.5 font-semibold text-left">{{ __('messages.check_in') }}</th>
                 <th class="px-3.5 py-2.5 font-semibold text-left">{{ __('messages.check_out') }}</th>
-                <th class="px-3.5 py-2.5 font-semibold text-left">{{ __('messages.status') }}</th>
+                <!-- <th class="px-3.5 py-2.5 font-semibold text-left">{{ __('messages.status') }}</th> -->
                 <th class="px-3.5 py-2.5 font-semibold text-left">{{ __('messages.hours') }}</th>
             </tr>
         </thead>
@@ -24,7 +24,7 @@
                     <td class="px-3.5 py-2.5 border-y">
                         {{ $attendance->check_out_display ?? ($attendance->check_out ? date('h:i A', strtotime($attendance->check_out)) : '—') }}
                     </td>
-                    <td class="px-3.5 py-2.5 border-y">
+                    <!-- <td class="px-3.5 py-2.5 border-y">
                         @php
                             $statusColors = [
                                 'present' => 'bg-green-100 text-green-500',
@@ -44,7 +44,7 @@
                         <span class="px-2.5 py-0.5 text-xs font-medium rounded {{ $statusColors[$attendance->status] ?? 'bg-slate-100' }}">
                             {{ $statusText[$attendance->status] ?? ucfirst($attendance->status) }}
                         </span>
-                    </td>
+                    </td> -->
                     <td class="px-3.5 py-2.5 border-y">
                         {{ $attendance->working_hours ? number_format($attendance->working_hours, 1) . ' ' . __('messages.hrs') : '—' }}
                     </td>

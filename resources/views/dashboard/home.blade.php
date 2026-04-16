@@ -1,1066 +1,504 @@
 @extends('layouts.master')
 
 @section('content')
-    <!-- Page-content -->
-    <div
-        class="group-data-[sidebar-size=lg]:ltr:md:ml-vertical-menu group-data-[sidebar-size=lg]:rtl:md:mr-vertical-menu group-data-[sidebar-size=md]:ltr:ml-vertical-menu-md group-data-[sidebar-size=md]:rtl:mr-vertical-menu-md group-data-[sidebar-size=sm]:ltr:ml-vertical-menu-sm group-data-[sidebar-size=sm]:rtl:mr-vertical-menu-sm pt-[calc(theme('spacing.header')_*_1)] pb-[calc(theme('spacing.header')_*_0.8)] px-4 group-data-[navbar=bordered]:pt-[calc(theme('spacing.header')_*_1.3)] group-data-[navbar=hidden]:pt-0 group-data-[layout=horizontal]:mx-auto group-data-[layout=horizontal]:max-w-screen-2xl group-data-[layout=horizontal]:px-0 group-data-[layout=horizontal]:group-data-[sidebar-size=lg]:ltr:md:ml-auto group-data-[layout=horizontal]:group-data-[sidebar-size=lg]:rtl:md:mr-auto group-data-[layout=horizontal]:md:pt-[calc(theme('spacing.header')_*_1.6)] group-data-[layout=horizontal]:px-3 group-data-[layout=horizontal]:group-data-[navbar=hidden]:pt-[calc(theme('spacing.header')_*_0.9)]">
-        <div class="container-fluid group-data-[content=boxed]:max-w-boxed mx-auto">
-            <div class="flex flex-col gap-2 py-4 md:flex-row md:items-center print:hidden">
-                <div class="grow">
-                    <h5 class="text-16">{{ __('messages.hr') }}</h5>
-                </div>
-                <ul class="flex items-center gap-2 text-sm font-normal shrink-0">
-                    <li
-                        class="relative before:content-['\ea54'] before:font-remix ltr:before:-right-1 rtl:before:-left-1  before:absolute before:text-[18px] before:-top-[3px] ltr:pr-4 rtl:pl-4 before:text-slate-400 dark:text-zink-200">
-                        <a href="#!" class="text-slate-400 dark:text-zink-200">{{ __('messages.dashboards') }}</a>
-                    </li>
-                    <li class="text-slate-700 dark:text-zink-100">{{ __('messages.hr') }}</li>
-                </ul>
+<!-- Page-content -->
+<div class="group-data-[sidebar-size=lg]:ltr:md:ml-vertical-menu group-data-[sidebar-size=lg]:rtl:md:mr-vertical-menu group-data-[sidebar-size=md]:ltr:ml-vertical-menu-md group-data-[sidebar-size=md]:rtl:mr-vertical-menu-md group-data-[sidebar-size=sm]:ltr:ml-vertical-menu-sm group-data-[sidebar-size=sm]:rtl:mr-vertical-menu-sm pt-[calc(theme('spacing.header')_*_1)] pb-[calc(theme('spacing.header')_*_0.8)] px-4 group-data-[navbar=bordered]:pt-[calc(theme('spacing.header')_*_1.3)] group-data-[navbar=hidden]:pt-0 group-data-[layout=horizontal]:mx-auto group-data-[layout=horizontal]:max-w-screen-2xl group-data-[layout=horizontal]:px-0 group-data-[layout=horizontal]:group-data-[sidebar-size=lg]:ltr:md:ml-auto group-data-[layout=horizontal]:group-data-[sidebar-size=lg]:rtl:md:mr-auto group-data-[layout=horizontal]:md:pt-[calc(theme('spacing.header')_*_1.6)] group-data-[layout=horizontal]:px-3 group-data-[layout=horizontal]:group-data-[navbar=hidden]:pt-[calc(theme('spacing.header')_*_0.9)]">
+    <div class="container-fluid group-data-[content=boxed]:max-w-boxed mx-auto">
+        <div class="flex flex-col gap-2 py-4 md:flex-row md:items-center print:hidden">
+            <div class="grow">
+                <h5 class="text-16">{{ __('messages.hr') }}</h5>
             </div>
-            <div class="grid grid-cols-12 2xl:grid-cols-12 gap-x-5">
-                <div class="col-span-12 md:order-1 xl:col-span-8 2xl:col-span-6">
-                    <h5 class="mb-2">{{ __('messages.welcome') }} Omar Mokhtar 🎉</h5>
-                    <p class="mb-5 text-slate-500 dark:text-zink-200">{{ __('messages.pending_salary') }} <a href="#!"
-                            class="underline text-slate-800 dark:text-zink-50"> Omar Mokhtar</a>
-                        {{ __('messages.pending_since') }} 05 Dec,
-                        2024. the documentation of the tasks, workflows, and activities that make up a process managed by
-                        the HR or People Ops team. <a href="#!"
-                            class="text-red-500">{{ __('messages.learn_more') }}</a></p>
-                </div>
-                <div class="col-span-12 md:order-2 xl:col-span-4 2xl:col-start-9 card">
-                    <div class="p-4">
-                        <div class="grid grid-cols-3">
-                            <div
-                                class="px-4 text-center ltr:border-r rtl:border-l border-slate-200 dark:border-zink-500 ltr:last:border-r-0 rtl:last:border-l-0">
-                                <h6 class="mb-1 font-bold"><span class="counter-value" data-target="36"></span></h6>
-                                <p class="text-slate-500 dark:text-zink-200">{{ __('messages.absent') }}</p>
-                            </div>
-                            <div
-                                class="px-4 text-center ltr:border-r rtl:border-l border-slate-200 dark:border-zink-500 ltr:last:border-r-0 rtl:last:border-l-0">
-                                <h6 class="mb-1 font-bold"><span class="counter-value" data-target="465"></span></h6>
-                                <p class="text-slate-500 dark:text-zink-200">{{ __('messages.attendance') }}</p>
-                            </div>
-                            <div
-                                class="px-4 text-center ltr:border-r rtl:border-l border-slate-200 dark:border-zink-500 ltr:last:border-r-0 rtl:last:border-l-0">
-                                <h6 class="mb-1 font-bold"><span class="counter-value" data-target="50"></span></h6>
-                                <p class="text-slate-500 dark:text-zink-200">{{ __('messages.late') }}</p>
-                            </div>
+            <ul class="flex items-center gap-2 text-sm font-normal shrink-0">
+                <li class="relative before:content-['\ea54'] before:font-remix ltr:before:-right-1 rtl:before:-left-1 before:absolute before:text-[18px] before:-top-[3px] ltr:pr-4 rtl:pl-4 before:text-slate-400 dark:text-zink-200">
+                    <a href="#!" class="text-slate-400 dark:text-zink-200">{{ __('messages.dashboards') }}</a>
+                </li>
+                <li class="text-slate-700 dark:text-zink-100">{{ __('messages.hr') }}</li>
+            </ul>
+        </div>
+        
+        <div class="grid grid-cols-12 2xl:grid-cols-12 gap-x-5">
+            <!-- Welcome Section -->
+            <div class="col-span-12 md:order-1 xl:col-span-8 2xl:col-span-6">
+                <h5 class="mb-2">{{ __('messages.welcome') }} Omar Mokhtar 🎉</h5>
+                <p class="mb-5 text-slate-500 dark:text-zink-200">
+                    {{ __('messages.pending_salary') }} <a href="#" class="underline text-slate-800 dark:text-zink-50">Omar Mokhtar</a>
+                    {{ __('messages.pending_since') }} 05 Dec, 2024.
+                    <a href="#" class="text-red-500">{{ __('messages.learn_more') }}</a>
+                </p>
+            </div>
+            
+            <!-- Attendance Stats -->
+            <div class="col-span-12 md:order-2 xl:col-span-4 2xl:col-start-9 card">
+                <div class="p-4">
+                    <div class="grid grid-cols-3">
+                        <div class="px-4 text-center ltr:border-r rtl:border-l border-slate-200 dark:border-zink-500 ltr:last:border-r-0 rtl:last:border-l-0">
+                            <h6 class="mb-1 font-bold"><span class="counter-value" data-target="{{ $absentToday }}">0</span></h6>
+                            <p class="text-slate-500 dark:text-zink-200">{{ __('messages.absent') }}</p>
+                        </div>
+                        <div class="px-4 text-center ltr:border-r rtl:border-l border-slate-200 dark:border-zink-500 ltr:last:border-r-0 rtl:last:border-l-0">
+                            <h6 class="mb-1 font-bold"><span class="counter-value" data-target="{{ $attendanceToday }}">0</span></h6>
+                            <p class="text-slate-500 dark:text-zink-200">{{ __('messages.attendance') }}</p>
+                        </div>
+                        <div class="px-4 text-center ltr:border-r rtl:border-l border-slate-200 dark:border-zink-500 ltr:last:border-r-0 rtl:last:border-l-0">
+                            <h6 class="mb-1 font-bold"><span class="counter-value" data-target="{{ $lateToday }}">0</span></h6>
+                            <p class="text-slate-500 dark:text-zink-200">{{ __('messages.late') }}</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-span-12 md:order-3 lg:col-span-6 2xl:col-span-3 card">
-                    <div class="card-body">
-                        <div class="grid grid-cols-12">
-                            <div class="col-span-8 md:col-span-9">
-                                <p class="text-slate-500 dark:text-slate-200">{{ __('messages.total_employee') }}</p>
-                                <h5 class="mt-3 mb-4"><span class="counter-value" data-target="615">0</span></h5>
-                            </div>
-                            <div class="col-span-4 md:col-span-3">
-                                <div id="totalEmployee" data-chart-colors='["bg-custom-500"]' dir="ltr"
-                                    class="grow apex-charts"></div>
-                            </div>
+            </div>
+            
+            <!-- Total Employees -->
+            <div class="col-span-12 md:order-3 lg:col-span-6 2xl:col-span-3 card">
+                <div class="card-body">
+                    <div class="grid grid-cols-12">
+                        <div class="col-span-8 md:col-span-9">
+                            <p class="text-slate-500 dark:text-slate-200">{{ __('messages.total_employee') }}</p>
+                            <h5 class="mt-3 mb-4"><span class="counter-value" data-target="{{ $totalEmployees }}">0</span></h5>
                         </div>
-                        <div class="flex items-center gap-3 mt-3">
-                            <p class="text-slate-500 dark:text-slate-200 grow"><span
-                                    class="font-medium text-green-500">15%</span> {{ __('messages.increase') }}</p>
-                            <p class="text-slate-500 dark:text-slate-200">{{ __('messages.this_month') }}</p>
+                        <div class="col-span-4 md:col-span-3">
+                            <div id="totalEmployee" data-chart-colors='["bg-custom-500"]' dir="ltr" class="grow apex-charts"></div>
                         </div>
                     </div>
-                </div>
-                <div class="col-span-12 md:order-4 lg:col-span-6 2xl:col-span-3 card">
-                    <div class="card-body">
-                        <div class="grid grid-cols-12">
-                            <div class="col-span-8 md:col-span-9">
-                                <p class="text-slate-500 dark:text-slate-200">{{ __('messages.total_application') }}</p>
-                                <h5 class="mt-3 mb-4"><span class="counter-value" data-target="174">0</span></h5>
-                            </div>
-                            <div class="col-span-4 md:col-span-3">
-                                <div id="totalApplication" data-chart-colors='["bg-purple-500"]' dir="ltr"
-                                    class="grow apex-charts"></div>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3 mt-3">
-                            <p class="text-slate-500 dark:text-slate-200 grow"><span
-                                    class="font-medium text-green-500">26%</span> {{ __('messages.increase') }}</p>
-                            <p class="text-slate-500 dark:text-slate-200">{{ __('messages.this_month') }}</p>
-                        </div>
+                    <div class="flex items-center gap-3 mt-3">
+                        <p class="text-slate-500 dark:text-slate-200 grow">
+                            <span class="font-medium {{ $employeeIncreasePercent >= 0 ? 'text-green-500' : 'text-red-500' }}">{{ abs($employeeIncreasePercent) }}%</span> 
+                            {{ __('messages.increase') }}
+                        </p>
+                        <p class="text-slate-500 dark:text-slate-200">{{ __('messages.this_month') }}</p>
                     </div>
                 </div>
-                <div class="col-span-12 md:order-7 2xl:order-5 lg:col-span-12 2xl:col-span-6 2xl:row-span-2 card">
-                    <div class="card-body">
-                        <div class="flex items-center gap-2 MB-3">
-                            <h6 class="mb-0 text-15 grow">{{ __('messages.application_received') }}</h6>
-                            <div class="relative flex items-center gap-2 dropdown shrink-0">
-                                <button type="button"
-                                    class="flex items-center justify-center p-0 text-xs text-white size-8 btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">{{ __('messages.all') }}</button>
-                                <button type="button"
-                                    class="flex items-center justify-center p-0 text-xs transition-all duration-200 ease-linear size-8 text-sky-500 btn bg-sky-100 hover:text-white hover:bg-sky-600 focus:text-white focus:bg-sky-600 focus:ring focus:ring-sky-100 active:text-white active:bg-sky-600 active:ring active:ring-sky-100 dark:bg-sky-500/20 dark:text-sky-400 dark:hover:bg-sky-500 dark:hover:text-white dark:focus:bg-sky-500 dark:focus:text-white dark:active:bg-sky-500 dark:active:text-white dark:ring-sky-400/20">1M</button>
-                                <button type="button"
-                                    class="flex items-center justify-center p-0 text-xs transition-all duration-200 ease-linear size-8 text-sky-500 btn bg-sky-100 hover:text-white hover:bg-sky-600 focus:text-white focus:bg-sky-600 focus:ring focus:ring-sky-100 active:text-white active:bg-sky-600 active:ring active:ring-sky-100 dark:bg-sky-500/20 dark:text-sky-400 dark:hover:bg-sky-500 dark:hover:text-white dark:focus:bg-sky-500 dark:focus:text-white dark:active:bg-sky-500 dark:active:text-white dark:ring-sky-400/20">6M</button>
-                                <button type="button"
-                                    class="flex items-center justify-center p-0 text-xs transition-all duration-200 ease-linear size-8 text-sky-500 btn bg-sky-100 hover:text-white hover:bg-sky-600 focus:text-white focus:bg-sky-600 focus:ring focus:ring-sky-100 active:text-white active:bg-sky-600 active:ring active:ring-sky-100 dark:bg-sky-500/20 dark:text-sky-400 dark:hover:bg-sky-500 dark:hover:text-white dark:focus:bg-sky-500 dark:focus:text-white dark:active:bg-sky-500 dark:active:text-white dark:ring-sky-400/20">1Y</button>
-                            </div>
+            </div>
+            
+            <!-- Total Application -->
+            <div class="col-span-12 md:order-4 lg:col-span-6 2xl:col-span-3 card">
+                <div class="card-body">
+                    <div class="grid grid-cols-12">
+                        <div class="col-span-8 md:col-span-9">
+                            <p class="text-slate-500 dark:text-slate-200">{{ __('messages.total_application') }}</p>
+                            <h5 class="mt-3 mb-4"><span class="counter-value" data-target="174">0</span></h5>
                         </div>
-                        <div id="applicationReceivedChart" class="apex-charts"
-                            data-chart-colors='["bg-custom-500", "bg-green-500"]' dir="ltr"></div>
-                    </div>
-                </div>
-                <div class="col-span-12 md:order-5 2xl:order-6 lg:col-span-6 2xl:col-span-3 card">
-                    <div class="card-body">
-                        <div class="grid grid-cols-12">
-                            <div class="col-span-8 md:col-span-9">
-                                <p class="text-slate-500 dark:text-slate-200">{{ __('messages.hired_candidates') }}</p>
-                                <h5 class="mt-3 mb-4"><span class="counter-value" data-target="64">0</span></h5>
-                            </div>
-                            <div class="col-span-4 md:col-span-3">
-                                <div id="hiredCandidates" data-chart-colors='["bg-green-500"]' dir="ltr"
-                                    class="grow apex-charts"></div>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3 mt-3">
-                            <p class="text-slate-500 dark:text-slate-200 grow"><span
-                                    class="font-medium text-red-500">05%</span> {{ __('messages.increase') }}</p>
-                            <p class="text-slate-500 dark:text-slate-200">{{ __('messages.this_month') }}</p>
+                        <div class="col-span-4 md:col-span-3">
+                            <div id="totalApplication" data-chart-colors='["bg-purple-500"]' dir="ltr" class="grow apex-charts"></div>
                         </div>
                     </div>
-                </div>
-                <div class="col-span-12 md:order-6 2xl:order-7 lg:col-span-6 2xl:col-span-3 card">
-                    <div class="card-body">
-                        <div class="grid grid-cols-12">
-                            <div class="col-span-8 md:col-span-9">
-                                <p class="text-slate-500 dark:text-slate-200">{{ __('messages.rejected_candidates') }}</p>
-                                <h5 class="mt-3 mb-4"><span class="counter-value" data-target="110">0</span></h5>
-                            </div>
-                            <div class="col-span-4 md:col-span-3">
-                                <div id="rejectedCandidates" data-chart-colors='["bg-red-500"]' dir="ltr"
-                                    class="grow apex-charts"></div>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3 mt-3">
-                            <p class="text-slate-500 dark:text-slate-200 grow"><span
-                                    class="font-medium text-red-500">16%</span> {{ __('messages.increase') }}</p>
-                            <p class="text-slate-500 dark:text-slate-200">{{ __('messages.this_month') }}</p>
-                        </div>
+                    <div class="flex items-center gap-3 mt-3">
+                        <p class="text-slate-500 dark:text-slate-200 grow"><span class="font-medium text-green-500">26%</span> {{ __('messages.increase') }}</p>
+                        <p class="text-slate-500 dark:text-slate-200">{{ __('messages.this_month') }}</p>
                     </div>
                 </div>
-                <div class="col-span-12 md:order-8 2xl:col-span-9 card">
-                    <div class="card-body">
-                        <div class="grid items-center grid-cols-1 gap-3 mb-5 xl:grid-cols-12">
-                            <div class="xl:col-span-3">
-                                <h6 class="text-15">{{ __('messages.employee_performance') }}</h6>
-                            </div><!--end col-->
-                            <div class="xl:col-span-4 xl:col-start-10">
-                                <div class="flex gap-3">
-                                    <div class="relative grow">
-                                        <input type="text"
-                                            class="ltr:pl-8 rtl:pr-8 search form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-                                            placeholder="{{ __('messages.search_for') }}" autocomplete="off">
-                                        <i data-lucide="search"
-                                            class="inline-block size-4 absolute ltr:left-2.5 rtl:right-2.5 top-2.5 text-slate-500 dark:text-zink-200 fill-slate-100 dark:fill-zink-600"></i>
-                                    </div>
-                                    <button type="button"
-                                        class="bg-white border-dashed shrink-0 text-custom-500 btn border-custom-500 hover:text-custom-500 hover:bg-custom-50 hover:border-custom-600 focus:text-custom-600 focus:bg-custom-50 focus:border-custom-600 active:text-custom-600 active:bg-custom-50 active:border-custom-600 dark:bg-zink-700 dark:ring-custom-400/20 dark:hover:bg-custom-800/20 dark:focus:bg-custom-800/20 dark:active:bg-custom-800/20"><i
-                                            class="align-baseline ltr:pr-1 rtl:pl-1 ri-download-2-line"></i>
-                                        {{ __('messages.export') }}</button>
-                                </div>
-                            </div><!--end col-->
-                        </div><!--end grid-->
-                        <div class="-mx-5 overflow-x-auto">
-                            <table class="w-full whitespace-nowrap">
-                                <thead
-                                    class="ltr:text-left rtl:text-right bg-slate-100 text-slate-500 dark:text-zink-200 dark:bg-zink-600">
-                                    <tr>
-                                        <th
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 font-semibold border-y border-slate-200 dark:border-zink-500 w-10">
-                                            <div class="flex items-center h-full">
-                                                <input id="productsCheckAll"
-                                                    class="size-4 cursor-pointer bg-white border border-slate-200 checked:bg-none dark:bg-zink-700 dark:border-zink-500 rounded-sm appearance-none arrow-none relative after:absolute after:content-['\eb7b'] after:top-0 after:left-0 after:font-remix after:leading-none after:opacity-0 checked:after:opacity-100 after:text-custom-500 checked:border-custom-500 dark:after:text-custom-500 dark:checked:border-custom-800"
-                                                    type="checkbox">
-                                            </div>
-                                        </th>
-                                        <th
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 font-semibold border-y border-slate-200 dark:border-zink-500">
-                                            {{ __('messages.id') }}</th>
-                                        <th
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 font-semibold border-y border-slate-200 dark:border-zink-500">
-                                            {{ __('messages.name') }}</th>
-                                        <th
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 font-semibold border-y border-slate-200 dark:border-zink-500">
-                                            {{ __('messages.designation') }}</th>
-                                        <th
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 font-semibold border-y border-slate-200 dark:border-zink-500">
-                                            {{ __('messages.performance') }}</th>
-                                        <th
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 font-semibold border-y border-slate-200 dark:border-zink-500">
-                                            {{ __('messages.status') }}</th>
-                                        <th
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 font-semibold border-y border-slate-200 dark:border-zink-500">
-                                            {{ __('messages.action') }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <div class="flex items-center h-full">
-                                                <input id="productsCheck1"
-                                                    class="size-4 cursor-pointer bg-white border border-slate-200 checked:bg-none dark:bg-zink-700 dark:border-zink-500 rounded-sm appearance-none arrow-none relative after:absolute after:content-['\eb7b'] after:top-0 after:left-0 after:font-remix after:leading-none after:opacity-0 checked:after:opacity-100 after:text-custom-500 checked:border-custom-500 dark:after:text-custom-500 dark:checked:border-custom-800"
-                                                    type="checkbox">
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <a href="#!">ST-1001</a>
-                                        </td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <div class="flex gap-2">
-                                                <div
-                                                    class="bg-green-100 rounded-full size-10 dark:bg-green-500/20 shrink-0">
-                                                    <img src="{{ URL::to('assets/images/avatar-10.png') }}"
-                                                        alt="" class="h-10 rounded-full">
-                                                </div>
-                                                <div class="grow">
-                                                    <h6>Kristen Redden</h6>
-                                                    <p class="text-slate-500 dark:text-zink-200">kredden@starcode.com</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            Designer</td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500 text-green-500">
-                                            {{ __('messages.good') }}</td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <span
-                                                class="px-2.5 py-0.5 text-xs inline-block font-medium rounded border bg-green-100 border-green-200 text-green-500 dark:bg-green-500/20 dark:border-green-500/20">{{ __('messages.active') }}</span>
-                                        </td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <div class="flex gap-2">
-                                                <a href="#!"
-                                                    class="flex items-center justify-center transition-all duration-200 ease-linear rounded-md size-8 bg-slate-100 dark:bg-zink-600 dark:text-zink-200 text-slate-500 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-100 dark:hover:bg-custom-500/20"><i
-                                                        data-lucide="pencil" class="size-4"></i></a>
-                                                <a href="#!"
-                                                    class="flex items-center justify-center transition-all duration-200 ease-linear rounded-md size-8 bg-slate-100 dark:bg-zink-600 dark:text-zink-200 text-slate-500 hover:text-red-500 dark:hover:text-red-500 hover:bg-red-100 dark:hover:bg-red-500/20"><i
-                                                        data-lucide="trash-2" class="size-4"></i></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <div class="flex items-center h-full">
-                                                <input id="productsCheck2"
-                                                    class="size-4 cursor-pointer bg-white border border-slate-200 checked:bg-none dark:bg-zink-700 dark:border-zink-500 rounded-sm appearance-none arrow-none relative after:absolute after:content-['\eb7b'] after:top-0 after:left-0 after:font-remix after:leading-none after:opacity-0 checked:after:opacity-100 after:text-custom-500 checked:border-custom-500 dark:after:text-custom-500 dark:checked:border-custom-800"
-                                                    type="checkbox">
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <a href="#!">ST-1002</a>
-                                        </td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <div class="flex gap-2">
-                                                <div class="rounded-full size-10 bg-sky-100 dark:bg-sky-500/20 shrink-0">
-                                                    <img src="{{ URL::to('assets/images/avatar-2.png') }}" alt=""
-                                                        class="h-10 rounded-full">
-                                                </div>
-                                                <div class="grow">
-                                                    <h6>Howard George</h6>
-                                                    <p class="text-slate-500 dark:text-zink-200">george@starcode.com</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            ASP.Net Developer</td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500 text-red-500">
-                                            {{ __('messages.low') }}</td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <span
-                                                class="px-2.5 py-0.5 text-xs inline-block font-medium rounded border bg-green-100 border-green-200 text-green-500 dark:bg-green-500/20 dark:border-green-500/20">{{ __('messages.active') }}</span>
-                                        </td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <div class="flex gap-2">
-                                                <a href="#!"
-                                                    class="flex items-center justify-center transition-all duration-200 ease-linear rounded-md size-8 bg-slate-100 dark:bg-zink-600 dark:text-zink-200 text-slate-500 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-100 dark:hover:bg-custom-500/20"><i
-                                                        data-lucide="pencil" class="size-4"></i></a>
-                                                <a href="#!"
-                                                    class="flex items-center justify-center transition-all duration-200 ease-linear rounded-md size-8 bg-slate-100 dark:bg-zink-600 dark:text-zink-200 text-slate-500 hover:text-red-500 dark:hover:text-red-500 hover:bg-red-100 dark:hover:bg-red-500/20"><i
-                                                        data-lucide="trash-2" class="size-4"></i></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <div class="flex items-center h-full">
-                                                <input id="productsCheck3"
-                                                    class="size-4 cursor-pointer bg-white border border-slate-200 checked:bg-none dark:bg-zink-700 dark:border-zink-500 rounded-sm appearance-none arrow-none relative after:absolute after:content-['\eb7b'] after:top-0 after:left-0 after:font-remix after:leading-none after:opacity-0 checked:after:opacity-100 after:text-custom-500 checked:border-custom-500 dark:after:text-custom-500 dark:checked:border-custom-800"
-                                                    type="checkbox">
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <a href="#!">ST-1003</a>
-                                        </td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <div class="flex gap-2">
-                                                <div class="rounded-full size-10 bg-slate-100 dark:bg-zink-600 shrink-0">
-                                                    <img src="{{ URL::to('assets/images/avatar-3.png') }}" alt=""
-                                                        class="h-10 rounded-full">
-                                                </div>
-                                                <div class="grow">
-                                                    <h6>Laura Carlson</h6>
-                                                    <p class="text-slate-500 dark:text-zink-200">carlson15@starcode.com</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            React Developer</td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500 text-green-500">
-                                            {{ __('messages.good') }}</td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <span
-                                                class="px-2.5 py-0.5 text-xs inline-block font-medium rounded border bg-green-100 border-green-200 text-green-500 dark:bg-green-500/20 dark:border-green-500/20">{{ __('messages.active') }}</span>
-                                        </td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <div class="flex gap-2">
-                                                <a href="#!"
-                                                    class="flex items-center justify-center transition-all duration-200 ease-linear rounded-md size-8 bg-slate-100 dark:bg-zink-600 dark:text-zink-200 text-slate-500 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-100 dark:hover:bg-custom-500/20"><i
-                                                        data-lucide="pencil" class="size-4"></i></a>
-                                                <a href="#!"
-                                                    class="flex items-center justify-center transition-all duration-200 ease-linear rounded-md size-8 bg-slate-100 dark:bg-zink-600 dark:text-zink-200 text-slate-500 hover:text-red-500 dark:hover:text-red-500 hover:bg-red-100 dark:hover:bg-red-500/20"><i
-                                                        data-lucide="trash-2" class="size-4"></i></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <div class="flex items-center h-full">
-                                                <input id="productsCheck4"
-                                                    class="size-4 cursor-pointer bg-white border border-slate-200 checked:bg-none dark:bg-zink-700 dark:border-zink-500 rounded-sm appearance-none arrow-none relative after:absolute after:content-['\eb7b'] after:top-0 after:left-0 after:font-remix after:leading-none after:opacity-0 checked:after:opacity-100 after:text-custom-500 checked:border-custom-500 dark:after:text-custom-500 dark:checked:border-custom-800"
-                                                    type="checkbox">
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <a href="#!">ST-1004</a>
-                                        </td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <div class="flex gap-2">
-                                                <div
-                                                    class="bg-yellow-100 rounded-full size-10 dark:bg-yellow-500/20 shrink-0">
-                                                    <img src="{{ URL::to('assets/images/avatar-4.png') }}" alt=""
-                                                        class="h-10 rounded-full">
-                                                </div>
-                                                <div class="grow">
-                                                    <h6>Joseph Hawkins</h6>
-                                                    <p class="text-slate-500 dark:text-zink-200">joseph@starcode.com</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            Angular Developer</td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500 text-green-500">
-                                            {{ __('messages.good') }}</td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <span
-                                                class="px-2.5 py-0.5 text-xs inline-block font-medium rounded border bg-slate-100 border-slate-200 text-slate-500 dark:bg-slate-500/20 dark:border-slate-500/20 dark:text-zink-200">{{ __('messages.disabled') }}</span>
-                                        </td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <div class="flex gap-2">
-                                                <a href="#!"
-                                                    class="flex items-center justify-center transition-all duration-200 ease-linear rounded-md size-8 bg-slate-100 dark:bg-zink-600 dark:text-zink-200 text-slate-500 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-100 dark:hover:bg-custom-500/20"><i
-                                                        data-lucide="pencil" class="size-4"></i></a>
-                                                <a href="#!"
-                                                    class="flex items-center justify-center transition-all duration-200 ease-linear rounded-md size-8 bg-slate-100 dark:bg-zink-600 dark:text-zink-200 text-slate-500 hover:text-red-500 dark:hover:text-red-500 hover:bg-red-100 dark:hover:bg-red-500/20"><i
-                                                        data-lucide="trash-2" class="size-4"></i></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <div class="flex items-center h-full">
-                                                <input id="productsCheck5"
-                                                    class="size-4 cursor-pointer bg-white border border-slate-200 checked:bg-none dark:bg-zink-700 dark:border-zink-500 rounded-sm appearance-none arrow-none relative after:absolute after:content-['\eb7b'] after:top-0 after:left-0 after:font-remix after:leading-none after:opacity-0 checked:after:opacity-100 after:text-custom-500 checked:border-custom-500 dark:after:text-custom-500 dark:checked:border-custom-800"
-                                                    type="checkbox">
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <a href="#!">ST-1005</a>
-                                        </td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <div class="flex gap-2">
-                                                <div
-                                                    class="bg-yellow-100 rounded-full size-10 dark:bg-yellow-500/20 shrink-0">
-                                                    <img src="{{ URL::to('assets/images/avatar-5.png') }}" alt=""
-                                                        class="h-10 rounded-full">
-                                                </div>
-                                                <div class="grow">
-                                                    <h6>Jeremy Clifford</h6>
-                                                    <p class="text-slate-500 dark:text-zink-200">joseph@starcode.com</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            UI / UX Designer</td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500 text-red-500">
-                                            {{ __('messages.low') }}</td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <span
-                                                class="px-2.5 py-0.5 text-xs inline-block font-medium rounded border bg-slate-100 border-slate-200 text-slate-500 dark:bg-slate-500/20 dark:border-slate-500/20 dark:text-zink-200">{{ __('messages.disabled') }}</span>
-                                        </td>
-                                        <td
-                                            class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
-                                            <div class="flex gap-2">
-                                                <a href="#!"
-                                                    class="flex items-center justify-center transition-all duration-200 ease-linear rounded-md size-8 bg-slate-100 dark:bg-zink-600 dark:text-zink-200 text-slate-500 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-100 dark:hover:bg-custom-500/20"><i
-                                                        data-lucide="pencil" class="size-4"></i></a>
-                                                <a href="#!"
-                                                    class="flex items-center justify-center transition-all duration-200 ease-linear rounded-md size-8 bg-slate-100 dark:bg-zink-600 dark:text-zink-200 text-slate-500 hover:text-red-500 dark:hover:text-red-500 hover:bg-red-100 dark:hover:bg-red-500/20"><i
-                                                        data-lucide="trash-2" class="size-4"></i></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="flex flex-col items-center mt-5 md:flex-row">
-                            <div class="mb-4 grow md:mb-0">
-                                <p class="text-slate-500 dark:text-zink-200">{{ __('messages.showing') }} <b>10</b>
-                                    {{ __('messages.of') }} <b>19</b> {{ __('messages.results') }}</p>
-                            </div>
-                            <ul class="flex flex-wrap items-center gap-2 shrink-0">
-                                <li>
-                                    <a href="#!"
-                                        class="inline-flex items-center justify-center bg-white dark:bg-zink-700 h-8 px-3 transition-all duration-150 ease-linear border rounded border-slate-200 dark:border-zink-500 text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-50 dark:hover:bg-custom-500/10 focus:bg-custom-50 dark:focus:bg-custom-500/10 focus:text-custom-500 dark:focus:text-custom-500 [&.active]:text-custom-500 dark:[&.active]:text-custom-500 [&.active]:bg-custom-50 dark:[&.active]:bg-custom-500/10 [&.active]:border-custom-50 dark:[&.active]:border-custom-500/10 [&.active]:hover:text-custom-700 dark:[&.active]:hover:text-custom-700 [&.disabled]:text-slate-400 dark:[&.disabled]:text-zink-300 [&.disabled]:cursor-auto"><i
-                                            class="mr-1 size-4 rtl:rotate-180" data-lucide="chevron-left"></i>
-                                        {{ __('messages.prev') }}</a>
-                                </li>
-                                <li>
-                                    <a href="#!"
-                                        class="inline-flex items-center justify-center bg-white dark:bg-zink-700 size-8 transition-all duration-150 ease-linear border rounded border-slate-200 dark:border-zink-500 text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-50 dark:hover:bg-custom-500/10 focus:bg-custom-50 dark:focus:bg-custom-500/10 focus:text-custom-500 dark:focus:text-custom-500 [&.active]:text-custom-500 dark:[&.active]:text-custom-500 [&.active]:bg-custom-50 dark:[&.active]:bg-custom-500/10 [&.active]:border-custom-50 dark:[&.active]:border-custom-500/10 [&.active]:hover:text-custom-700 dark:[&.active]:hover:text-custom-700 [&.disabled]:text-slate-400 dark:[&.disabled]:text-zink-300 [&.disabled]:cursor-auto">1</a>
-                                </li>
-                                <li>
-                                    <a href="#!"
-                                        class="inline-flex items-center justify-center bg-white dark:bg-zink-700 size-8 transition-all duration-150 ease-linear border rounded border-slate-200 dark:border-zink-500 text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-50 dark:hover:bg-custom-500/10 focus:bg-custom-50 dark:focus:bg-custom-500/10 focus:text-custom-500 dark:focus:text-custom-500 [&.active]:text-custom-500 dark:[&.active]:text-custom-500 [&.active]:bg-custom-50 dark:[&.active]:bg-custom-500/10 [&.active]:border-custom-50 dark:[&.active]:border-custom-500/10 [&.active]:hover:text-custom-700 dark:[&.active]:hover:text-custom-700 [&.disabled]:text-slate-400 dark:[&.disabled]:text-zink-300 [&.disabled]:cursor-auto active">2</a>
-                                </li>
-                                <li>
-                                    <a href="#!"
-                                        class="inline-flex items-center justify-center bg-white dark:bg-zink-700 size-8 transition-all duration-150 ease-linear border rounded border-slate-200 dark:border-zink-500 text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-50 dark:hover:bg-custom-500/10 focus:bg-custom-50 dark:focus:bg-custom-500/10 focus:text-custom-500 dark:focus:text-custom-500 [&.active]:text-custom-500 dark:[&.active]:text-custom-500 [&.active]:bg-custom-50 dark:[&.active]:bg-custom-500/10 [&.active]:border-custom-50 dark:[&.active]:border-custom-500/10 [&.active]:hover:text-custom-700 dark:[&.active]:hover:text-custom-700 [&.disabled]:text-slate-400 dark:[&.disabled]:text-zink-300 [&.disabled]:cursor-auto">3</a>
-                                </li>
-                                <li>
-                                    <a href="#!"
-                                        class="inline-flex items-center justify-center bg-white dark:bg-zink-700 h-8 px-3 transition-all duration-150 ease-linear border rounded border-slate-200 dark:border-zink-500 text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-50 dark:hover:bg-custom-500/10 focus:bg-custom-50 dark:focus:bg-custom-500/10 focus:text-custom-500 dark:focus:text-custom-500 [&.active]:text-custom-500 dark:[&.active]:text-custom-500 [&.active]:bg-custom-50 dark:[&.active]:bg-custom-500/10 [&.active]:border-custom-50 dark:[&.active]:border-custom-500/10 [&.active]:hover:text-custom-700 dark:[&.active]:hover:text-custom-700 [&.disabled]:text-slate-400 dark:[&.disabled]:text-zink-300 [&.disabled]:cursor-auto">{{ __('messages.next') }}
-                                        <i class="ml-1 size-4 rtl:rotate-180" data-lucide="chevron-right"></i></a>
-                                </li>
-                            </ul>
+            </div>
+            
+            <!-- Application Received Chart -->
+            <div class="col-span-12 md:order-7 2xl:order-5 lg:col-span-12 2xl:col-span-6 2xl:row-span-2 card">
+                <div class="card-body">
+                    <div class="flex items-center gap-2 mb-3">
+                        <h6 class="mb-0 text-15 grow">{{ __('messages.application_received') }}</h6>
+                        <div class="relative flex items-center gap-2 dropdown shrink-0">
+                            <button type="button" class="flex items-center justify-center p-0 text-xs text-white size-8 btn bg-custom-500 border-custom-500">All</button>
+                            <button type="button" class="flex items-center justify-center p-0 text-xs size-8 text-sky-500 btn bg-sky-100">1M</button>
+                            <button type="button" class="flex items-center justify-center p-0 text-xs size-8 text-sky-500 btn bg-sky-100">6M</button>
+                            <button type="button" class="flex items-center justify-center p-0 text-xs size-8 text-sky-500 btn bg-sky-100">1Y</button>
                         </div>
                     </div>
+                    <div id="applicationReceivedChart" class="apex-charts" data-chart-colors='["bg-custom-500", "bg-green-500"]' dir="ltr"></div>
                 </div>
-                <div
-                    class="col-span-12 md:order-9 lg:col-span-6 lg:row-span-2 xl:col-span-4 xl:row-span-2 2xl:row-span-2 2xl:col-span-3 card">
-                    <div class="card-body">
-                        <h6 class="mb-3 text-15 grow">{{ __('messages.upcoming_scheduled') }}</h6>
-                        <div id="calendar" class="w-auto p-1"></div>
-                        <div class="flex flex-col gap-4 mt-3">
-                            <div class="flex gap-3">
-                                <div
-                                    class="flex flex-col items-center justify-center border rounded-sm size-12 border-slate-200 dark:border-zink-500 shrink-0">
-                                    <h6>28</h6> <span
-                                        class="text-sm text-slate-500 dark:text-zink-200">{{ __('messages.july') }}</span>
-                                </div>
-                                <div class="grow">
-                                    <h6 class="mb-1">{{ __('messages.meeting_with_designer') }} <small
-                                            class="inline-block px-2 font-medium border border-transparent rounded text-[11px] py-0.5 bg-slate-100 text-slate-500 dark:bg-slate-500/20 dark:text-zink-200 dark:border-transparent">09:57
-                                            {{ __('messages.am') }}</small></h6>
-                                    <p class="text-slate-500 dark:text-zink-200">{{ __('messages.created_by_admin') }}</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-3">
-                                <div
-                                    class="flex flex-col items-center justify-center border rounded-sm size-12 border-slate-200 dark:border-zink-500 shrink-0">
-                                    <h6>08</h6> <span
-                                        class="text-sm text-slate-500 dark:text-zink-200">{{ __('messages.june') }}</span>
-                                </div>
-                                <div class="grow">
-                                    <h6 class="mb-1">{{ __('messages.developing_line_managers') }} <small
-                                            class="inline-block px-2 font-medium border border-transparent rounded text-[11px] py-0.5 bg-slate-100 text-slate-500 dark:bg-slate-500/20 dark:text-zink-200 dark:border-transparent">10:54
-                                            {{ __('messages.am') }}</small></h6>
-                                    <p class="text-slate-500 dark:text-zink-200">{{ __('messages.created_by_hr') }}</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-3">
-                                <div
-                                    class="flex flex-col items-center justify-center border rounded-sm size-12 border-slate-200 dark:border-zink-500 shrink-0">
-                                    <h6>17</h6> <span
-                                        class="text-sm text-slate-500 dark:text-zink-200">{{ __('messages.july') }}</span>
-                                </div>
-                                <div class="grow">
-                                    <h6 class="mb-1">{{ __('messages.airplane_in_las_vegas') }} <small
-                                            class="inline-block px-2 font-medium border border-transparent rounded text-[11px] py-0.5 bg-slate-100 text-slate-500 dark:bg-slate-500/20 dark:text-zink-200 dark:border-transparent">12:00
-                                            {{ __('messages.pm') }}</small></h6>
-                                    <p class="text-slate-500 dark:text-zink-200">{{ __('messages.created_by_hr') }}</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-3">
-                                <div
-                                    class="flex flex-col items-center justify-center border rounded-sm size-12 border-slate-200 dark:border-zink-500 shrink-0">
-                                    <h6>11</h6> <span
-                                        class="text-sm text-slate-500 dark:text-zink-200">{{ __('messages.november') }}</span>
-                                </div>
-                                <div class="grow">
-                                    <h6 class="mb-1">{{ __('messages.hospitality_project') }}</h6>
-                                    <p class="text-slate-500 dark:text-zink-200">{{ __('messages.created_by_admin') }}</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-3">
-                                <div
-                                    class="flex flex-col items-center justify-center border rounded-sm size-12 border-slate-200 dark:border-zink-500 shrink-0">
-                                    <h6>20</h6> <span
-                                        class="text-sm text-slate-500 dark:text-zink-200">{{ __('messages.november') }}</span>
-                                </div>
-                                <div class="grow">
-                                    <h6 class="mb-1">{{ __('messages.gartner_digital_workplace') }} <small
-                                            class="inline-block px-2 font-medium border border-transparent rounded text-[11px] py-0.5 bg-slate-100 text-slate-500 dark:bg-slate-500/20 dark:text-zink-200 dark:border-transparent">03:49
-                                            {{ __('messages.pm') }}</small></h6>
-                                    <p class="text-slate-500 dark:text-zink-200">{{ __('messages.created_by_hr') }}</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-3">
-                                <div
-                                    class="flex flex-col items-center justify-center border rounded-sm size-12 border-slate-200 dark:border-zink-500 shrink-0">
-                                    <h6>04</h6> <span
-                                        class="text-sm text-slate-500 dark:text-zink-200">{{ __('messages.december') }}</span>
-                                </div>
-                                <div class="grow">
-                                    <h6 class="mb-1">{{ __('messages.nordic_people_analytics') }} <small
-                                            class="inline-block px-2 font-medium border border-transparent rounded text-[11px] py-0.5 bg-slate-100 text-slate-500 dark:bg-slate-500/20 dark:text-zink-200 dark:border-transparent">11:00
-                                            {{ __('messages.am') }}</small></h6>
-                                    <p class="text-slate-500 dark:text-zink-200">{{ __('messages.created_by_admin') }}</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-3">
-                                <div
-                                    class="flex flex-col items-center justify-center border rounded-sm size-12 border-slate-200 dark:border-zink-500 shrink-0">
-                                    <h6>17</h6> <span
-                                        class="text-sm text-slate-500 dark:text-zink-200">{{ __('messages.january') }}</span>
-                                </div>
-                                <div class="grow">
-                                    <h6 class="mb-1">{{ __('messages.cipd_festival_of_work') }} <small
-                                            class="inline-block px-2 font-medium border border-transparent rounded text-[11px] py-0.5 bg-slate-100 text-slate-500 dark:bg-slate-500/20 dark:text-zink-200 dark:border-transparent">01:29
-                                            {{ __('messages.pm') }}</small></h6>
-                                    <p class="text-slate-500 dark:text-zink-200">{{ __('messages.created_by_hr') }}</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-3">
-                                <div
-                                    class="flex flex-col items-center justify-center border rounded-sm size-12 border-slate-200 dark:border-zink-500 shrink-0">
-                                    <h6>03</h6> <span
-                                        class="text-sm text-slate-500 dark:text-zink-200">{{ __('messages.february') }}</span>
-                                </div>
-                                <div class="grow">
-                                    <h6 class="mb-1">{{ __('messages.hro_today_forum') }} <small
-                                            class="inline-block px-2 font-medium border border-transparent rounded text-[11px] py-0.5 bg-slate-100 text-slate-500 dark:bg-slate-500/20 dark:text-zink-200 dark:border-transparent">02:15
-                                            {{ __('messages.pm') }}</small></h6>
-                                    <p class="text-slate-500 dark:text-zink-200">{{ __('messages.created_by_admin') }}</p>
-                                </div>
-                            </div>
+            </div>
+            
+            <!-- Hired Candidates -->
+            <div class="col-span-12 md:order-5 2xl:order-6 lg:col-span-6 2xl:col-span-3 card">
+                <div class="card-body">
+                    <div class="grid grid-cols-12">
+                        <div class="col-span-8 md:col-span-9">
+                            <p class="text-slate-500 dark:text-slate-200">{{ __('messages.hired_candidates') }}</p>
+                            <h5 class="mt-3 mb-4"><span class="counter-value" data-target="64">0</span></h5>
                         </div>
-                        <div class="flex gap-3 p-2 mt-3 rounded-md bg-custom-500">
-                            <div class="shrink-0">
-                                <img src="{{ URL::to('assets/images/profile.png') }}" alt="" class="h-24">
-                            </div>
-                            <div>
-                                <h6 class="mb-1 text-15 text-custom-50">{{ __('messages.need_help') }}</h6>
-                                <p class="text-custom-200">{{ __('messages.help_text') }}</p>
-                            </div>
+                        <div class="col-span-4 md:col-span-3">
+                            <div id="hiredCandidates" data-chart-colors='["bg-green-500"]' dir="ltr" class="grow apex-charts"></div>
                         </div>
                     </div>
+                    <div class="flex items-center gap-3 mt-3">
+                        <p class="text-slate-500 dark:text-slate-200 grow"><span class="font-medium text-red-500">05%</span> {{ __('messages.increase') }}</p>
+                        <p class="text-slate-500 dark:text-slate-200">{{ __('messages.this_month') }}</p>
+                    </div>
                 </div>
-                <div class="col-span-12 md:order-10 lg:col-span-6 xl:col-span-4 2xl:col-span-3 card">
-                    <div class="card-body">
-                        <div class="flex items-center gap-2 mb-3">
-                            <h6 class="text-15 grow">{{ __('messages.total_projects') }} (247)</h6>
-                            <div class="relative dropdown shrink-0">
-                                <button type="button"
-                                    class="flex items-center justify-center w-[30px] h-[30px] p-0 bg-white text-slate-500 btn hover:text-slate-500 hover:bg-slate-100 focus:text-slate-500 focus:bg-slate-100 active:text-slate-500 active:bg-slate-100 dark:bg-zink-700 dark:hover:bg-slate-500/10 dark:focus:bg-slate-500/10 dark:active:bg-slate-500/10 dropdown-toggle"
-                                    id="userDeviceDropdown" data-bs-toggle="dropdown">
-                                    <i data-lucide="more-vertical" class="inline-block size-4"></i>
+            </div>
+            
+            <!-- Rejected Candidates -->
+            <div class="col-span-12 md:order-6 2xl:order-7 lg:col-span-6 2xl:col-span-3 card">
+                <div class="card-body">
+                    <div class="grid grid-cols-12">
+                        <div class="col-span-8 md:col-span-9">
+                            <p class="text-slate-500 dark:text-slate-200">{{ __('messages.rejected_candidates') }}</p>
+                            <h5 class="mt-3 mb-4"><span class="counter-value" data-target="110">0</span></h5>
+                        </div>
+                        <div class="col-span-4 md:col-span-3">
+                            <div id="rejectedCandidates" data-chart-colors='["bg-red-500"]' dir="ltr" class="grow apex-charts"></div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 mt-3">
+                        <p class="text-slate-500 dark:text-slate-200 grow"><span class="font-medium text-red-500">16%</span> {{ __('messages.increase') }}</p>
+                        <p class="text-slate-500 dark:text-slate-200">{{ __('messages.this_month') }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Employee Performance Table -->
+            <!-- <div class="col-span-12 md:order-8 2xl:col-span-9 card">
+                <div class="card-body">
+                    <div class="grid items-center grid-cols-1 gap-3 mb-5 xl:grid-cols-12">
+                        <div class="xl:col-span-3">
+                            <h6 class="text-15">{{ __('messages.employee_performance') }}</h6>
+                        </div>
+                        <div class="xl:col-span-4 xl:col-start-10">
+                            <div class="flex gap-3">
+                                <div class="relative grow">
+                                    <input type="text" id="searchEmployeeInput"
+                                        class="ltr:pl-8 rtl:pr-8 search form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500"
+                                        placeholder="{{ __('messages.search_for') }}" autocomplete="off">
+                                    <i data-lucide="search" class="inline-block size-4 absolute ltr:left-2.5 rtl:right-2.5 top-2.5 text-slate-500 dark:text-zink-200"></i>
+                                </div>
+                                <button type="button" id="exportEmployeeBtn"
+                                    class="bg-white border-dashed shrink-0 text-custom-500 btn border-custom-500">
+                                    <i class="align-baseline ltr:pr-1 rtl:pl-1 ri-download-2-line"></i>
+                                    {{ __('messages.export') }}
                                 </button>
-
-                                <ul class="absolute z-50 hidden py-2 mt-1 ltr:text-left rtl:text-right list-none bg-white rounded-md shadow-md dropdown-menu min-w-[10rem] dark:bg-zink-600"
-                                    aria-labelledby="userDeviceDropdown">
-                                    <li>
-                                        <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                                            href="#!">1 Weekly</a>
-                                    </li>
-                                    <li>
-                                        <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                                            href="#!">1 Monthly</a>
-                                    </li>
-                                    <li>
-                                        <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                                            href="#!">3 Monthly</a>
-                                    </li>
-                                    <li>
-                                        <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                                            href="#!">6 Monthly</a>
-                                    </li>
-                                    <li>
-                                        <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                                            href="#!">This Yearly</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div id="totalProjectChart" class="-ml-2 apex-charts"
-                            data-chart-colors='["bg-custom-500", "bg-yellow-500", "bg-green-400", "bg-red-400"]'
-                            dir="ltr"></div>
-                    </div>
-                </div>
-                <div class="col-span-12 md:order-11 lg:col-span-6 xl:col-span-4 2xl:col-span-3 card">
-                    <div class="!pb-0 card-body">
-                        <h6 class="mb-3 text-15">{{ __('messages.upcoming_interview') }}</h6>
-                    </div>
-                    <div class="pb-5">
-                        <div data-simplebar="" class="flex flex-col h-[350px] gap-4 px-5">
-                            <div class="flex flex-col gap-3">
-                                <div class="border rounded-md border-slate-200 dark:border-zink-500">
-                                    <div class="flex flex-wrap items-center gap-3 p-2">
-                                        <div class="rounded-full size-10 shrink-0">
-                                            <img src="{{ URL::to('assets/images/profile.png') }}" alt=""
-                                                class="h-10 rounded-full">
-                                        </div>
-                                        <div class="grow">
-                                            <h6 class="mb-1"><a href="#!">James Krogman</a></h6>
-                                            <p class="text-slate-500 dark:text-zink-200">james@starcode.com</p>
-                                        </div>
-                                        <div class="relative dropdown shrink-0">
-                                            <button type="button"
-                                                class="flex items-center justify-center w-[30px] h-[30px] p-0 bg-white text-slate-500 btn hover:text-slate-500 hover:bg-slate-100 focus:text-slate-500 focus:bg-slate-100 active:text-slate-500 active:bg-slate-100 dark:bg-zink-700 dark:hover:bg-slate-500/10 dark:focus:bg-slate-500/10 dark:active:bg-slate-500/10 dropdown-toggle"
-                                                id="interviewDropdown" data-bs-toggle="dropdown">
-                                                <i data-lucide="more-vertical" class="inline-block size-4"></i>
-                                            </button>
-
-                                            <ul class="absolute z-50 hidden py-2 mt-1 ltr:text-left rtl:text-right list-none bg-white rounded-md shadow-md dropdown-menu min-w-[10rem] dark:bg-zink-600"
-                                                aria-labelledby="interviewDropdown">
-                                                <li>
-                                                    <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                                                        href="#!">{{ __('messages.overview') }}</a>
-                                                </li>
-                                                <li>
-                                                    <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                                                        href="#!">{{ __('messages.edit') }}</a>
-                                                </li>
-                                                <li>
-                                                    <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                                                        href="#!">{{ __('messages.delete') }}</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="p-2 border-t border-slate-200 dark:border-zink-500">
-                                        <div class="flex flex-col gap-3 md:items-center md:flex-row">
-                                            <p class="text-slate-500 dark:text-zink-200 shrink-0"><i
-                                                    data-lucide="calendar"
-                                                    class="inline-block size-4 ltr:mr-1 rtl::ml-1"></i> <span
-                                                    class="align-middle">25 {{ __('messages.november') }}</span></p>
-                                            <p class="text-slate-500 dark:text-zink-200 grow"><i data-lucide="clock-4"
-                                                    class="inline-block size-4 ltr:mr-1 rtl::ml-1"></i> <span
-                                                    class="align-middle">02:41 {{ __('messages.pm') }}</span></p>
-                                            <span
-                                                class="px-2.5 py-0.5 text-xs inline-block text-center font-medium shrink-0 rounded border bg-white border-green-400 text-green-500 dark:bg-zink-700 dark:border-green-700">{{ __('messages.confirm') }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="border rounded-md border-slate-200 dark:border-zink-500">
-                                    <div class="flex flex-wrap items-center gap-3 p-2">
-                                        <div class="rounded-full size-10 shrink-0">
-                                            <img src="{{ URL::to('assets/images/user-2.jpg') }}" alt=""
-                                                class="h-10 rounded-full">
-                                        </div>
-                                        <div class="grow">
-                                            <h6 class="mb-1"><a href="#!">StarCode Kh</a></h6>
-                                            <p class="text-slate-500 dark:text-zink-200">starcode@starcode.com</p>
-                                        </div>
-                                        <div class="relative dropdown shrink-0">
-                                            <button type="button"
-                                                class="flex items-center justify-center w-[30px] h-[30px] p-0 bg-white text-slate-500 btn hover:text-slate-500 hover:bg-slate-100 focus:text-slate-500 focus:bg-slate-100 active:text-slate-500 active:bg-slate-100 dark:bg-zink-700 dark:hover:bg-slate-500/10 dark:focus:bg-slate-500/10 dark:active:bg-slate-500/10 dropdown-toggle"
-                                                id="interviewDropdown2" data-bs-toggle="dropdown">
-                                                <i data-lucide="more-vertical" class="inline-block size-4"></i>
-                                            </button>
-
-                                            <ul class="absolute z-50 hidden py-2 mt-1 ltr:text-left rtl:text-right list-none bg-white rounded-md shadow-md dropdown-menu min-w-[10rem] dark:bg-zink-600"
-                                                aria-labelledby="interviewDropdown2">
-                                                <li>
-                                                    <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                                                        href="#!">{{ __('messages.overview') }}</a>
-                                                </li>
-                                                <li>
-                                                    <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                                                        href="#!">{{ __('messages.edit') }}</a>
-                                                </li>
-                                                <li>
-                                                    <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                                                        href="#!">{{ __('messages.delete') }}</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="p-2 border-t border-slate-200 dark:border-zink-500">
-                                        <div class="flex flex-col gap-3 md:items-center md:flex-row">
-                                            <p class="text-slate-500 dark:text-zink-200 shrink-0"><i
-                                                    data-lucide="calendar"
-                                                    class="inline-block size-4 ltr:mr-1 rtl::ml-1"></i> <span
-                                                    class="align-middle">05 {{ __('messages.december') }}</span></p>
-                                            <p class="text-slate-500 dark:text-zink-200 grow"><i data-lucide="clock-4"
-                                                    class="inline-block size-4 ltr:mr-1 rtl::ml-1"></i> <span
-                                                    class="align-middle">01:23 {{ __('messages.pm') }}</span></p>
-                                            <span
-                                                class="px-2.5 py-0.5 text-xs text-center inline-block font-medium shrink-0 rounded border bg-white border-custom-400 text-custom-500 dark:bg-zink-700 dark:border-custom-700">{{ __('messages.re_scheduled') }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="border rounded-md border-slate-200 dark:border-zink-500">
-                                    <div class="flex flex-wrap items-center gap-3 p-2">
-                                        <div class="rounded-full size-10 shrink-0">
-                                            <img src="{{ URL::to('assets/images/profile.png') }}" alt=""
-                                                class="h-10 rounded-full">
-                                        </div>
-                                        <div class="grow">
-                                            <h6 class="mb-1"><a href="#!">Denise Ledford</a></h6>
-                                            <p class="text-slate-500 dark:text-zink-200">ledford@starcode.com</p>
-                                        </div>
-                                        <div class="relative dropdown shrink-0">
-                                            <button type="button"
-                                                class="flex items-center justify-center w-[30px] h-[30px] p-0 bg-white text-slate-500 btn hover:text-slate-500 hover:bg-slate-100 focus:text-slate-500 focus:bg-slate-100 active:text-slate-500 active:bg-slate-100 dark:bg-zink-700 dark:hover:bg-slate-500/10 dark:focus:bg-slate-500/10 dark:active:bg-slate-500/10 dropdown-toggle"
-                                                id="interviewDropdown3" data-bs-toggle="dropdown">
-                                                <i data-lucide="more-vertical" class="inline-block size-4"></i>
-                                            </button>
-
-                                            <ul class="absolute z-50 hidden py-2 mt-1 ltr:text-left rtl:text-right list-none bg-white rounded-md shadow-md dropdown-menu min-w-[10rem] dark:bg-zink-600"
-                                                aria-labelledby="interviewDropdown3">
-                                                <li>
-                                                    <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                                                        href="#!">{{ __('messages.overview') }}</a>
-                                                </li>
-                                                <li>
-                                                    <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                                                        href="#!">{{ __('messages.edit') }}</a>
-                                                </li>
-                                                <li>
-                                                    <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                                                        href="#!">{{ __('messages.delete') }}</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="p-2 border-t border-slate-200 dark:border-zink-500">
-                                        <div class="flex flex-col gap-3 md:items-center md:flex-row">
-                                            <p class="text-slate-500 dark:text-zink-200 shrink-0"><i
-                                                    data-lucide="calendar"
-                                                    class="inline-block size-4 ltr:mr-1 rtl::ml-1"></i> <span
-                                                    class="align-middle">27 {{ __('messages.november') }}</span></p>
-                                            <p class="text-slate-500 dark:text-zink-200 grow"><i data-lucide="clock-4"
-                                                    class="inline-block size-4 ltr:mr-1 rtl::ml-1"></i> <span
-                                                    class="align-middle">11:59 {{ __('messages.pm') }}</span></p>
-                                            <span
-                                                class="px-2.5 py-0.5 text-xs inline-block text-center font-medium shrink-0 rounded border bg-white border-sky-400 text-sky-500 dark:bg-zink-700 dark:border-sky-700">{{ __('messages.scheduled') }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="border rounded-md border-slate-200 dark:border-zink-500">
-                                    <div class="flex flex-wrap items-center gap-3 p-2">
-                                        <div class="rounded-full size-10 shrink-0">
-                                            <img src="{{ URL::to('assets/images/avatar-5.png') }}" alt=""
-                                                class="h-10 rounded-full">
-                                        </div>
-                                        <div class="grow">
-                                            <h6 class="mb-1"><a href="#!">Gladys Smith</a></h6>
-                                            <p class="text-slate-500 dark:text-zink-200">gap-4@starcode.com</p>
-                                        </div>
-                                        <div class="relative dropdown shrink-0">
-                                            <button type="button"
-                                                class="flex items-center justify-center w-[30px] h-[30px] p-0 bg-white text-slate-500 btn hover:text-slate-500 hover:bg-slate-100 focus:text-slate-500 focus:bg-slate-100 active:text-slate-500 active:bg-slate-100 dark:bg-zink-700 dark:hover:bg-slate-500/10 dark:focus:bg-slate-500/10 dark:active:bg-slate-500/10 dropdown-toggle"
-                                                id="interviewDropdown4" data-bs-toggle="dropdown">
-                                                <i data-lucide="more-vertical" class="inline-block size-4"></i>
-                                            </button>
-
-                                            <ul class="absolute z-50 hidden py-2 mt-1 ltr:text-left rtl:text-right list-none bg-white rounded-md shadow-md dropdown-menu min-w-[10rem] dark:bg-zink-600"
-                                                aria-labelledby="interviewDropdown4">
-                                                <li>
-                                                    <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                                                        href="#!">{{ __('messages.overview') }}</a>
-                                                </li>
-                                                <li>
-                                                    <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                                                        href="#!">{{ __('messages.edit') }}</a>
-                                                </li>
-                                                <li>
-                                                    <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                                                        href="#!">{{ __('messages.delete') }}</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="p-2 border-t border-slate-200 dark:border-zink-500">
-                                        <div class="flex flex-col gap-3 md:items-center md:flex-row">
-                                            <p class="text-slate-500 dark:text-zink-200 shrink-0"><i
-                                                    data-lucide="calendar"
-                                                    class="inline-block size-4 ltr:mr-1 rtl::ml-1"></i> <span
-                                                    class="align-middle">07 {{ __('messages.december') }}</span></p>
-                                            <p class="text-slate-500 dark:text-zink-200 grow"><i data-lucide="clock-4"
-                                                    class="inline-block size-4 ltr:mr-1 rtl::ml-1"></i> <span
-                                                    class="align-middle">05:19 {{ __('messages.pm') }}</span></p>
-                                            <span
-                                                class="px-2.5 py-0.5 text-xs inline-block text-center font-medium shrink-0 rounded border bg-white border-red-400 text-red-500 dark:bg-zink-700 dark:border-red-700">{{ __('messages.cancelled') }}</span>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="-mx-5 overflow-x-auto">
+                        <table class="w-full whitespace-nowrap" id="employeeTable">
+                            <thead class="ltr:text-left rtl:text-right bg-slate-100 text-slate-500 dark:text-zink-200 dark:bg-zink-600">
+                                <tr>
+                                    <th class="px-3.5 py-2.5 first:pl-5 last:pr-5 font-semibold border-y border-slate-200 dark:border-zink-500 w-10">
+                                        <div class="flex items-center h-full">
+                                            <input id="productsCheckAll" type="checkbox"
+                                                class="size-4 cursor-pointer bg-white border border-slate-200 checked:bg-none dark:bg-zink-700 dark:border-zink-500 rounded-sm">
+                                        </div>
+                                    </th>
+                                    <th class="px-3.5 py-2.5 first:pl-5 last:pr-5 font-semibold border-y border-slate-200 dark:border-zink-500">{{ __('messages.id') }}</th>
+                                    <th class="px-3.5 py-2.5 first:pl-5 last:pr-5 font-semibold border-y border-slate-200 dark:border-zink-500">{{ __('messages.name') }}</th>
+                                    <th class="px-3.5 py-2.5 first:pl-5 last:pr-5 font-semibold border-y border-slate-200 dark:border-zink-500">{{ __('messages.designation') }}</th>
+                                    <th class="px-3.5 py-2.5 first:pl-5 last:pr-5 font-semibold border-y border-slate-200 dark:border-zink-500">{{ __('messages.performance') }}</th>
+                                    <th class="px-3.5 py-2.5 first:pl-5 last:pr-5 font-semibold border-y border-slate-200 dark:border-zink-500">{{ __('messages.status') }}</th>
+                                    <th class="px-3.5 py-2.5 first:pl-5 last:pr-5 font-semibold border-y border-slate-200 dark:border-zink-500">{{ __('messages.action') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody id="employeeTableBody">
+                                @forelse($employeePerformance as $employee)
+                                <tr class="employee-row">
+                                    <td class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
+                                        <div class="flex items-center h-full">
+                                            <input type="checkbox" class="employee-checkbox size-4 cursor-pointer bg-white border border-slate-200 checked:bg-none dark:bg-zink-700 dark:border-zink-500 rounded-sm">
+                                        </div>
+                                    </td>
+                                    <td class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
+                                        <a href="#!">{{ $employee['id'] }}</a>
+                                    </td>
+                                    <td class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
+                                        <div class="flex gap-2">
+                                            <div class="bg-green-100 rounded-full size-10 dark:bg-green-500/20 shrink-0">
+                                                <img src="{{ URL::to($employee['avatar']) }}" alt="{{ $employee['name'] }}" class="h-10 rounded-full" onerror="this.src='{{ URL::to('assets/images/avatar-default.png') }}'">
+                                            </div>
+                                            <div class="grow">
+                                                <h6>{{ $employee['name'] }}</h6>
+                                                <p class="text-slate-500 dark:text-zink-200">{{ $employee['email'] }}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
+                                        {{ $employee['designation'] }}
+                                    </td>
+                                    <td class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500 {{ $employee['performance_color'] }}">
+                                        {{ __("messages." . strtolower($employee['performance'])) }}
+                                    </td>
+                                    <td class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
+                                        <span class="px-2.5 py-0.5 text-xs inline-block font-medium rounded border 
+                                            {{ $employee['status'] == 'active' ? 'bg-green-100 border-green-200 text-green-500 dark:bg-green-500/20 dark:border-green-500/20' : 'bg-slate-100 border-slate-200 text-slate-500 dark:bg-slate-500/20 dark:border-slate-500/20 dark:text-zink-200' }}">
+                                            {{ __("messages." . $employee['status']) }}
+                                        </span>
+                                    </td>
+                                    <td class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
+                                        <div class="flex gap-2">
+                                            <a href="#" class="flex items-center justify-center rounded-md size-8 bg-slate-100 dark:bg-zink-600">
+                                                <i data-lucide="pencil" class="size-4"></i>
+                                            </a>
+                                            <a href="#" class="flex items-center justify-center rounded-md size-8 bg-slate-100 dark:bg-zink-600">
+                                                <i data-lucide="trash-2" class="size-4"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">{{ __('messages.no_employees_found') }}</td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="flex flex-col items-center mt-5 md:flex-row">
+                        <div class="mb-4 grow md:mb-0">
+                            <p class="text-slate-500 dark:text-zink-200">{{ __('messages.showing') }} <b id="showingCount">{{ $employeePerformance->count() }}</b>
+                                {{ __('messages.of') }} <b id="totalCount">{{ $employeePerformance->count() }}</b> {{ __('messages.results') }}</p>
+                        </div>
+                        <ul class="flex flex-wrap items-center gap-2 shrink-0" id="paginationControls"></ul>
+                    </div>
                 </div>
-                <div class="col-span-12 md:order-12 lg:col-span-12 xl:col-span-8 2xl:col-span-3">
-                    <div class="grid grid-cols-12 gap-x-5">
-                        <div
-                            class="relative col-span-12 card bg-gradient-to-r to-custom-100 dark:to-custom-500/20 from-transparent">
-                            <div class="bg-[url('../images/hr-dashboard.png')] absolute inset-0 bg-cover opacity-30"></div>
-                            <div class="relative card-body">
-                                <div class="flex gap-3 mb-4">
-                                    <div class="bg-purple-100 rounded-full size-10 dark:bg-purple-500/20 shrink-0">
-                                        <img src="{{ URL::to('assets/images/avatar-6.png') }}" alt=""
-                                            class="h-10 rounded-full">
+            </div> -->
+            <div class="col-span-12 md:order-8 2xl:col-span-9 card">
+                <div class="card-body">
+                    <div class="grid items-center grid-cols-1 gap-3 mb-5 xl:grid-cols-12">
+                        <div class="xl:col-span-3">
+                            <h6 class="text-15">{{ __('messages.employee_performance') }}</h6>
+                        </div>
+                        <div class="xl:col-span-4 xl:col-start-10">
+                            <div class="flex gap-3">
+                                <div class="relative grow">
+                                    <input type="text" id="searchEmployeeInput"
+                                        class="ltr:pl-8 rtl:pr-8 search form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500"
+                                        placeholder="{{ __('messages.search_for') }}" autocomplete="off">
+                                    <i data-lucide="search" class="inline-block size-4 absolute ltr:left-2.5 rtl:right-2.5 top-2.5 text-slate-500 dark:text-zink-200"></i>
+                                </div>
+                                <button type="button" id="exportEmployeeBtn"
+                                    class="bg-white border-dashed shrink-0 text-custom-500 btn border-custom-500">
+                                    <i class="align-baseline ltr:pr-1 rtl:pl-1 ri-download-2-line"></i>
+                                    {{ __('messages.export') }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="-mx-5 overflow-x-auto">
+                        <table class="w-full whitespace-nowrap" id="employeeTable">
+                            <thead class="ltr:text-left rtl:text-right bg-slate-100 text-slate-500 dark:text-zink-200 dark:bg-zink-600">
+                                <tr>
+                                    <th class="px-3.5 py-2.5 first:pl-5 last:pr-5 font-semibold border-y border-slate-200 dark:border-zink-500 w-10">
+                                        <div class="flex items-center h-full">
+                                            <input id="productsCheckAll" type="checkbox"
+                                                class="size-4 cursor-pointer bg-white border border-slate-200 checked:bg-none dark:bg-zink-700 dark:border-zink-500 rounded-sm">
+                                        </div>
+                                    </th>
+                                    <th class="px-3.5 py-2.5 first:pl-5 last:pr-5 font-semibold border-y border-slate-200 dark:border-zink-500">{{ __('messages.id') }}</th>
+                                    <th class="px-3.5 py-2.5 first:pl-5 last:pr-5 font-semibold border-y border-slate-200 dark:border-zink-500">{{ __('messages.name') }}</th>
+                                    <th class="px-3.5 py-2.5 first:pl-5 last:pr-5 font-semibold border-y border-slate-200 dark:border-zink-500">{{ __('messages.designation') }}</th>
+                                    <th class="px-3.5 py-2.5 first:pl-5 last:pr-5 font-semibold border-y border-slate-200 dark:border-zink-500">{{ __('messages.performance') }}</th>
+                                    <!-- <th class="px-3.5 py-2.5 first:pl-5 last:pr-5 font-semibold border-y border-slate-200 dark:border-zink-500">{{ __('messages.status') }}</th>
+                                    <th class="px-3.5 py-2.5 first:pl-5 last:pr-5 font-semibold border-y border-slate-200 dark:border-zink-500">{{ __('messages.action') }}</th> -->
+                                </tr>
+                            </thead>
+                            <tbody id="employeeTableBody">
+                                @forelse($employeePerformance as $employee)
+                                <tr class="employee-row">
+                                    <td class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
+                                        <div class="flex items-center h-full">
+                                            <input type="checkbox" class="employee-checkbox size-4 cursor-pointer bg-white border border-slate-200 checked:bg-none dark:bg-zink-700 dark:border-zink-500 rounded-sm">
+                                        </div>
+                                    </td>
+                                    <td class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
+                                        <a href="#!">{{ $employee['id'] }}</a>
+                                    </td>
+                                    <td class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
+                                        <div class="flex gap-2">
+                                            <div class="bg-green-100 rounded-full size-10 dark:bg-green-500/20 shrink-0">
+                                                {{-- الحل: منع الـ infinite loop --}}
+                                                <img src="{{ URL::to($employee['avatar']) }}" 
+                                                    alt="{{ $employee['name'] }}" 
+                                                    class="h-10 rounded-full" 
+                                                    onerror="this.onerror=null; this.src='{{ URL::to('assets/images/user.png') }}';">
+                                            </div>
+                                            <div class="grow">
+                                                <h6>{{ $employee['name'] }}</h6>
+                                                <p class="text-slate-500 dark:text-zink-200">{{ $employee['email'] }}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
+                                        {{ $employee['designation'] }}
+                                    </td>
+                                    <td class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500 {{ $employee['performance_color'] }}">
+                                        {{ __("messages." . strtolower($employee['performance'])) }}
+                                    </td>
+                                    <!-- <td class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
+                                        <span class="px-2.5 py-0.5 text-xs inline-block font-medium rounded border 
+                                            {{ $employee['status'] == 'active' ? 'bg-green-100 border-green-200 text-green-500 dark:bg-green-500/20 dark:border-green-500/20' : 'bg-slate-100 border-slate-200 text-slate-500 dark:bg-slate-500/20 dark:border-slate-500/20 dark:text-zink-200' }}">
+                                            {{ __("messages." . $employee['status']) }}
+                                        </span>
+                                    </td> -->
+                                    <!-- <td class="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500">
+                                        <div class="flex gap-2">
+                                            <a href="#" class="flex items-center justify-center rounded-md size-8 bg-slate-100 dark:bg-zink-600">
+                                                <i data-lucide="pencil" class="size-4"></i>
+                                            </a>
+                                            <a href="#" class="flex items-center justify-center rounded-md size-8 bg-slate-100 dark:bg-zink-600">
+                                                <i data-lucide="trash-2" class="size-4"></i>
+                                            </a>
+                                        </div>
+                                    </td> -->
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">{{ __('messages.no_employees_found') }}</td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="flex flex-col items-center mt-5 md:flex-row">
+                        <div class="mb-4 grow md:mb-0">
+                            <p class="text-slate-500 dark:text-zink-200">{{ __('messages.showing') }} <b id="showingCount">{{ $employeePerformance->count() }}</b>
+                                {{ __('messages.of') }} <b id="totalCount">{{ $employeePerformance->count() }}</b> {{ __('messages.results') }}</p>
+                        </div>
+                        <ul class="flex flex-wrap items-center gap-2 shrink-0" id="paginationControls"></ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- باقي الكاردات (Upcoming Scheduled, Total Projects, Upcoming Interview, Recent Payroll, Birthday Card) -->
+            <!-- Upcoming Scheduled -->
+            <div class="col-span-12 md:order-9 lg:col-span-6 lg:row-span-2 xl:col-span-4 xl:row-span-2 2xl:row-span-2 2xl:col-span-3 card">
+                <div class="card-body">
+                    <h6 class="mb-3 text-15 grow">{{ __('messages.upcoming_scheduled') }}</h6>
+                    <div id="calendar" class="w-auto p-1"></div>
+                    <div class="flex flex-col gap-4 mt-3">
+                        <div class="flex gap-3">
+                            <div class="flex flex-col items-center justify-center border rounded-sm size-12 border-slate-200 dark:border-zink-500 shrink-0">
+                                <h6>28</h6> <span class="text-sm text-slate-500 dark:text-zink-200">{{ __('messages.july') }}</span>
+                            </div>
+                            <div class="grow">
+                                <h6 class="mb-1">{{ __('messages.meeting_with_designer') }} <small class="inline-block px-2 font-medium border border-transparent rounded text-[11px] py-0.5 bg-slate-100">09:57 {{ __('messages.am') }}</small></h6>
+                                <p class="text-slate-500 dark:text-zink-200">{{ __('messages.created_by_admin') }}</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="flex flex-col items-center justify-center border rounded-sm size-12 border-slate-200 dark:border-zink-500 shrink-0">
+                                <h6>08</h6> <span class="text-sm text-slate-500 dark:text-zink-200">{{ __('messages.june') }}</span>
+                            </div>
+                            <div class="grow">
+                                <h6 class="mb-1">{{ __('messages.developing_line_managers') }} <small class="inline-block px-2 font-medium border border-transparent rounded text-[11px] py-0.5 bg-slate-100">10:54 {{ __('messages.am') }}</small></h6>
+                                <p class="text-slate-500 dark:text-zink-200">{{ __('messages.created_by_hr') }}</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="flex flex-col items-center justify-center border rounded-sm size-12 border-slate-200 dark:border-zink-500 shrink-0">
+                                <h6>17</h6> <span class="text-sm text-slate-500 dark:text-zink-200">{{ __('messages.july') }}</span>
+                            </div>
+                            <div class="grow">
+                                <h6 class="mb-1">{{ __('messages.airplane_in_las_vegas') }} <small class="inline-block px-2 font-medium border border-transparent rounded text-[11px] py-0.5 bg-slate-100">12:00 {{ __('messages.pm') }}</small></h6>
+                                <p class="text-slate-500 dark:text-zink-200">{{ __('messages.created_by_hr') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex gap-3 p-2 mt-3 rounded-md bg-custom-500">
+                        <div class="shrink-0">
+                            <img src="{{ URL::to('assets/images/user.png') }}" alt="" class="h-24">
+                        </div>
+                        <div>
+                            <h6 class="mb-1 text-15 text-custom-50">{{ __('messages.need_help') }}</h6>
+                            <p class="text-custom-200">{{ __('messages.help_text') }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Total Projects -->
+            <div class="col-span-12 md:order-10 lg:col-span-6 xl:col-span-4 2xl:col-span-3 card">
+                <div class="card-body">
+                    <div class="flex items-center gap-2 mb-3">
+                        <h6 class="text-15 grow">{{ __('messages.total_projects') }} (247)</h6>
+                    </div>
+                    <div id="totalProjectChart" class="-ml-2 apex-charts" data-chart-colors='["bg-custom-500", "bg-yellow-500", "bg-green-400", "bg-red-400"]' dir="ltr"></div>
+                </div>
+            </div>
+            
+            <!-- Upcoming Interview -->
+            <div class="col-span-12 md:order-11 lg:col-span-6 xl:col-span-4 2xl:col-span-3 card">
+                <div class="!pb-0 card-body">
+                    <h6 class="mb-3 text-15">{{ __('messages.upcoming_interview') }}</h6>
+                </div>
+                <div class="pb-5">
+                    <div data-simplebar class="flex flex-col h-[350px] gap-4 px-5">
+                        <div class="flex flex-col gap-3">
+                            <div class="border rounded-md border-slate-200 dark:border-zink-500">
+                                <div class="flex flex-wrap items-center gap-3 p-2">
+                                    <div class="rounded-full size-10 shrink-0">
+                                        <img src="{{ URL::to('assets/images/user.png') }}" alt="" class="h-10 rounded-full">
                                     </div>
                                     <div class="grow">
-                                        <h6 class="mb-1">Nakisha Short</h6>
-                                        <p class="text-slate-500 dark:text-zink-200">{{ __('messages.birthday_today') }}
-                                        </p>
+                                        <h6 class="mb-1"><a href="#!">James Krogman</a></h6>
+                                        <p class="text-slate-500 dark:text-zink-200">james@starcode.com</p>
                                     </div>
                                 </div>
-                                <button type="button"
-                                    class="px-2 py-1.5 text-xs text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">{{ __('messages.wish_her') }}</button>
+                                <div class="p-2 border-t border-slate-200 dark:border-zink-500">
+                                    <div class="flex flex-col gap-3 md:items-center md:flex-row">
+                                        <p class="text-slate-500 dark:text-zink-200 shrink-0"><i data-lucide="calendar" class="inline-block size-4 ltr:mr-1"></i> <span class="align-middle">25 {{ __('messages.november') }}</span></p>
+                                        <p class="text-slate-500 dark:text-zink-200 grow"><i data-lucide="clock-4" class="inline-block size-4 ltr:mr-1"></i> <span class="align-middle">02:41 {{ __('messages.pm') }}</span></p>
+                                        <span class="px-2.5 py-0.5 text-xs inline-block text-center font-medium shrink-0 rounded border bg-white border-green-400 text-green-500">{{ __('messages.confirm') }}</span>
+                                    </div>
+                                </div>
                             </div>
-                            <img src="{{ URL::to('assets/images/birthday.png') }}" alt=""
-                                class="absolute bottom-0 right-0">
                         </div>
-                        <div class="col-span-12 card">
-                            <div class="!pb-0 card-body">
-                                <div class="flex items-center gap-2 mb-3">
-                                    <h6 class="text-15 grow">{{ __('messages.recent_payroll') }}</h6>
-                                    <div class="relative dropdown shrink-0">
-                                        <button type="button"
-                                            class="flex items-center justify-center w-[30px] h-[30px] p-0 bg-white text-slate-500 btn hover:text-slate-500 hover:bg-slate-100 focus:text-slate-500 focus:bg-slate-100 active:text-slate-500 active:bg-slate-100 dark:bg-zink-700 dark:hover:bg-slate-500/10 dark:focus:bg-slate-500/10 dark:active:bg-slate-500/10 dropdown-toggle"
-                                            id="userDeviceDropdown" data-bs-toggle="dropdown">
-                                            <i data-lucide="more-vertical" class="inline-block size-4"></i>
-                                        </button>
-
-                                        <ul class="absolute z-50 hidden py-2 mt-1 ltr:text-left rtl:text-right list-none bg-white rounded-md shadow-md dropdown-menu min-w-[10rem] dark:bg-zink-600"
-                                            aria-labelledby="userDeviceDropdown">
-                                            <li>
-                                                <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                                                    href="#!">{{ __('messages.today') }}</a>
-                                            </li>
-                                            <li>
-                                                <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                                                    href="#!">{{ __('messages.yesterday') }}</a>
-                                            </li>
-                                            <li>
-                                                <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                                                    href="#!">{{ __('messages.thursday') }}</a>
-                                            </li>
-                                        </ul>
-                                    </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Birthday & Recent Payroll -->
+            <div class="col-span-12 md:order-12 lg:col-span-12 xl:col-span-8 2xl:col-span-3">
+                <div class="grid grid-cols-12 gap-x-5">
+                    <div class="relative col-span-12 card bg-gradient-to-r to-custom-100 dark:to-custom-500/20 from-transparent">
+                        <div class="bg-[url('../images/hr-dashboard.png')] absolute inset-0 bg-cover opacity-30"></div>
+                        <div class="relative card-body">
+                            <div class="flex gap-3 mb-4">
+                                <div class="bg-purple-100 rounded-full size-10 dark:bg-purple-500/20 shrink-0">
+                                    <img src="{{ URL::to('assets/images/avatar-6.png') }}" alt="" class="h-10 rounded-full">
+                                </div>
+                                <div class="grow">
+                                    <h6 class="mb-1">Nakisha Short</h6>
+                                    <p class="text-slate-500 dark:text-zink-200">{{ __('messages.birthday_today') }}</p>
                                 </div>
                             </div>
-                            <div class="pb-5">
-                                <div data-simplebar="" class="flex flex-col h-[198px] gap-4 px-5">
-                                    <div class="flex flex-col gap-3">
-                                        <div class="flex flex-wrap items-center gap-3">
-                                            <div
-                                                class="flex items-center justify-center text-red-500 rounded-full size-6 shrink-0">
-                                                <i data-lucide="move-up-right" class="size-4"></i>
-                                            </div>
-                                            <div class="grow">
-                                                <h6 class="mb-0">Christopher Horn</h6>
-                                            </div>
-                                            <div class="shrink-0">
-                                                <h6>$145.32</h6>
-                                            </div>
-                                            <div class="w-20 ltr:text-right rtl:text-left shrink-0">
-                                                <span
-                                                    class="px-2.5 py-0.5 inline-block text-[11px] font-medium rounded border bg-green-100 border-transparent text-green-500 dark:bg-green-500/20 dark:border-transparent">{{ __('messages.paid') }}</span>
-                                            </div>
+                            <button type="button" class="px-2 py-1.5 text-xs text-white btn bg-custom-500 border-custom-500">{{ __('messages.wish_her') }}</button>
+                        </div>
+                        <img src="{{ URL::to('assets/images/birthday.png') }}" alt="" class="absolute bottom-0 right-0">
+                    </div>
+                    
+                    <div class="col-span-12 card">
+                        <div class="!pb-0 card-body">
+                            <div class="flex items-center gap-2 mb-3">
+                                <h6 class="text-15 grow">{{ __('messages.recent_payroll') }}</h6>
+                            </div>
+                        </div>
+                        <div class="pb-5">
+                            <div data-simplebar class="flex flex-col h-[198px] gap-4 px-5">
+                                <div class="flex flex-col gap-3">
+                                    <div class="flex flex-wrap items-center gap-3">
+                                        <div class="flex items-center justify-center text-red-500 rounded-full size-6 shrink-0">
+                                            <i data-lucide="move-up-right" class="size-4"></i>
                                         </div>
-                                        <div class="flex flex-wrap items-center gap-3">
-                                            <div
-                                                class="flex items-center justify-center text-green-500 rounded-full size-6 shrink-0">
-                                                <i data-lucide="move-down-left" class="size-4"></i>
-                                            </div>
-                                            <div class="grow">
-                                                <h6 class="mb-0">Richard Peters</h6>
-                                            </div>
-                                            <div class="shrink-0">
-                                                <h6>$4512.99</h6>
-                                            </div>
-                                            <div class="w-20 ltr:text-right rtl:text-left shrink-0">
-                                                <span
-                                                    class="px-2.5 py-0.5 inline-block text-[11px] font-medium rounded border bg-yellow-100 border-transparent text-yellow-500 dark:bg-yellow-500/20 dark:border-transparent">{{ __('messages.pending') }}</span>
-                                            </div>
+                                        <div class="grow">
+                                            <h6 class="mb-0">Christopher Horn</h6>
                                         </div>
-                                        <div class="flex flex-wrap items-center gap-3">
-                                            <div
-                                                class="flex items-center justify-center text-green-500 rounded-full size-6 shrink-0">
-                                                <i data-lucide="move-down-left" class="size-4"></i>
-                                            </div>
-                                            <div class="grow">
-                                                <h6 class="mb-0">James Perez</h6>
-                                            </div>
-                                            <div class="shrink-0">
-                                                <h6>$879.99</h6>
-                                            </div>
-                                            <div class="w-20 ltr:text-right rtl:text-left shrink-0">
-                                                <span
-                                                    class="px-2.5 py-0.5 inline-block text-[11px] font-medium rounded border bg-green-100 border-transparent text-green-500 dark:bg-green-500/20 dark:border-transparent">{{ __('messages.paid') }}</span>
-                                            </div>
+                                        <div class="shrink-0">
+                                            <h6>$145.32</h6>
                                         </div>
-                                        <div class="flex flex-wrap items-center gap-3">
-                                            <div
-                                                class="flex items-center justify-center text-red-500 rounded-full size-6 shrink-0">
-                                                <i data-lucide="move-up-right" class="size-4"></i>
-                                            </div>
-                                            <div class="grow">
-                                                <h6 class="mb-0">Myrtle Velez</h6>
-                                            </div>
-                                            <div class="shrink-0">
-                                                <h6>$978.14</h6>
-                                            </div>
-                                            <div class="w-20 ltr:text-right rtl:text-left shrink-0">
-                                                <span
-                                                    class="px-2.5 py-0.5 inline-block text-[11px] font-medium rounded border bg-red-100 border-transparent text-red-500 dark:bg-red-500/20 dark:border-transparent">{{ __('messages.cancelled') }}</span>
-                                            </div>
+                                        <div class="w-20 ltr:text-right rtl:text-left shrink-0">
+                                            <span class="px-2.5 py-0.5 inline-block text-[11px] font-medium rounded border bg-green-100 border-transparent text-green-500">{{ __('messages.paid') }}</span>
                                         </div>
-                                        <div class="flex flex-wrap items-center gap-3">
-                                            <div
-                                                class="flex items-center justify-center text-green-500 rounded-full size-6 shrink-0">
-                                                <i data-lucide="move-down-left" class="size-4"></i>
-                                            </div>
-                                            <div class="grow">
-                                                <h6 class="mb-0">Brad Castillo</h6>
-                                            </div>
-                                            <div class="shrink-0">
-                                                <h6>$412.59</h6>
-                                            </div>
-                                            <div class="w-20 ltr:text-right rtl:text-left shrink-0">
-                                                <span
-                                                    class="px-2.5 py-0.5 inline-block text-[11px] font-medium rounded border bg-yellow-100 border-transparent text-yellow-500 dark:bg-yellow-500/20 dark:border-transparent">{{ __('messages.pending') }}</span>
-                                            </div>
+                                    </div>
+                                    <div class="flex flex-wrap items-center gap-3">
+                                        <div class="flex items-center justify-center text-green-500 rounded-full size-6 shrink-0">
+                                            <i data-lucide="move-down-left" class="size-4"></i>
                                         </div>
-                                        <div class="flex flex-wrap items-center gap-3">
-                                            <div
-                                                class="flex items-center justify-center text-green-500 rounded-full size-6 shrink-0">
-                                                <i data-lucide="move-down-left" class="size-4"></i>
-                                            </div>
-                                            <div class="grow">
-                                                <h6 class="mb-0">Robert Jump</h6>
-                                            </div>
-                                            <div class="shrink-0">
-                                                <h6>$666.99</h6>
-                                            </div>
-                                            <div class="w-20 ltr:text-right rtl:text-left shrink-0">
-                                                <span
-                                                    class="px-2.5 py-0.5 inline-block text-[11px] font-medium rounded border bg-green-100 border-transparent text-green-500 dark:bg-green-500/20 dark:border-transparent">{{ __('messages.paid') }}</span>
-                                            </div>
+                                        <div class="grow">
+                                            <h6 class="mb-0">Richard Peters</h6>
                                         </div>
-                                        <div class="flex flex-wrap items-center gap-3">
-                                            <div
-                                                class="flex items-center justify-center text-red-500 rounded-full size-6 shrink-0">
-                                                <i data-lucide="move-up-right" class="size-4"></i>
-                                            </div>
-                                            <div class="grow">
-                                                <h6 class="mb-0">Myrtle Velez</h6>
-                                            </div>
-                                            <div class="shrink-0">
-                                                <h6>$978.14</h6>
-                                            </div>
-                                            <div class="w-20 ltr:text-right rtl:text-left shrink-0">
-                                                <span
-                                                    class="px-2.5 py-0.5 inline-block text-[11px] font-medium rounded border bg-red-100 border-transparent text-red-500 dark:bg-red-500/20 dark:border-transparent">{{ __('messages.cancelled') }}</span>
-                                            </div>
+                                        <div class="shrink-0">
+                                            <h6>$4512.99</h6>
                                         </div>
-                                        <div class="flex flex-wrap items-center gap-3">
-                                            <div
-                                                class="flex items-center justify-center text-red-500 rounded-full size-6 shrink-0">
-                                                <i data-lucide="move-up-right" class="size-4"></i>
-                                            </div>
-                                            <div class="grow">
-                                                <h6 class="mb-0">Christopher Horn</h6>
-                                            </div>
-                                            <div class="shrink-0">
-                                                <h6>$145.32</h6>
-                                            </div>
-                                            <div class="w-20 ltr:text-right rtl:text-left shrink-0">
-                                                <span
-                                                    class="px-2.5 py-0.5 inline-block text-[11px] font-medium rounded border bg-green-100 border-transparent text-green-500 dark:bg-green-500/20 dark:border-transparent">{{ __('messages.paid') }}</span>
-                                            </div>
-                                        </div>
-                                        <div class="flex flex-wrap items-center gap-3">
-                                            <div
-                                                class="flex items-center justify-center text-green-500 rounded-full size-6 shrink-0">
-                                                <i data-lucide="move-down-left" class="size-4"></i>
-                                            </div>
-                                            <div class="grow">
-                                                <h6 class="mb-0">Richard Peters</h6>
-                                            </div>
-                                            <div class="shrink-0">
-                                                <h6>$4512.99</h6>
-                                            </div>
-                                            <div class="w-20 ltr:text-right rtl:text-left shrink-0">
-                                                <span
-                                                    class="px-2.5 py-0.5 inline-block text-[11px] font-medium rounded border bg-yellow-100 border-transparent text-yellow-500 dark:bg-yellow-500/20 dark:border-transparent">{{ __('messages.pending') }}</span>
-                                            </div>
-                                        </div>
-                                        <div class="flex flex-wrap items-center gap-3">
-                                            <div
-                                                class="flex items-center justify-center text-green-500 rounded-full size-6 shrink-0">
-                                                <i data-lucide="move-down-left" class="size-4"></i>
-                                            </div>
-                                            <div class="grow">
-                                                <h6 class="mb-0">James Perez</h6>
-                                            </div>
-                                            <div class="shrink-0">
-                                                <h6>$879.99</h6>
-                                            </div>
-                                            <div class="w-20 ltr:text-right rtl:text-left shrink-0">
-                                                <span
-                                                    class="px-2.5 py-0.5 inline-block text-[11px] font-medium rounded border bg-green-100 border-transparent text-green-500 dark:bg-green-500/20 dark:border-transparent">{{ __('messages.paid') }}</span>
-                                            </div>
+                                        <div class="w-20 ltr:text-right rtl:text-left shrink-0">
+                                            <span class="px-2.5 py-0.5 inline-block text-[11px] font-medium rounded border bg-yellow-100 border-transparent text-yellow-500">{{ __('messages.pending') }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -1070,10 +508,173 @@
                 </div>
             </div>
         </div>
-        <!-- container-fluid -->
     </div>
-    <!-- End Page-content -->
-@section('script')
-    <script src="{{ URL::to('assets/js/pages/dashboards-hr.init.js') }}"></script>
+</div>
 @endsection
+
+@section('script')
+<script src="{{ URL::to('assets/js/pages/dashboards-hr.init.js') }}"></script>
+<script>
+(function() {
+    'use strict';
+    
+    // منع التكرار
+    if (window.dashboardInitialized) return;
+    window.dashboardInitialized = true;
+    
+    // تحديث الـ counter values
+    function initCounterValues() {
+        document.querySelectorAll('.counter-value').forEach(function(el) {
+            var target = el.getAttribute('data-target');
+            if (target && target !== '0' && el.innerText === '0') {
+                el.innerText = target;
+            }
+        });
+    }
+    
+    // Search and Pagination
+    function initTableFeatures() {
+        var searchInput = document.getElementById('searchEmployeeInput');
+        var tableBody = document.getElementById('employeeTableBody');
+        var showingCount = document.getElementById('showingCount');
+        var totalCount = document.getElementById('totalCount');
+        var paginationControls = document.getElementById('paginationControls');
+        
+        if (!tableBody) return;
+        
+        var allRows = Array.from(document.querySelectorAll('.employee-row'));
+        var currentPage = 1;
+        var rowsPerPage = 5;
+        
+        function updateTableDisplay() {
+            var searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+            
+            var filteredRows = allRows.filter(function(row) {
+                var name = row.querySelector('td:nth-child(3) h6')?.innerText.toLowerCase() || '';
+                var email = row.querySelector('td:nth-child(3) p')?.innerText.toLowerCase() || '';
+                var id = row.querySelector('td:nth-child(2) a')?.innerText.toLowerCase() || '';
+                var designation = row.querySelector('td:nth-child(4)')?.innerText.toLowerCase() || '';
+                return name.includes(searchTerm) || email.includes(searchTerm) || id.includes(searchTerm) || designation.includes(searchTerm);
+            });
+            
+            var totalFiltered = filteredRows.length;
+            if (totalCount) totalCount.innerText = totalFiltered;
+            
+            var startIndex = (currentPage - 1) * rowsPerPage;
+            var endIndex = startIndex + rowsPerPage;
+            var paginatedRows = filteredRows.slice(startIndex, endIndex);
+            
+            allRows.forEach(function(row) { row.style.display = 'none'; });
+            paginatedRows.forEach(function(row) { row.style.display = ''; });
+            
+            if (showingCount) showingCount.innerText = paginatedRows.length;
+            updatePaginationControls(totalFiltered);
+        }
+        
+        function updatePaginationControls(totalItems) {
+            if (!paginationControls) return;
+            var totalPages = Math.ceil(totalItems / rowsPerPage);
+            if (totalPages <= 1) {
+                paginationControls.innerHTML = '';
+                return;
+            }
+            
+            var paginationHtml = '';
+            paginationHtml += '<li><a href="#" class="pagination-prev inline-flex items-center justify-center bg-white dark:bg-zink-700 h-8 px-3 border rounded border-slate-200 dark:border-zink-500 text-slate-500 dark:text-zink-200 ' + (currentPage === 1 ? 'opacity-50 cursor-not-allowed' : '') + '"><i class="mr-1 size-4 rtl:rotate-180" data-lucide="chevron-left"></i> Prev</a></li>';
+            
+            for (var i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    paginationHtml += '<li><a href="#" class="inline-flex items-center justify-center bg-white dark:bg-zink-700 size-8 border rounded border-slate-200 dark:border-zink-500 ' + (currentPage === i ? 'bg-custom-50 text-custom-500' : 'text-slate-500') + '" data-page="' + i + '">' + i + '</a></li>';
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    paginationHtml += '<li><span class="inline-flex items-center justify-center size-8">...</span></li>';
+                }
+            }
+            
+            paginationHtml += '<li><a href="#" class="pagination-next inline-flex items-center justify-center bg-white dark:bg-zink-700 h-8 px-3 border rounded border-slate-200 dark:border-zink-500 text-slate-500 dark:text-zink-200 ' + (currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : '') + '">Next <i class="ml-1 size-4 rtl:rotate-180" data-lucide="chevron-right"></i></a></li>';
+            
+            paginationControls.innerHTML = paginationHtml;
+            
+            document.querySelectorAll('#paginationControls a[data-page]').forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    currentPage = parseInt(this.dataset.page);
+                    updateTableDisplay();
+                });
+            });
+            
+            var prevBtn = paginationControls.querySelector('.pagination-prev');
+            var nextBtn = paginationControls.querySelector('.pagination-next');
+            if (prevBtn && currentPage > 1) {
+                prevBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (currentPage > 1) currentPage--;
+                    updateTableDisplay();
+                });
+            }
+            if (nextBtn && currentPage < totalPages) {
+                nextBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (currentPage < totalPages) currentPage++;
+                    updateTableDisplay();
+                });
+            }
+            
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+        
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function() {
+                currentPage = 1;
+                updateTableDisplay();
+            });
+        }
+        
+        // Export
+        var exportBtn = document.getElementById('exportEmployeeBtn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', function() {
+                var rows = document.querySelectorAll('#employeeTable tbody tr.employee-row:visible');
+                var csvContent = "ID,Name,Email,Designation,Performance,Status\n";
+                rows.forEach(function(row) {
+                    var id = row.querySelector('td:nth-child(2) a')?.innerText || '';
+                    var name = row.querySelector('td:nth-child(3) h6')?.innerText || '';
+                    var email = row.querySelector('td:nth-child(3) p')?.innerText || '';
+                    var designation = row.querySelector('td:nth-child(4)')?.innerText || '';
+                    var performance = row.querySelector('td:nth-child(5)')?.innerText || '';
+                    var status = row.querySelector('td:nth-child(6) span')?.innerText || '';
+                    csvContent += '"' + id + '","' + name + '","' + email + '","' + designation + '","' + performance + '","' + status + '"\n';
+                });
+                var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                var link = document.createElement('a');
+                link.setAttribute('href', URL.createObjectURL(blob));
+                link.setAttribute('download', 'employees_report.csv');
+                link.click();
+            });
+        }
+        
+        // Select All
+        var selectAllCheckbox = document.getElementById('productsCheckAll');
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                document.querySelectorAll('#employeeTableBody .employee-checkbox').forEach(function(cb) {
+                    cb.checked = selectAllCheckbox.checked;
+                });
+            });
+        }
+        
+        updateTableDisplay();
+    }
+    
+    // تنفيذ كل شيء بعد تحميل الصفحة
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            initCounterValues();
+            initTableFeatures();
+        });
+    } else {
+        initCounterValues();
+        initTableFeatures();
+    }
+})();
+</script>
 @endsection
