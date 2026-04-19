@@ -553,4 +553,14 @@ return [
 
     'average' => 'average',
     'excellent' => 'excellent',
+
+    'year' => 'year',
+    'years' => 'years',
+    'month' => 'month',
+    'months' => 'months',
+    'day' => 'day',
+    'days' => 'days',
+    'and' => 'and',
+    'today' => 'today',
+    'export' => 'Export',
 ];

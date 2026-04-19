@@ -32,6 +32,20 @@
                                 <i data-lucide="search" class="absolute size-4 left-2.5 top-2.5 text-slate-400"></i>
                             </div>
 
+                            {{-- زر Export --}}
+                            <div>
+                                <a href="{{ route('hr/employee/export', ['search' => request('search')]) }}" 
+                                    class="text-white btn bg-green-500 border-green-500 hover:text-white hover:bg-green-600 hover:border-green-600 focus:text-white focus:bg-green-600 focus:border-green-600 focus:ring focus:ring-green-100 active:text-white active:bg-green-600 active:border-green-600 active:ring active:ring-green-100 dark:ring-green-400/20">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download inline-block size-4 mr-1">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="7 10 12 15 17 10"></polyline>
+                                        <line x1="12" x2="12" y1="15" y2="3"></line>
+                                    </svg>
+                                    <span class="align-middle">{{ __('messages.export') }}</span>
+                                </a>
+                            </div>
+
+                            {{-- زر الإضافة --}}
                             <div>
                                 <button data-modal-target="addEmployeeModal" type="button"
                                     class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">
@@ -53,38 +67,24 @@
                         <table class="w-full border-collapse">
                             <thead>
                                 <tr class="bg-slate-100 dark:bg-zink-600 border-b border-slate-200 dark:border-zink-500">
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">
-                                        {{ __('messages.no') }}</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">{{ __('messages.no') }}</th>
                                     <th hidden>ID</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">
-                                        {{ __('messages.employee_id') }}</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">{{ __('messages.employee_id') }}</th>
                                     <th hidden>Photo</th>
                                     <th hidden>Location</th>
                                     <th hidden>Join Date</th>
                                     <th hidden>Status</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">
-                                        {{ __('messages.name') }}</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">
-                                        {{ __('messages.email') }}</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">
-                                        {{ __('messages.phone') }}</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">
-                                        {{ __('messages.experience') }}</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">
-                                        {{ __('messages.join_date') }}</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">
-                                        {{ __('messages.last_login') }}</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">
-                                        {{ __('messages.role') }}</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">
-                                        {{ __('messages.designation') }}</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">
-                                        {{ __('messages.department') }}</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">
-                                        {{ __('messages.status') }}</th>
-                                    <th
-                                        class="px-4 py-3 text-center text-sm font-semibold text-slate-700 dark:text-zink-100">
-                                        {{ __('messages.action') }}</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">{{ __('messages.name') }}</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">{{ __('messages.email') }}</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">{{ __('messages.phone') }}</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">{{ __('messages.experience') }}</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">{{ __('messages.join_date') }}</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">{{ __('messages.last_login') }}</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">{{ __('messages.role') }}</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">{{ __('messages.designation') }}</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">{{ __('messages.department') }}</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-zink-100">{{ __('messages.status') }}</th>
+                                    <th class="px-4 py-3 text-center text-sm font-semibold text-slate-700 dark:text-zink-100">{{ __('messages.action') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -96,11 +96,53 @@
                                         foreach ($parts as $part) {
                                             $initials .= strtoupper(substr($part, 0, 1));
                                         }
+                                        
+                                        // حساب تاريخ الانضمام بدقة (بدون كسور)
+                                        $joinDate = \Carbon\Carbon::parse($employee->join_date);
+                                        $now = \Carbon\Carbon::now();
+                                        
+                                        // حساب الفرق بالسنوات (عدد صحيح)
+                                        $years = $now->year - $joinDate->year;
+                                        
+                                        // حساب الفرق بالأشهر
+                                        $months = $now->month - $joinDate->month;
+                                        
+                                        // حساب الفرق بالأيام
+                                        $days = $now->day - $joinDate->day;
+                                        
+                                        // تعديل القيم إذا كانت سلبية
+                                        if ($days < 0) {
+                                            $months--;
+                                            $days += $joinDate->copy()->addYears($years)->addMonths($months)->daysInMonth;
+                                        }
+                                        
+                                        if ($months < 0) {
+                                            $years--;
+                                            $months += 12;
+                                        }
+                                        
+                                        $joinDateText = '';
+                                        
+                                        if ($years > 0) {
+                                            $joinDateText .= $years . ' ' . ($years == 1 ? __('messages.year') : __('messages.years'));
+                                        }
+                                        
+                                        if ($months > 0) {
+                                            if ($joinDateText) $joinDateText .= ' ' . __('messages.and') . ' ';
+                                            $joinDateText .= $months . ' ' . ($months == 1 ? __('messages.month') : __('messages.months'));
+                                        }
+                                        
+                                        if ($days > 0 && $years == 0) {
+                                            if ($joinDateText) $joinDateText .= ' ' . __('messages.and') . ' ';
+                                            $joinDateText .= $days . ' ' . ($days == 1 ? __('messages.day') : __('messages.days'));
+                                        }
+                                        
+                                        if (empty($joinDateText)) {
+                                            $joinDateText = __('messages.today');
+                                        }
                                     @endphp
-                                    <tr
-                                        class="border-b border-slate-200 dark:border-zink-500 hover:bg-slate-50 dark:hover:bg-zink-600 transition-colors">
-                                        <td class="px-4 py-3 text-sm text-slate-600 dark:text-zink-200">
-                                            {{ $employeeList->firstItem() + $key }}</td>
+                                    <tr class="border-b border-slate-200 dark:border-zink-500 hover:bg-slate-50 dark:hover:bg-zink-600 transition-colors">
+                                        <td class="px-4 py-3 text-sm text-slate-600 dark:text-zink-200">{{ $employeeList->firstItem() + $key }}</td>
                                         <td hidden class="id">{{ $employee->id }}</td>
                                         <td class="px-4 py-3 text-sm">
                                             <a href="{{ url('page/account/' . $employee->user_id) }}"
@@ -114,8 +156,7 @@
                                         <td hidden class="statuss">{{ $employee->status }}</td>
                                         <td class="px-4 py-3 text-sm">
                                             <div class="flex items-center gap-2">
-                                                <div
-                                                    class="flex items-center justify-center font-medium rounded-full size-8 shrink-0 bg-slate-200 text-slate-800 dark:text-zink-50 dark:bg-zink-600">
+                                                <div class="flex items-center justify-center font-medium rounded-full size-8 shrink-0 bg-slate-200 text-slate-800 dark:text-zink-50 dark:bg-zink-600">
                                                     @if (!empty($employee->avatar))
                                                         <img src="{{ URL::to('assets/images/user/' . $employee->avatar) }}"
                                                             alt="" class="w-8 h-8 rounded-full object-cover">
@@ -128,43 +169,31 @@
                                                         class="name font-medium text-slate-700 dark:text-zink-100 hover:text-custom-500">
                                                         {{ $employee->name }}
                                                     </a>
-                                                    <p class="position text-xs text-slate-400 dark:text-zink-300">
-                                                        {{ $employee->position }}</p>
+                                                    <p class="position text-xs text-slate-400 dark:text-zink-300">{{ $employee->position }}</p>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="px-4 py-3 text-sm text-slate-600 dark:text-zink-200 email">
-                                            {{ $employee->email }}</td>
-                                        <td class="px-4 py-3 text-sm text-slate-600 dark:text-zink-200 phone_number">
-                                            {{ $employee->phone_number }}</td>
-                                        <td class="px-4 py-3 text-sm text-slate-600 dark:text-zink-200 experience">
-                                            {{ $employee->experience }}</td>
-                                        <td class="px-4 py-3 text-sm text-slate-600 dark:text-zink-200">
-                                            {{ \Carbon\Carbon::parse($employee->join_date)->diffForHumans() }}</td>
-                                        <td class="px-4 py-3 text-sm text-slate-600 dark:text-zink-200">
-                                            {{ \Carbon\Carbon::parse($employee->last_login)->diffForHumans() }}</td>
-                                        <td class="px-4 py-3 text-sm text-slate-600 dark:text-zink-200 role_name">
-                                            {{ $employee->role_name }}</td>
-                                        <td class="px-4 py-3 text-sm text-slate-600 dark:text-zink-200 designation">
-                                            {{ $employee->designation }}</td>
-                                        <td class="px-4 py-3 text-sm text-slate-600 dark:text-zink-200 department">
-                                            {{ $employee->department }}</td>
+                                        <td class="px-4 py-3 text-sm text-slate-600 dark:text-zink-200 email">{{ $employee->email }}</td>
+                                        <td class="px-4 py-3 text-sm text-slate-600 dark:text-zink-200 phone_number">{{ $employee->phone_number }}</td>
+                                        <td class="px-4 py-3 text-sm text-slate-600 dark:text-zink-200 experience">{{ $employee->experience }}</td>
+                                        <td class="px-4 py-3 text-sm text-slate-600 dark:text-zink-200">{{ $joinDateText }}</td>
+                                        <td class="px-4 py-3 text-sm text-slate-600 dark:text-zink-200">{{ \Carbon\Carbon::parse($employee->last_login)->diffForHumans() }}</td>
+                                        <td class="px-4 py-3 text-sm text-slate-600 dark:text-zink-200 role_name">{{ $employee->role_name }}</td>
+                                        <td class="px-4 py-3 text-sm text-slate-600 dark:text-zink-200 designation">{{ $employee->designation }}</td>
+                                        <td class="px-4 py-3 text-sm text-slate-600 dark:text-zink-200 department">{{ $employee->department }}</td>
                                         <td class="px-4 py-3">
                                             @if ($employee->status == 'Active')
-                                                <span
-                                                    class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-600 dark:bg-green-500/20 dark:text-green-400">
+                                                <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-600 dark:bg-green-500/20 dark:text-green-400">
                                                     <i data-lucide="check-circle" class="inline size-3 mr-1"></i>
                                                     {{ __('messages.active') }}
                                                 </span>
                                             @elseif ($employee->status == 'Inactive')
-                                                <span
-                                                    class="px-2 py-1 text-xs font-medium rounded-full bg-slate-100 text-slate-500 dark:bg-slate-500/20 dark:text-slate-400">
+                                                <span class="px-2 py-1 text-xs font-medium rounded-full bg-slate-100 text-slate-500 dark:bg-slate-500/20 dark:text-slate-400">
                                                     <i data-lucide="loader" class="inline size-3 mr-1"></i>
                                                     {{ __('messages.inactive') }}
                                                 </span>
                                             @else
-                                                <span
-                                                    class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-500 dark:bg-red-500/20 dark:text-red-400">
+                                                <span class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-500 dark:bg-red-500/20 dark:text-red-400">
                                                     <i data-lucide="x" class="inline size-3 mr-1"></i>
                                                     {{ __('messages.disable') }}
                                                 </span>
@@ -195,10 +224,8 @@
                                                         <path d="M3 6h18"></path>
                                                         <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
                                                         <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                                                        <line x1="10" x2="10" y1="11"
-                                                            y2="17"></line>
-                                                        <line x1="14" x2="14" y1="11"
-                                                            y2="17"></line>
+                                                        <line x1="10" x2="10" y1="11" y2="17"></line>
+                                                        <line x1="14" x2="14" y1="11" y2="17"></line>
                                                     </svg>
                                                 </a>
                                             </div>
@@ -206,8 +233,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="17"
-                                            class="px-4 py-8 text-center text-slate-500 dark:text-zink-200">
+                                        <td colspan="17" class="px-4 py-8 text-center text-slate-500 dark:text-zink-200">
                                             <i data-lucide="inbox" class="size-12 mx-auto mb-3 opacity-50"></i>
                                             <p>{{ __('messages.no_records_found') }}</p>
                                         </td>
@@ -220,7 +246,6 @@
                     {{-- Pagination --}}
                     <div class="flex flex-wrap items-center justify-between mt-4 pagination-container">
                         <div class="mb-3 text-sm text-slate-500 dark:text-zink-200 md:mb-0">
-                            {{-- عرض المعلومات --}}
                             @if ($employeeList->total() > 0)
                                 {{ __('messages.showing_entries', [
                                     'from' => $employeeList->firstItem(),
@@ -232,7 +257,7 @@
                             @endif
                         </div>
                         <div>
-                            {{ $employeeList->appends(['search' => request('search')])->links('vendor.pagination.custom') }}
+                            {{ $employeeList->appends(['search' => request('search')])->links() }}
                         </div>
                     </div>
                 </div>
@@ -242,14 +267,13 @@
     <!-- End Page-content -->
 
     {{-- ══════════════════════════════════════════════════════════════
-         ADD EMPLOYEE MODAL (نفس التصميم الأصلي)
+         ADD EMPLOYEE MODAL
     ══════════════════════════════════════════════════════════════ --}}
     <div id="addEmployeeModal" modal-center=""
         class="fixed flex flex-col transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4 show
                {{ $errors->create->any() || session('open_add_modal') ? '' : 'hidden' }}">
         <div class="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600">
 
-            {{-- Header --}}
             <div class="flex items-center justify-between p-4 border-b dark:border-zink-500">
                 <h5 class="text-16">{{ __('messages.add_employee') }}</h5>
                 <button data-modal-close="addEmployeeModal"
@@ -258,17 +282,14 @@
                 </button>
             </div>
 
-            {{-- Body --}}
             <div class="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto">
                 <form id="create-form" action="{{ route('hr/employee/save') }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="user_id" value="{{ $employeeId }}">
 
-                    {{-- Validation errors for CREATE --}}
                     @if ($errors->create->any())
-                        <div
-                            class="px-4 py-3 mb-4 text-sm text-red-500 border border-red-200 rounded-md bg-red-50 dark:bg-red-500/20">
+                        <div class="px-4 py-3 mb-4 text-sm text-red-500 border border-red-200 rounded-md bg-red-50 dark:bg-red-500/20">
                             <ul class="list-disc list-inside space-y-1">
                                 @foreach ($errors->create->all() as $error)
                                     <li>{{ $error }}</li>
@@ -279,14 +300,11 @@
 
                     <div class="grid grid-cols-1 gap-4 xl:grid-cols-12">
 
-                        {{-- Avatar --}}
                         <div class="xl:col-span-12">
-                            <div
-                                class="relative mx-auto mb-4 rounded-full shadow-md size-24 bg-slate-100 profile-user dark:bg-zink-500">
+                            <div class="relative mx-auto mb-4 rounded-full shadow-md size-24 bg-slate-100 profile-user dark:bg-zink-500">
                                 <img id="add-user-profile-image" src="{{ URL::to('assets/images/user.png') }}"
                                     alt="" class="object-cover w-full h-full rounded-full">
-                                <div
-                                    class="absolute bottom-0 flex items-center justify-center rounded-full size-8 ltr:right-0 rtl:left-0 profile-photo-edit">
+                                <div class="absolute bottom-0 flex items-center justify-center rounded-full size-8 ltr:right-0 rtl:left-0 profile-photo-edit">
                                     <input id="add-profile-img-file-input" name="avatar" type="file"
                                         class="hidden profile-img-file-input">
                                     <label for="add-profile-img-file-input"
@@ -296,65 +314,44 @@
                                     </label>
                                 </div>
                             </div>
-                            @if ($errors->create->has('avatar'))
-                                <p class="text-xs text-red-500 text-center mt-1">{{ $errors->create->first('avatar') }}
-                                </p>
-                            @endif
                         </div>
 
-                        {{-- Employee ID (display only) --}}
                         <div class="xl:col-span-12">
-                            <label
-                                class="inline-block mb-2 text-base font-medium">{{ __('messages.employee_id') }}</label>
+                            <label class="inline-block mb-2 text-base font-medium">{{ __('messages.employee_id') }}</label>
                             <input type="text"
                                 class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
                                 value="{{ $employeeId }}" disabled>
                         </div>
 
-                        {{-- Name --}}
                         <div class="xl:col-span-12">
-                            <label
-                                class="inline-block mb-2 text-base font-medium">{{ __('messages.employee_name') }}</label>
+                            <label class="inline-block mb-2 text-base font-medium">{{ __('messages.employee_name') }}</label>
                             <input type="text" name="name"
-                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 @if ($errors->create->has('name')) border-red-400 @endif"
+                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
                                 placeholder="{{ __('messages.enter_employee_name') }}" value="{{ old('name') }}">
-                            @if ($errors->create->has('name'))
-                                <p class="text-xs text-red-500 mt-1">{{ $errors->create->first('name') }}</p>
-                            @endif
                         </div>
 
-                        {{-- Email --}}
                         <div class="xl:col-span-12">
                             <label class="inline-block mb-2 text-base font-medium">{{ __('messages.email') }}</label>
                             <input type="email" name="email"
-                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 @if ($errors->create->has('email')) border-red-400 @endif"
+                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
                                 placeholder="{{ __('messages.enter_email') }}" value="{{ old('email') }}">
-                            @if ($errors->create->has('email'))
-                                <p class="text-xs text-red-500 mt-1">{{ $errors->create->first('email') }}</p>
-                            @endif
                         </div>
 
-                        {{-- ── Password ── --}}
                         <div class="xl:col-span-6">
                             <label class="inline-block mb-2 text-base font-medium">{{ __('messages.password') }}</label>
                             <div class="relative">
                                 <input type="password" name="password" id="add_password"
-                                    class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 pr-10 @if ($errors->create->has('password')) border-red-400 @endif"
+                                    class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 pr-10"
                                     placeholder="••••••••">
                                 <button type="button" onclick="togglePassword('add_password', 'add_eye')"
                                     class="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-zink-200">
                                     <i id="add_eye" data-lucide="eye" class="size-4"></i>
                                 </button>
                             </div>
-                            @if ($errors->create->has('password'))
-                                <p class="text-xs text-red-500 mt-1">{{ $errors->create->first('password') }}</p>
-                            @endif
                         </div>
 
-                        {{-- ── Confirm Password ── --}}
                         <div class="xl:col-span-6">
-                            <label
-                                class="inline-block mb-2 text-base font-medium">{{ __('messages.new_password') }}</label>
+                            <label class="inline-block mb-2 text-base font-medium">{{ __('messages.new_password') }}</label>
                             <div class="relative">
                                 <input type="password" name="password_confirmation" id="add_password_confirmation"
                                     class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 pr-10"
@@ -367,12 +364,10 @@
                             </div>
                         </div>
 
-                        {{-- Position --}}
                         <div class="xl:col-span-12">
                             <label class="inline-block mb-2 text-base font-medium">{{ __('messages.position') }}</label>
                             <select name="position"
-                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800"
-                                data-choices data-choices-search-false>
+                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800">
                                 <option value="">{{ __('messages.select_position') }}</option>
                                 @foreach ($position as $value)
                                     <option value="{{ $value->position }}"
@@ -381,17 +376,12 @@
                                     </option>
                                 @endforeach
                             </select>
-                            @if ($errors->create->has('position'))
-                                <p class="text-xs text-red-500 mt-1">{{ $errors->create->first('position') }}</p>
-                            @endif
                         </div>
 
-                        {{-- ── Department (Dropdown) ── --}}
                         <div class="xl:col-span-12">
                             <label class="inline-block mb-2 text-base font-medium">{{ __('messages.department') }}</label>
                             <select name="department"
-                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 @if ($errors->create->has('department')) border-red-400 @endif"
-                                data-choices data-choices-search-false>
+                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800">
                                 <option value="">{{ __('messages.select_department') }}</option>
                                 @foreach ($department as $dept)
                                     <option value="{{ $dept->department }}"
@@ -400,17 +390,12 @@
                                     </option>
                                 @endforeach
                             </select>
-                            @if ($errors->create->has('department'))
-                                <p class="text-xs text-red-500 mt-1">{{ $errors->create->first('department') }}</p>
-                            @endif
                         </div>
 
-                        {{-- Role & Status --}}
                         <div class="xl:col-span-6">
                             <label class="inline-block mb-2 text-base font-medium">{{ __('messages.role_name') }}</label>
                             <select name="role_name"
-                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800"
-                                data-choices data-choices-search-false>
+                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800">
                                 <option value="">{{ __('messages.select_role') }}</option>
                                 @foreach ($roleName as $value)
                                     <option value="{{ $value->role_type }}"
@@ -419,16 +404,12 @@
                                     </option>
                                 @endforeach
                             </select>
-                            @if ($errors->create->has('role_name'))
-                                <p class="text-xs text-red-500 mt-1">{{ $errors->create->first('role_name') }}</p>
-                            @endif
                         </div>
 
                         <div class="xl:col-span-6">
                             <label class="inline-block mb-2 text-base font-medium">{{ __('messages.status') }}</label>
                             <select name="status"
-                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800"
-                                data-choices data-choices-search-false>
+                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800">
                                 <option value="">{{ __('messages.select_status') }}</option>
                                 @foreach ($statusUser as $value)
                                     <option value="{{ $value->type_name }}"
@@ -437,64 +418,41 @@
                                     </option>
                                 @endforeach
                             </select>
-                            @if ($errors->create->has('status'))
-                                <p class="text-xs text-red-500 mt-1">{{ $errors->create->first('status') }}</p>
-                            @endif
                         </div>
 
-                        {{-- Phone & Location --}}
                         <div class="xl:col-span-6">
-                            <label
-                                class="inline-block mb-2 text-base font-medium">{{ __('messages.phone_number') }}</label>
+                            <label class="inline-block mb-2 text-base font-medium">{{ __('messages.phone_number') }}</label>
                             <input type="tel" name="phone_number"
-                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 @if ($errors->create->has('phone_number')) border-red-400 @endif"
+                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
                                 placeholder="{{ __('messages.enter_phone') }}" value="{{ old('phone_number') }}">
-                            @if ($errors->create->has('phone_number'))
-                                <p class="text-xs text-red-500 mt-1">{{ $errors->create->first('phone_number') }}</p>
-                            @endif
                         </div>
 
                         <div class="xl:col-span-6">
                             <label class="inline-block mb-2 text-base font-medium">{{ __('messages.location') }}</label>
                             <input type="text" name="location"
-                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 @if ($errors->create->has('location')) border-red-400 @endif"
+                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
                                 placeholder="{{ __('messages.enter_location') }}" value="{{ old('location') }}">
-                            @if ($errors->create->has('location'))
-                                <p class="text-xs text-red-500 mt-1">{{ $errors->create->first('location') }}</p>
-                            @endif
                         </div>
 
-                        {{-- Join Date & Experience --}}
                         <div class="xl:col-span-6">
-                            <label
-                                class="inline-block mb-2 text-base font-medium">{{ __('messages.joining_date') }}</label>
+                            <label class="inline-block mb-2 text-base font-medium">{{ __('messages.joining_date') }}</label>
                             <input type="text" name="join_date"
                                 class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
                                 placeholder="{{ __('messages.select_date') }}" data-provider="flatpickr"
                                 data-date-format="d M, Y" value="{{ old('join_date') }}">
-                            @if ($errors->create->has('join_date'))
-                                <p class="text-xs text-red-500 mt-1">{{ $errors->create->first('join_date') }}</p>
-                            @endif
                         </div>
 
                         <div class="xl:col-span-6">
-                            <label
-                                class="inline-block mb-2 text-base font-medium">{{ __('messages.experience_years') }}</label>
+                            <label class="inline-block mb-2 text-base font-medium">{{ __('messages.experience_years') }}</label>
                             <input type="number" name="experience" step="0.1"
                                 class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
                                 placeholder="0.0" value="{{ old('experience') }}">
-                            @if ($errors->create->has('experience'))
-                                <p class="text-xs text-red-500 mt-1">{{ $errors->create->first('experience') }}</p>
-                            @endif
                         </div>
 
-                        {{-- Designation --}}
                         <div class="xl:col-span-12">
-                            <label
-                                class="inline-block mb-2 text-base font-medium">{{ __('messages.designation') }}</label>
+                            <label class="inline-block mb-2 text-base font-medium">{{ __('messages.designation') }}</label>
                             <select name="designation"
-                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800"
-                                data-choices data-choices-search-false>
+                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800">
                                 <option value="">{{ __('messages.designation_select') }}</option>
                                 @foreach ($position as $value)
                                     <option value="{{ $value->position }}"
@@ -503,12 +461,9 @@
                                     </option>
                                 @endforeach
                             </select>
-                            @if ($errors->create->has('designation'))
-                                <p class="text-xs text-red-500 mt-1">{{ $errors->create->first('designation') }}</p>
-                            @endif
                         </div>
 
-                    </div>{{-- end grid --}}
+                    </div>
 
                     <div class="flex justify-end gap-2 mt-4">
                         <button type="reset" data-modal-close="addEmployeeModal"
@@ -524,7 +479,6 @@
             </div>
         </div>
     </div>
-    {{-- END ADD MODAL --}}
 
     {{-- ══════════════════════════════════════════════════════════════
          EDIT EMPLOYEE MODAL
@@ -534,7 +488,6 @@
                {{ $errors->update->any() || session('open_edit_modal') ? '' : 'hidden' }}">
         <div class="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600">
 
-            {{-- Header --}}
             <div class="flex items-center justify-between p-4 border-b dark:border-zink-500">
                 <h5 class="text-16">{{ __('messages.edit_employee') }}</h5>
                 <button data-modal-close="editEmployeeModal"
@@ -543,7 +496,6 @@
                 </button>
             </div>
 
-            {{-- Body --}}
             <div class="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto">
                 <form id="edit-form" action="{{ route('hr/employee/update') }}" method="POST"
                     enctype="multipart/form-data">
@@ -552,10 +504,8 @@
                         value="{{ old('id', session('open_edit_modal') ? old('id') : '') }}">
                     <input type="hidden" name="old_avatar" id="old_avatar" value="{{ old('old_avatar') }}">
 
-                    {{-- Validation errors for UPDATE --}}
                     @if ($errors->update->any())
-                        <div
-                            class="px-4 py-3 mb-4 text-sm text-red-500 border border-red-200 rounded-md bg-red-50 dark:bg-red-500/20">
+                        <div class="px-4 py-3 mb-4 text-sm text-red-500 border border-red-200 rounded-md bg-red-50 dark:bg-red-500/20">
                             <ul class="list-disc list-inside space-y-1">
                                 @foreach ($errors->update->all() as $error)
                                     <li>{{ $error }}</li>
@@ -566,15 +516,11 @@
 
                     <div class="grid grid-cols-1 gap-4 xl:grid-cols-12">
 
-                        {{-- Avatar --}}
                         <div class="xl:col-span-12">
-                            <div
-                                class="relative mx-auto mb-4 rounded-full shadow-md size-24 bg-slate-100 profile-user dark:bg-zink-500">
-                                <img id="e_avatar_edit"
-                                    src="{{ old('avatar_preview', URL::to('assets/images/user.png')) }}" alt=""
-                                    class="object-cover w-full h-full rounded-full">
-                                <div
-                                    class="absolute bottom-0 flex items-center justify-center rounded-full size-8 ltr:right-0 rtl:left-0 profile-photo-edit">
+                            <div class="relative mx-auto mb-4 rounded-full shadow-md size-24 bg-slate-100 profile-user dark:bg-zink-500">
+                                <img id="e_avatar_edit" src="{{ URL::to('assets/images/user.png') }}"
+                                    alt="" class="object-cover w-full h-full rounded-full">
+                                <div class="absolute bottom-0 flex items-center justify-center rounded-full size-8 ltr:right-0 rtl:left-0 profile-photo-edit">
                                     <input id="edit-profile-img-file-input" name="avatar" type="file"
                                         class="hidden edit-profile-img-file-input">
                                     <label for="edit-profile-img-file-input"
@@ -584,70 +530,44 @@
                                     </label>
                                 </div>
                             </div>
-                            @if ($errors->update->has('avatar'))
-                                <p class="text-xs text-red-500 text-center mt-1">{{ $errors->update->first('avatar') }}
-                                </p>
-                            @endif
                         </div>
 
-                        {{-- Employee ID --}}
                         <div class="xl:col-span-12">
-                            <label
-                                class="inline-block mb-2 text-base font-medium">{{ __('messages.employee_id') }}</label>
+                            <label class="inline-block mb-2 text-base font-medium">{{ __('messages.employee_id') }}</label>
                             <input type="text" name="employee_id" id="e_employee_id"
                                 class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800"
                                 readonly value="{{ old('employee_id') }}">
                         </div>
 
-                        {{-- Name --}}
                         <div class="xl:col-span-12">
-                            <label
-                                class="inline-block mb-2 text-base font-medium">{{ __('messages.employee_name') }}</label>
+                            <label class="inline-block mb-2 text-base font-medium">{{ __('messages.employee_name') }}</label>
                             <input type="text" name="name" id="e_name"
-                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 @if ($errors->update->has('name')) border-red-400 @endif"
+                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
                                 placeholder="{{ __('messages.enter_employee_name') }}" value="{{ old('name') }}">
-                            @if ($errors->update->has('name'))
-                                <p class="text-xs text-red-500 mt-1">{{ $errors->update->first('name') }}</p>
-                            @endif
                         </div>
 
-                        {{-- Email --}}
                         <div class="xl:col-span-12">
                             <label class="inline-block mb-2 text-base font-medium">{{ __('messages.email') }}</label>
                             <input type="email" name="email" id="e_email"
-                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 @if ($errors->update->has('email')) border-red-400 @endif"
+                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
                                 placeholder="{{ __('messages.enter_email') }}" value="{{ old('email') }}">
-                            @if ($errors->update->has('email'))
-                                <p class="text-xs text-red-500 mt-1">{{ $errors->update->first('email') }}</p>
-                            @endif
                         </div>
 
-                        {{-- ── New Password (optional on update) ── --}}
                         <div class="xl:col-span-6">
-                            <label class="inline-block mb-2 text-base font-medium">
-                                {{ __('messages.new_password') }}
-                                <span class="text-xs text-slate-400">({{ __('messages.password') }}
-                                    {{ app()->getLocale() == 'ar' ? 'اتركه فارغًا إن لم ترد تغييره' : 'leave blank to keep current' }})</span>
-                            </label>
+                            <label class="inline-block mb-2 text-base font-medium">{{ __('messages.new_password') }}</label>
                             <div class="relative">
                                 <input type="password" name="password" id="e_password"
-                                    class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 pr-10 @if ($errors->update->has('password')) border-red-400 @endif"
+                                    class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 pr-10"
                                     placeholder="••••••••">
                                 <button type="button" onclick="togglePassword('e_password', 'e_eye')"
                                     class="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-zink-200">
                                     <i id="e_eye" data-lucide="eye" class="size-4"></i>
                                 </button>
                             </div>
-                            @if ($errors->update->has('password'))
-                                <p class="text-xs text-red-500 mt-1">{{ $errors->update->first('password') }}</p>
-                            @endif
                         </div>
 
-                        {{-- ── Confirm New Password ── --}}
                         <div class="xl:col-span-6">
-                            <label class="inline-block mb-2 text-base font-medium">
-                                {{ app()->getLocale() == 'ar' ? 'تأكيد الباسورد الجديد' : 'Confirm New Password' }}
-                            </label>
+                            <label class="inline-block mb-2 text-base font-medium">{{ __('messages.password_confirmation') }}</label>
                             <div class="relative">
                                 <input type="password" name="password_confirmation" id="e_password_confirmation"
                                     class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 pr-10"
@@ -660,77 +580,48 @@
                             </div>
                         </div>
 
-                        {{-- Position --}}
                         <div class="xl:col-span-12">
                             <label class="inline-block mb-2 text-base font-medium">{{ __('messages.position') }}</label>
-                            <select name="position" id="e_position"
-                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800"
-                                data-choices-search-false>
+                            <select name="position" id="e_position" class="form-input border-slate-200 dark:border-zink-500">
                                 <option value="">{{ __('messages.select_position') }}</option>
                                 @foreach ($position as $value)
-                                    <option value="{{ $value->position }}"
-                                        {{ old('position') == $value->position ? 'selected' : '' }}>
-                                        {{ $value->position }}</option>
+                                    <option value="{{ $value->position }}">{{ $value->position }}</option>
                                 @endforeach
                             </select>
-                            @if ($errors->update->has('position'))
-                                <p class="text-xs text-red-500 mt-1">{{ $errors->update->first('position') }}</p>
-                            @endif
                         </div>
 
-                        {{-- ── Department (Dropdown) ── --}}
                         <div class="xl:col-span-12">
-                            <label
-                                class="inline-block mb-2 text-base font-medium">{{ __('messages.department') }}</label>
-                            <select name="department" id="e_department"
-                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 @if ($errors->update->has('department')) border-red-400 @endif"
-                                data-choices data-choices-search-false>
+                            <label class="inline-block mb-2 text-base font-medium">{{ __('messages.department') }}</label>
+                            <select name="department" id="e_department" class="form-input border-slate-200 dark:border-zink-500">
                                 <option value="">{{ __('messages.select_department') }}</option>
                                 @foreach ($department as $dept)
-                                    <option value="{{ $dept->department }}"
-                                        {{ old('department') == $dept->department || (old('department') === null && isset($employee) && $employee->department == $dept->department) ? 'selected' : '' }}>
-                                        {{ $dept->department }}
-                                    </option>
+                                    <option value="{{ $dept->department }}">{{ $dept->department }}</option>
                                 @endforeach
                             </select>
-                            @if ($errors->update->has('department'))
-                                <p class="text-xs text-red-500 mt-1">{{ $errors->update->first('department') }}</p>
-                            @endif
                         </div>
 
-                        {{-- Role & Status --}}
                         <div class="xl:col-span-6">
                             <label class="inline-block mb-2 text-base font-medium">{{ __('messages.role_name') }}</label>
-                            <select name="role_name" id="e_role_name"
-                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800"
-                                data-choices-search-false>
+                            <select name="role_name" id="e_role_name" class="form-input border-slate-200 dark:border-zink-500">
                                 <option value="">{{ __('messages.select_role') }}</option>
                                 @foreach ($roleName as $value)
-                                    <option value="{{ $value->role_type }}"
-                                        {{ old('role_name') == $value->role_type ? 'selected' : '' }}>
-                                        {{ $value->role_type }}</option>
+                                    <option value="{{ $value->role_type }}">{{ $value->role_type }}</option>
                                 @endforeach
                             </select>
                         </div>
 
                         <div class="xl:col-span-6">
                             <label class="inline-block mb-2 text-base font-medium">{{ __('messages.status') }}</label>
-                            <select name="status" id="e_status"
-                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800"
-                                data-choices-search-false>
+                            <select name="status" id="e_status" class="form-input border-slate-200 dark:border-zink-500">
                                 <option value="">{{ __('messages.select_status') }}</option>
                                 @foreach ($statusUser as $value)
-                                    <option value="{{ $value->type_name }}"
-                                        {{ old('status') == $value->type_name ? 'selected' : '' }}>
-                                        {{ $value->type_name }}</option>
+                                    <option value="{{ $value->type_name }}">{{ $value->type_name }}</option>
                                 @endforeach
                             </select>
                         </div>
 
-                        {{-- Phone & Location --}}
                         <div class="xl:col-span-6">
-                            <label
-                                class="inline-block mb-2 text-base font-medium">{{ __('messages.phone_number') }}</label>
+                            <label class="inline-block mb-2 text-base font-medium">{{ __('messages.phone_number') }}</label>
                             <input type="tel" name="phone_number" id="e_phone_number"
                                 class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
                                 placeholder="{{ __('messages.enter_phone') }}" value="{{ old('phone_number') }}">
@@ -743,10 +634,8 @@
                                 placeholder="{{ __('messages.enter_location') }}" value="{{ old('location') }}">
                         </div>
 
-                        {{-- Join Date & Experience --}}
                         <div class="xl:col-span-6">
-                            <label
-                                class="inline-block mb-2 text-base font-medium">{{ __('messages.joining_date') }}</label>
+                            <label class="inline-block mb-2 text-base font-medium">{{ __('messages.joining_date') }}</label>
                             <input type="text" name="join_date" id="e_join_date"
                                 class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
                                 placeholder="{{ __('messages.select_date') }}" data-provider="flatpickr"
@@ -754,30 +643,23 @@
                         </div>
 
                         <div class="xl:col-span-6">
-                            <label
-                                class="inline-block mb-2 text-base font-medium">{{ __('messages.experience_years') }}</label>
+                            <label class="inline-block mb-2 text-base font-medium">{{ __('messages.experience_years') }}</label>
                             <input type="number" name="experience" id="e_experience" step="0.1"
                                 class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
                                 placeholder="0.0" value="{{ old('experience') }}">
                         </div>
 
-                        {{-- Designation --}}
                         <div class="xl:col-span-12">
-                            <label
-                                class="inline-block mb-2 text-base font-medium">{{ __('messages.designation') }}</label>
-                            <select name="designation" id="e_designation"
-                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800"
-                                data-choices-search-false>
+                            <label class="inline-block mb-2 text-base font-medium">{{ __('messages.designation') }}</label>
+                            <select name="designation" id="e_designation" class="form-input border-slate-200 dark:border-zink-500">
                                 <option value="">{{ __('messages.designation_select') }}</option>
                                 @foreach ($position as $value)
-                                    <option value="{{ $value->position }}"
-                                        {{ old('designation') == $value->position ? 'selected' : '' }}>
-                                        {{ $value->position }}</option>
+                                    <option value="{{ $value->position }}">{{ $value->position }}</option>
                                 @endforeach
                             </select>
                         </div>
 
-                    </div>{{-- end grid --}}
+                    </div>
 
                     <div class="flex justify-end gap-2 mt-4">
                         <button type="reset" data-modal-close="editEmployeeModal"
@@ -793,7 +675,6 @@
             </div>
         </div>
     </div>
-    {{-- END EDIT MODAL --}}
 
     {{-- ══════════════════════════════════════════════════════════════
          DELETE MODAL
@@ -832,137 +713,106 @@
             </div>
         </div>
     </div>
-    {{-- END DELETE MODAL --}}
 @endsection
 
 @section('script')
-    {{-- ── Toggle password visibility helper ── --}}
-    <script>
-        function togglePassword(inputId, iconId) {
-            var input = document.getElementById(inputId);
-            var icon = document.getElementById(iconId);
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.setAttribute('data-lucide', 'eye-off');
-            } else {
-                input.type = 'password';
-                icon.setAttribute('data-lucide', 'eye');
-            }
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+<script>
+function togglePassword(inputId, iconId) {
+    var input = document.getElementById(inputId);
+    var icon = document.getElementById(iconId);
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.setAttribute('data-lucide', 'eye-off');
+    } else {
+        input.type = 'password';
+        icon.setAttribute('data-lucide', 'eye');
+    }
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+$(document).ready(function() {
+    @if($errors->create->any() || session('open_add_modal'))
+        $('#addEmployeeModal').removeClass('hidden');
+    @endif
+
+    @if($errors->update->any() || session('open_edit_modal'))
+        $('#editEmployeeModal').removeClass('hidden');
+    @endif
+
+    $('[data-modal-close]').on('click', function() {
+        var modalId = $(this).attr('data-modal-close');
+        $('#' + modalId).addClass('hidden');
+        $('#' + modalId + ' form')[0]?.reset();
+        if (modalId === 'addEmployeeModal') {
+            $('#add-user-profile-image').attr('src', "{{ URL::to('assets/images/user.png') }}");
         }
-    </script>
-
-    {{-- ── Avatar preview ── --}}
-    <script>
-        var addInput = document.getElementById('add-profile-img-file-input');
-        if (addInput) {
-            addInput.addEventListener('change', function() {
-                var preview = document.getElementById('add-user-profile-image');
-                var reader = new FileReader();
-                reader.addEventListener('load', function() {
-                    preview.src = reader.result;
-                });
-                if (this.files[0]) reader.readAsDataURL(this.files[0]);
-            });
+        if (modalId === 'editEmployeeModal') {
+            $('#e_avatar_edit').attr('src', "{{ URL::to('assets/images/user.png') }}");
         }
+    });
 
-        var editInput = document.getElementById('edit-profile-img-file-input');
-        if (editInput) {
-            editInput.addEventListener('change', function() {
-                var preview = document.getElementById('e_avatar_edit');
-                var reader = new FileReader();
-                reader.addEventListener('load', function() {
-                    preview.src = reader.result;
-                });
-                if (this.files[0]) reader.readAsDataURL(this.files[0]);
-            });
-        }
-    </script>
+    $('[data-modal-target="addEmployeeModal"]').on('click', function() {
+        $('#addEmployeeModal').removeClass('hidden');
+    });
 
-    {{-- ── Populate Edit Modal from table row ── --}}
-    <script>
-        $(document).ready(function() {
-            // التحكم في ظهور المودالات عند وجود أخطاء
-            @if ($errors->create->any() || session('open_add_modal'))
-                $('#addEmployeeModal').removeClass('hidden');
-            @endif
+    let searchTimeout;
+    $('#searchInput').on('keyup', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(function() {
+            var search = $('#searchInput').val();
+            var currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('search', search);
+            currentUrl.searchParams.set('page', '1');
+            window.location.href = currentUrl.toString();
+        }, 500);
+    });
+});
 
-            @if ($errors->update->any() || session('open_edit_modal'))
-                $('#editEmployeeModal').removeClass('hidden');
-            @endif
+$(document).on('click', '#editEmployee', function() {
+    var row = $(this).closest('tr');
+    var avatar = row.find('.photo').text().trim();
+    var avatarUrl = avatar ? "{{ asset('assets/images/user') }}/" + avatar : "{{ asset('assets/images/user.png') }}";
+    $('#e_avatar_edit').attr('src', avatarUrl);
+    $('#old_avatar').val(avatar);
+    $('#e_id').val(row.find('.id').text().trim());
+    $('#e_employee_id').val(row.find('.user_id').text().trim());
+    $('#e_name').val(row.find('.name').text().trim());
+    $('#e_email').val(row.find('.email').text().trim());
+    $('#e_phone_number').val(row.find('.phone_number').text().trim());
+    $('#e_location').val(row.find('.location').text().trim());
+    $('#e_join_date').val(row.find('.join_date').text().trim());
+    $('#e_experience').val(row.find('.experience').text().trim());
+    $('#e_position').val(row.find('.position').text().trim());
+    $('#e_department').val(row.find('.department').text().trim());
+    $('#e_role_name').val(row.find('.role_name').text().trim());
+    $('#e_status').val(row.find('.statuss').text().trim());
+    $('#e_designation').val(row.find('.designation').text().trim());
+    $('#e_password').val('');
+    $('#e_password_confirmation').val('');
+    $('#editEmployeeModal').removeClass('hidden');
+});
 
-            // إغلاق المودال
-            $('[data-modal-close]').on('click', function() {
-                var modalId = $(this).attr('data-modal-close');
-                $('#' + modalId).addClass('hidden');
+$(document).on('click', '#deleteRecord', function() {
+    var row = $(this).closest('tr');
+    $('#e_idDelete').val(row.find('.id').text().trim());
+    $('#del_avatar').val(row.find('.photo').text().trim());
+    $('#deleteModal').removeClass('hidden');
+});
 
-                // إعادة تعيين النموذج عند الإغلاق
-                $('#' + modalId + ' form')[0]?.reset();
+document.getElementById('add-profile-img-file-input')?.addEventListener('change', function() {
+    var preview = document.getElementById('add-user-profile-image');
+    var reader = new FileReader();
+    reader.addEventListener('load', function() { preview.src = reader.result; });
+    if (this.files[0]) reader.readAsDataURL(this.files[0]);
+});
 
-                if (modalId === 'addEmployeeModal') {
-                    $('#add-user-profile-image').attr('src', "{{ URL::to('assets/images/user.png') }}");
-                }
-                if (modalId === 'editEmployeeModal') {
-                    $('#e_avatar_edit').attr('src', "{{ URL::to('assets/images/user.png') }}");
-                }
-            });
+document.getElementById('edit-profile-img-file-input')?.addEventListener('change', function() {
+    var preview = document.getElementById('e_avatar_edit');
+    var reader = new FileReader();
+    reader.addEventListener('load', function() { preview.src = reader.result; });
+    if (this.files[0]) reader.readAsDataURL(this.files[0]);
+});
 
-            // فتح مودال الإضافة
-            $('[data-modal-target="addEmployeeModal"]').on('click', function() {
-                $('#addEmployeeModal').removeClass('hidden');
-            });
-
-            // البحث المباشر
-            let searchTimeout;
-            $('#searchInput').on('keyup', function() {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(function() {
-                    var search = $('#searchInput').val();
-                    var currentUrl = new URL(window.location.href);
-                    currentUrl.searchParams.set('search', search);
-                    currentUrl.searchParams.set('page', '1');
-                    window.location.href = currentUrl.toString();
-                }, 500);
-            });
-        });
-
-        // ملء بيانات مودال التعديل
-        $(document).on('click', '#editEmployee', function() {
-            var row = $(this).closest('tr');
-
-            var avatar = row.find('.photo').text().trim();
-            var avatarUrl = avatar ?
-                "{{ asset('assets/images/user') }}/" + avatar :
-                "{{ asset('assets/images/user.png') }}";
-            $('#e_avatar_edit').attr('src', avatarUrl);
-            $('#old_avatar').val(avatar);
-
-            $('#e_id').val(row.find('.id').text().trim());
-            $('#e_employee_id').val(row.find('.user_id').text().trim());
-            $('#e_name').val(row.find('.name').text().trim());
-            $('#e_email').val(row.find('.email').text().trim());
-            $('#e_phone_number').val(row.find('.phone_number').text().trim());
-            $('#e_location').val(row.find('.location').text().trim());
-            $('#e_join_date').val(row.find('.join_date').text().trim());
-            $('#e_experience').val(row.find('.experience').text().trim());
-            $('#e_position').val(row.find('.position').text().trim());
-            $('#e_department').val(row.find('.department').text().trim());
-            $('#e_role_name').val(row.find('.role_name').text().trim());
-            $('#e_status').val(row.find('.statuss').text().trim());
-            $('#e_designation').val(row.find('.designation').text().trim());
-
-            $('#e_password').val('');
-            $('#e_password_confirmation').val('');
-
-            $('#editEmployeeModal').removeClass('hidden');
-        });
-
-        // ملء بيانات مودال الحذف
-        $(document).on('click', '#deleteRecord', function() {
-            var row = $(this).closest('tr');
-            $('#e_idDelete').val(row.find('.id').text().trim());
-            $('#del_avatar').val(row.find('.photo').text().trim());
-            $('#deleteModal').removeClass('hidden');
-        });
-    </script>
+if (typeof lucide !== 'undefined') lucide.createIcons();
+</script>
 @endsection

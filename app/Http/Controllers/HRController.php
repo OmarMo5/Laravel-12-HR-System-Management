@@ -23,7 +23,6 @@ use App\Models\Notification;
 
 class HRController extends Controller
 {
-
     public function changeLang($lang)
     {
         if (in_array($lang, ['en', 'ar'])) {
@@ -48,7 +47,7 @@ class HRController extends Controller
                 ->orWhere('user_id', 'like', '%' . $search . '%')
                 ->orWhere('position', 'like', '%' . $search . '%')
                 ->orWhere('department', 'like', '%' . $search . '%');
-        })->paginate(7);
+        })->paginate(10);
 
         $latestUser = User::orderBy('id', 'DESC')->first();
         $userId     = $latestUser ? (int) substr($latestUser->user_id, 4) + 1 : 1;
@@ -63,6 +62,87 @@ class HRController extends Controller
             'employeeList', 'employeeId', 'roleName',
             'position', 'department', 'statusUser', 'search'
         ));
+    }
+
+    /** Export Employees to Excel (CSV) */
+    public function exportEmployees(Request $request)
+    {
+        try {
+            $search = $request->input('search');
+            
+            $employees = User::when($search, function ($query, $search) {
+                return $query->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%')
+                    ->orWhere('user_id', 'like', '%' . $search . '%')
+                    ->orWhere('position', 'like', '%' . $search . '%')
+                    ->orWhere('department', 'like', '%' . $search . '%');
+            })->orderBy('created_at', 'desc')->get();
+            
+            $fileName = 'employees_' . date('Y-m-d_His') . '.csv';
+            
+            $headers = [
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+                'Pragma' => 'no-cache',
+                'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+                'Expires' => '0',
+            ];
+            
+            $callback = function() use ($employees) {
+                $handle = fopen('php://output', 'w');
+                
+                // Add UTF-8 BOM for Arabic support
+                fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF));
+                
+                // Headers
+                fputcsv($handle, [
+                    '#',
+                    __('messages.employee_id'),
+                    __('messages.name'),
+                    __('messages.email'),
+                    __('messages.phone'),
+                    __('messages.position'),
+                    __('messages.department'),
+                    __('messages.designation'),
+                    __('messages.role'),
+                    __('messages.status'),
+                    __('messages.location'),
+                    __('messages.join_date'),
+                    __('messages.experience'),
+                    __('messages.last_login'),
+                ]);
+                
+                // Data rows
+                $counter = 1;
+                foreach ($employees as $employee) {
+                    fputcsv($handle, [
+                        $counter++,
+                        $employee->user_id,
+                        $employee->name,
+                        $employee->email,
+                        $employee->phone_number,
+                        $employee->position,
+                        $employee->department,
+                        $employee->designation,
+                        $employee->role_name,
+                        $employee->status,
+                        $employee->location,
+                        $employee->join_date,
+                        $employee->experience . ' ' . __('messages.years'),
+                        $employee->last_login ? Carbon::parse($employee->last_login)->format('Y-m-d H:i:s') : 'N/A',
+                    ]);
+                }
+                
+                fclose($handle);
+            };
+            
+            return response()->stream($callback, 200, $headers);
+            
+        } catch (\Exception $e) {
+            Log::error('Export error: ' . $e->getMessage());
+            flash()->error(__('messages.error_occurred') . ': ' . $e->getMessage());
+            return redirect()->back();
+        }
     }
 
     /** Save (Create) Employee */
@@ -360,6 +440,7 @@ class HRController extends Controller
                 if ($employee->email && filter_var($employee->email, FILTER_VALIDATE_EMAIL)) {
                     try {
                         Mail::to($employee->email)->send(new HolidayNotificationMail($holiday));
+                        //Mail::to($employee->email)->queue(new HolidayNotificationMail($holiday));
                         $successCount++;
                     } catch (\Exception $e) {
                         $failCount++;
@@ -777,114 +858,88 @@ class HRController extends Controller
     }
 
     /** Update Leave Status */
-    /* public function updateLeaveStatus(Request $request)
+    public function updateLeaveStatus(Request $request)
     {
         try {
-            $leave         = Leave::findOrFail($request->id);
-            $leave->status = $request->status;
-
-            if (in_array($request->status, ['Approved', 'Rejected'])) {
-                $leave->approved_by = Session::get('name');
-            }
-
+            $leave = Leave::findOrFail($request->id);
+            $oldStatus = $leave->status;
+            $newStatus = $request->status;
+            
+            $leave->status = $newStatus;
+            $leave->approved_by = Session::get('name');
             $leave->save();
+
+            // Send notification to employee
+            $this->sendLeaveStatusNotification($leave, $oldStatus, $newStatus);
 
             return response()->json([
                 'response_code' => 200,
-                'status'        => 'success',
-                'message'       => 'Leave status updated successfully',
+                'status' => 'success',
+                'message' => 'Leave status updated successfully',
             ]);
 
         } catch (\Exception $e) {
-            \Log::error($e);
+            \Log::error('Error updating leave status: ' . $e->getMessage());
             return response()->json([
                 'response_code' => 500,
-                'status'        => 'error',
-                'message'       => 'Failed to update status',
+                'status' => 'error',
+                'message' => 'Failed to update status: ' . $e->getMessage(),
             ], 500);
         }
-    } */
-   public function updateLeaveStatus(Request $request)
-{
-    try {
-        $leave = Leave::findOrFail($request->id);
-        $oldStatus = $leave->status;
-        $newStatus = $request->status;
-        
-        $leave->status = $newStatus;
-        $leave->approved_by = Session::get('name');
-        $leave->save();
-
-        // Send notification to employee
-        $this->sendLeaveStatusNotification($leave, $oldStatus, $newStatus);
-
-        return response()->json([
-            'response_code' => 200,
-            'status' => 'success',
-            'message' => 'Leave status updated successfully',
-        ]);
-
-    } catch (\Exception $e) {
-        \Log::error('Error updating leave status: ' . $e->getMessage());
-        return response()->json([
-            'response_code' => 500,
-            'status' => 'error',
-            'message' => 'Failed to update status: ' . $e->getMessage(),
-        ], 500);
     }
-}
-/**
- * Send notification to employee when leave status changes
- */
-private function sendLeaveStatusNotification($leave, $oldStatus, $newStatus)
-{
-    try {
-        if ($oldStatus == $newStatus) {
-            return;
+
+    /**
+     * Send notification to employee when leave status changes
+     */
+    private function sendLeaveStatusNotification($leave, $oldStatus, $newStatus)
+    {
+        try {
+            if ($oldStatus == $newStatus) {
+                return;
+            }
+
+            $employee = User::where('user_id', $leave->staff_id)->first();
+            
+            if (!$employee) {
+                \Log::error('Employee not found for notification: ' . $leave->staff_id);
+                return;
+            }
+
+            if ($newStatus == 'Approved') {
+                $title = '✅ تم قبول الإجازة';
+                $titleEn = '✅ Leave Approved';
+                $message = "عزيزي {$employee->name}، تم قبول طلب الإجازة ({$leave->leave_type}) من {$leave->date_from} إلى {$leave->date_to} بواسطة " . Session::get('name');
+                $messageEn = "Dear {$employee->name}, your {$leave->leave_type} leave request from {$leave->date_from} to {$leave->date_to} has been APPROVED by " . Session::get('name');
+                $type = 'leave_approved';
+            } elseif ($newStatus == 'Rejected') {
+                $title = '❌ تم رفض الإجازة';
+                $titleEn = '❌ Leave Rejected';
+                $message = "عزيزي {$employee->name}، تم رفض طلب الإجازة ({$leave->leave_type}) من {$leave->date_from} إلى {$leave->date_to} بواسطة " . Session::get('name');
+                $messageEn = "Dear {$employee->name}, your {$leave->leave_type} leave request from {$leave->date_from} to {$leave->date_to} has been REJECTED by " . Session::get('name');
+                $type = 'leave_rejected';
+            } else {
+                return;
+            }
+
+            // Use the appropriate language based on user preference
+            $finalTitle = app()->getLocale() == 'ar' ? $title : $titleEn;
+            $finalMessage = app()->getLocale() == 'ar' ? $message : $messageEn;
+
+            Notification::create([
+                'user_id' => $leave->staff_id,
+                'type' => $type,
+                'title' => $finalTitle,
+                'message' => $finalMessage,
+                'leave_id' => $leave->id,
+                'is_read' => false,
+            ]);
+
+            \Log::info('Notification sent to employee: ' . $leave->staff_id);
+
+        } catch (\Exception $e) {
+            \Log::error('Error sending notification: ' . $e->getMessage());
         }
-
-        $employee = User::where('user_id', $leave->staff_id)->first();
-        
-        if (!$employee) {
-            \Log::error('Employee not found for notification: ' . $leave->staff_id);
-            return;
-        }
-
-        if ($newStatus == 'Approved') {
-            $title = '✅ تم قبول الإجازة';
-            $titleEn = '✅ Leave Approved';
-            $message = "عزيزي {$employee->name}، تم قبول طلب الإجازة ({$leave->leave_type}) من {$leave->date_from} إلى {$leave->date_to} بواسطة " . Session::get('name');
-            $messageEn = "Dear {$employee->name}, your {$leave->leave_type} leave request from {$leave->date_from} to {$leave->date_to} has been APPROVED by " . Session::get('name');
-            $type = 'leave_approved';
-        } elseif ($newStatus == 'Rejected') {
-            $title = '❌ تم رفض الإجازة';
-            $titleEn = '❌ Leave Rejected';
-            $message = "عزيزي {$employee->name}، تم رفض طلب الإجازة ({$leave->leave_type}) من {$leave->date_from} إلى {$leave->date_to} بواسطة " . Session::get('name');
-            $messageEn = "Dear {$employee->name}, your {$leave->leave_type} leave request from {$leave->date_from} to {$leave->date_to} has been REJECTED by " . Session::get('name');
-            $type = 'leave_rejected';
-        } else {
-            return;
-        }
-
-        // Use the appropriate language based on user preference
-        $finalTitle = app()->getLocale() == 'ar' ? $title : $titleEn;
-        $finalMessage = app()->getLocale() == 'ar' ? $message : $messageEn;
-
-        Notification::create([
-            'user_id' => $leave->staff_id,
-            'type' => $type,
-            'title' => $finalTitle,
-            'message' => $finalMessage,
-            'leave_id' => $leave->id,
-            'is_read' => false,
-        ]);
-
-        \Log::info('Notification sent to employee: ' . $leave->staff_id);
-
-    } catch (\Exception $e) {
-        \Log::error('Error sending notification: ' . $e->getMessage());
     }
-}
 
     /**
      * Delete Leave - COMPLETE WORKING VERSION
@@ -1237,7 +1292,7 @@ private function sendLeaveStatusNotification($leave, $oldStatus, $newStatus)
         return $workingDays;
     }
 
-    public function attendanceMain(Request $request)
+    /* public function attendanceMain(Request $request)
     {
         $now    = Carbon::now('Africa/Cairo');
         $month  = (int) $request->get('month', $now->month);
@@ -1294,6 +1349,178 @@ private function sendLeaveStatusNotification($leave, $oldStatus, $newStatus)
             'weekends', 'totalEmployees', 'presentToday', 'absentToday',
             'workingDays', 'search', 'startDate', 'endDate'
         ));
+    } */
+    public function attendanceMain(Request $request)
+    {
+        $now    = Carbon::now('Africa/Cairo');
+        $month  = (int) $request->get('month', $now->month);
+        $year   = (int) $request->get('year',  $now->year);
+        $search = $request->get('search', '');
+        $perPage = (int) $request->get('per_page', 100); // غيرنا من 25 لـ 100 عشان يظهر كل الموظفين
+
+        $startDate   = Carbon::create($year, $month, 1, 0, 0, 0, 'Africa/Cairo')->startOfMonth();
+        $endDate     = Carbon::create($year, $month, 1, 0, 0, 0, 'Africa/Cairo')->endOfMonth();
+        $daysInMonth = $endDate->day;
+
+        $today          = $now->toDateString();
+        $totalEmployees = User::where('status', 'Active')->count();
+        $presentToday   = Attendance::whereDate('date', $today)
+            ->whereIn('status', ['present', 'late', 'early_departure', 'late_early', 'approved'])
+            ->distinct('user_id')
+            ->count('user_id');
+        $absentToday    = max(0, $totalEmployees - $presentToday);
+
+        $workingDays = $this->getWorkingDaysInMonth($year, $month);
+
+        // Get ALL users without pagination limit
+        $users = User::where('status', 'Active')
+            ->when($search, fn($q) => $q->where('name', 'like', "%{$search}%")
+                ->orWhere('user_id', 'like', "%{$search}%"))
+            ->orderBy('name')
+            ->paginate($perPage)
+            ->withQueryString();
+
+        $userIds     = $users->pluck('user_id')->toArray();
+        $attendances = Attendance::whereIn('user_id', $userIds)
+            ->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
+            ->get()
+            ->groupBy('user_id');
+
+        $attendanceMatrix = [];
+        foreach ($userIds as $uid) {
+            $attendanceMatrix[$uid] = [];
+            $records = $attendances->get($uid, collect());
+            foreach ($records as $rec) {
+                $day = (int) Carbon::parse($rec->date)->format('j');
+                $attendanceMatrix[$uid][$day] = $rec->status;
+            }
+        }
+
+        $weekends = [];
+        for ($d = 1; $d <= $daysInMonth; $d++) {
+            $dayObj = Carbon::create($year, $month, $d, 0, 0, 0, 'Africa/Cairo');
+            if ($dayObj->dayOfWeek == 5 || $dayObj->dayOfWeek == 6) {
+                $weekends[] = $d;
+            }
+        }
+
+        return view('HR.Attendance.attendance-main', compact(
+            'users', 'month', 'year', 'daysInMonth', 'attendanceMatrix',
+            'weekends', 'totalEmployees', 'presentToday', 'absentToday',
+            'workingDays', 'search', 'startDate', 'endDate', 'perPage'
+        ));
+    }
+    
+    /** Export Attendance Main to Excel */
+    public function exportAttendanceMain(Request $request)
+    {
+        try {
+            $month  = (int) $request->get('month', Carbon::now('Africa/Cairo')->month);
+            $year   = (int) $request->get('year', Carbon::now('Africa/Cairo')->year);
+            $search = $request->get('search', '');
+
+            $startDate   = Carbon::create($year, $month, 1, 0, 0, 0, 'Africa/Cairo')->startOfMonth();
+            $endDate     = Carbon::create($year, $month, 1, 0, 0, 0, 'Africa/Cairo')->endOfMonth();
+            $daysInMonth = $endDate->day;
+
+            // Get all users (no pagination for export)
+            $users = User::where('status', 'Active')
+                ->when($search, fn($q) => $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('user_id', 'like', "%{$search}%"))
+                ->orderBy('name')
+                ->get();
+
+            $userIds = $users->pluck('user_id')->toArray();
+            $attendances = Attendance::whereIn('user_id', $userIds)
+                ->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
+                ->get()
+                ->groupBy('user_id');
+
+            $attendanceMatrix = [];
+            foreach ($userIds as $uid) {
+                $attendanceMatrix[$uid] = [];
+                $records = $attendances->get($uid, collect());
+                foreach ($records as $rec) {
+                    $day = (int) Carbon::parse($rec->date)->format('j');
+                    $attendanceMatrix[$uid][$day] = $rec->status;
+                }
+            }
+
+            $fileName = 'attendance_' . $year . '_' . $month . '_' . date('Y-m-d_His') . '.csv';
+            
+            $headers = [
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+                'Pragma' => 'no-cache',
+                'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+                'Expires' => '0',
+            ];
+            
+            $callback = function() use ($users, $daysInMonth, $year, $month, $attendanceMatrix) {
+                $handle = fopen('php://output', 'w');
+                
+                // Add UTF-8 BOM for Arabic support
+                fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF));
+                
+                // Build headers row
+                $headers = [__('messages.employee_name'), __('messages.employee_id'), __('messages.department')];
+                for ($d = 1; $d <= $daysInMonth; $d++) {
+                    $headers[] = $d;
+                }
+                $headers[] = __('messages.present_days');
+                $headers[] = __('messages.absent_days');
+                fputcsv($handle, $headers);
+                
+                // Data rows
+                foreach ($users as $user) {
+                    $row = [
+                        $user->name,
+                        $user->user_id,
+                        $user->department ?? '—',
+                    ];
+                    
+                    $presentCount = 0;
+                    $absentCount = 0;
+                    
+                    for ($d = 1; $d <= $daysInMonth; $d++) {
+                        $dayObj = Carbon::create($year, $month, $d, 0, 0, 0, 'Africa/Cairo');
+                        $isWeekend = ($dayObj->dayOfWeek == 5 || $dayObj->dayOfWeek == 6);
+                        $isFuture = $dayObj->isFuture();
+                        $status = $attendanceMatrix[$user->user_id][$d] ?? null;
+                        
+                        if ($isWeekend) {
+                            $row[] = __('messages.weekend');
+                        } elseif ($isFuture) {
+                            $row[] = '—';
+                        } elseif ($status === null) {
+                            $row[] = __('messages.absent');
+                            $absentCount++;
+                        } elseif (in_array($status, ['present', 'late', 'early_departure', 'late_early', 'approved'])) {
+                            $row[] = __('messages.present');
+                            $presentCount++;
+                        } elseif ($status === 'absent' || $status === 'rejected') {
+                            $row[] = __('messages.absent');
+                            $absentCount++;
+                        } else {
+                            $row[] = $status;
+                        }
+                    }
+                    
+                    $row[] = $presentCount;
+                    $row[] = $absentCount;
+                    fputcsv($handle, $row);
+                }
+                
+                fclose($handle);
+            };
+            
+            return response()->stream($callback, 200, $headers);
+            
+        } catch (\Exception $e) {
+            Log::error('Export error: ' . $e->getMessage());
+            flash()->error(__('messages.error_occurred') . ': ' . $e->getMessage());
+            return redirect()->back();
+        }
     }
 
     /** Department Page */
