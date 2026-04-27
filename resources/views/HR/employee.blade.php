@@ -160,10 +160,8 @@
                                         if (empty($joinDateText))
                                             $joinDateText = __('messages.today');
                                     @endphp
-                                    <tr
-                                        class="border-b border-slate-200 dark:border-zink-500 hover:bg-slate-50 dark:hover:bg-zink-600 transition-colors">
-                                        <td class="px-4 py-3 text-sm text-slate-600 dark:text-zink-200">
-                                            {{ $employeeList->firstItem() + $key }}</td>
+                                    <tr class="border-b border-slate-200 dark:border-zink-500 hover:bg-slate-50 dark:hover:bg-zink-600 transition-colors">
+                                        <td class="px-4 py-3 text-sm text-slate-600 dark:text-zink-200">{{ $employeeList->firstItem() + $key }}</td>
                                         <td hidden class="id">{{ $employee->id }}</td>
                                         <td class="px-4 py-3 text-sm">
                                             <a href="{{ url('page/account/' . $employee->user_id) }}"
@@ -181,8 +179,7 @@
                                         <td hidden class="raw_designation">{{ $employee->designation }}</td>
                                         <td class="px-4 py-3 text-sm">
                                             <div class="flex items-center gap-2">
-                                                <div
-                                                    class="flex items-center justify-center font-medium rounded-full size-8 shrink-0 bg-slate-200 text-slate-800 dark:text-zink-50 dark:bg-zink-600">
+                                                <div class="flex items-center justify-center font-medium rounded-full size-8 shrink-0 bg-slate-200 text-slate-800 dark:text-zink-50 dark:bg-zink-600">
                                                     @if (!empty($employee->avatar))
                                                         <img src="{{ URL::to('assets/images/user/' . $employee->avatar) }}"
                                                             alt="" class="w-8 h-8 rounded-full object-cover">
@@ -286,8 +283,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="17"
-                                            class="px-4 py-8 text-center text-slate-500 dark:text-zink-200">
+                                        <td colspan="17" class="px-4 py-8 text-center text-slate-500 dark:text-zink-200">
                                             <i data-lucide="inbox" class="size-12 mx-auto mb-3 opacity-50"></i>
                                             <p>{{ __('messages.no_records_found') }}</p>
                                         </td>
