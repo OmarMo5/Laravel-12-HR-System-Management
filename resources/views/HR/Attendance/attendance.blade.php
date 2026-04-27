@@ -287,8 +287,8 @@
                                                 @else
                                                     <span class="text-green-600">{{ __('messages.on_time') }}</span>
                                                 @endif
-                                            </td> -->
-                                            <!-- <td class="px-3.5 py-2.5 border-y border-slate-200 dark:border-zink-500">
+                                            </td>
+                                            <td class="px-3.5 py-2.5 border-y border-slate-200 dark:border-zink-500">
                                                 <div class="flex gap-2">
                                                     @if (!in_array($attendance->status, ['approved', 'rejected']))
                                                         <button type="button"

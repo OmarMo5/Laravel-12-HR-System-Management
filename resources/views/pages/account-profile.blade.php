@@ -42,7 +42,8 @@
                                     </label>
                                 </div>
                             </div>
-                        </div><!--end col-->
+                        </div>
+                        <!--end col-->
                         <div class="lg:col-span-10 2xl:col-span-9">
                             <h5 class="mb-1">
                                 @if (!empty($profileDetail->name))
@@ -59,7 +60,14 @@
                                         class="inline-block size-4 ltr:mr-1 rtl:ml-1 text-slate-500 dark:text-zink-200 fill-slate-100 dark:fill-zink-500"></i>
 
                                     @if ($profileDetail && !empty($profileDetail->position))
-                                        {{ $profileDetail->position }}
+                                        @switch($profileDetail->position)
+                                            @case('Full-Time Onsite') {{ __('messages.full_time') }} @break
+                                            @case('Part-Time') {{ __('messages.part_time') }} @break
+                                            @case('Remote') {{ __('messages.remote') }} @break
+                                            @case('Hybrid Work') {{ __('messages.hybrid') }} @break
+                                            @case('Contractor') {{ __('messages.contractor') }} @break
+                                            @default {{ $profileDetail->position }}
+                                        @endswitch
                                     @elseif($profileDetail && $profileDetail->position === null)
                                         N/A
                                     @else
@@ -95,10 +103,9 @@
                                     <p class="text-slate-500 dark:text-zink-200">Products</p>
                                 </li>
                             </ul>
-                            <p class="mt-4 text-slate-500 dark:text-zink-200">Strong leader and negotiator adept at driving
-                                collaboration and innovation. Highly accomplished Web Developer with 10+ years of experience
-                                creating, launching and leading successful business ventures. Proven ability to build
-                                relationships, drive customer loyalty and increase profitability.</p>
+                            <p class="mt-4 text-slate-500 dark:text-zink-200">
+                                {{ $profileDetail->bio ?? __('messages.no_bio_available') }}
+                            </p>
                             <div class="flex gap-2 mt-4">
                                 <a href="#!"
                                     class="flex items-center justify-center transition-all duration-200 ease-linear rounded size-9 text-sky-500 bg-sky-100 hover:bg-sky-200 dark:bg-sky-500/20 dark:hover:bg-sky-500/30">
@@ -212,9 +219,8 @@
                                         <img src="{{ URL::to('assets/images/medal.png') }}" alt=""
                                             class="w-2/6 mx-auto">
                                         <div class="mt-5 mb-auto">
-                                            <h5 class="mb-1 text-white">Congratulation Paula</h5>
-                                            <p class="text-custom-200">on your outstanding achievement! Your hard work and
-                                                dedication have truly paid off.</p>
+                                            <h5 class="mb-1 text-white">{{ __('messages.congratulations') }} {{ $profileDetail->name }}</h5>
+                                            <p class="text-custom-200">{{ __('messages.achievement_message') }}</p>
                                         </div>
                                         <div class="p-3 mt-5 rounded-md bg-custom-600">
                                             <h2 class="mb-1 text-white">1054</h2>
@@ -253,40 +259,50 @@
                                         <table class="w-full ltr:text-left rtl:ext-right">
                                             <tbody>
                                                 <tr>
-                                                    <th class="py-2 font-semibold ps-0" scope="row">Designation</th>
-                                                    <td class="py-2 text-right text-slate-500 dark:text-zink-200">Web
-                                                        Developer</td>
-                                                </tr>
-                                                <tr>
-                                                    <th class="py-2 font-semibold ps-0" scope="row">Phone No</th>
-                                                    <td class="py-2 text-right text-slate-500 dark:text-zink-200">617 219
-                                                        6245</td>
-                                                </tr>p
-                                                <tr>
-                                                    <th class="py-2 font-semibold ps-0" scope="row">Birth of Date</th>
-                                                    <td class="py-2 text-right text-slate-500 dark:text-zink-200">15 Dec,
-                                                        1998</td>
-                                                </tr>
-                                                <tr>
-                                                    <th class="py-2 font-semibold ps-0" scope="row">Website</th>
-                                                    <td class="py-2 text-right text-slate-500 dark:text-zink-200"><a
-                                                            href="http://StarCode Kh.in/" target="_blank"
-                                                            class="text-custom-500">www.starcodekh.com</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <th class="py-2 font-semibold ps-0" scope="row">Email</th>
+                                                    <th class="py-2 font-semibold ps-0" scope="row">{{ __('messages.designation') }}</th>
                                                     <td class="py-2 text-right text-slate-500 dark:text-zink-200">
-                                                        paula@StarCode Kh.com</td>
+                                                        @php
+                                                            $pos = $profileDetail->designation ?? $profileDetail->position;
+                                                        @endphp
+                                                        @switch($pos)
+                                                            @case('Full-Time Onsite') {{ __('messages.full_time') }} @break
+                                                            @case('Part-Time') {{ __('messages.part_time') }} @break
+                                                            @case('Remote') {{ __('messages.remote') }} @break
+                                                            @case('Hybrid Work') {{ __('messages.hybrid') }} @break
+                                                            @case('Contractor') {{ __('messages.contractor') }} @break
+                                                            @default {{ $pos ?? 'N/A' }}
+                                                        @endswitch
+                                                    </td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="py-2 font-semibold ps-0" scope="row">Location</th>
-                                                    <td class="py-2 text-right text-slate-500 dark:text-zink-200">Phnom
-                                                        Penh, Cambodia</td>
+                                                    <th class="py-2 font-semibold ps-0" scope="row">{{ __('messages.phone_number') }}</th>
+                                                    <td class="py-2 text-right text-slate-500 dark:text-zink-200">
+                                                        {{ $profileDetail->phone_number ?? 'N/A' }}
+                                                    </td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="pt-2 font-semibold ps-0" scope="row">Joining Date</th>
-                                                    <td class="pt-2 text-right text-slate-500 dark:text-zink-200">01 July
-                                                        2023</td>
+                                                    <th class="py-2 font-semibold ps-0" scope="row">{{ __('messages.birth_date') }}</th>
+                                                    <td class="py-2 text-right text-slate-500 dark:text-zink-200">
+                                                        {{ $profileDetail->birth_date ?? 'N/A' }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="py-2 font-semibold ps-0" scope="row">{{ __('messages.email') }}</th>
+                                                    <td class="py-2 text-right text-slate-500 dark:text-zink-200">
+                                                        {{ $profileDetail->email ?? 'N/A' }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="py-2 font-semibold ps-0" scope="row">{{ __('messages.location') }}</th>
+                                                    <td class="py-2 text-right text-slate-500 dark:text-zink-200">
+                                                        {{ $profileDetail->location ?? 'N/A' }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="pt-2 font-semibold ps-0" scope="row">{{ __('messages.joining_date') }}</th>
+                                                    <td class="pt-2 text-right text-slate-500 dark:text-zink-200">
+                                                        {{ !empty($profileDetail->join_date) ? \Carbon\Carbon::parse($profileDetail->join_date)->format('d/m/Y') : 'N/A' }}
+                                                    </td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -298,8 +314,9 @@
                     </div>
                     <!--end grid-->
                 </div>
-                <!--end tab pane-->
-                <div class="hidden tab-pane" id="documentsTabs">
+                
+                <!--end tab pane Documents-->
+                <!-- <div class="hidden tab-pane" id="documentsTabs">
                     <div class="flex items-center gap-3 mb-4">
                         <h5 class="underline grow">Documents</h5>
                         <div class="shrink-0">
@@ -554,9 +571,10 @@
                             </li>
                         </ul>
                     </div>
-                </div>
-                <!--end tab pane-->
-                <div class="hidden tab-pane" id="projectsTabs">
+                </div> -->
+
+                <!--end tab pane Projects-->
+                <!-- <div class="hidden tab-pane" id="projectsTabs">
                     <div class="flex items-center gap-3 mb-4">
                         <h5 class="underline grow">Projects</h5>
                         <div class="shrink-0">
@@ -621,7 +639,7 @@
                                     <div class="h-1.5 rounded-full bg-custom-500" style="width: 25%"></div>
                                 </div>
                             </div>
-                        </div><!--end card & col-->
+                        </div>
                         <div class="card">
                             <div class="card-body">
                                 <div class="flex">
@@ -677,7 +695,7 @@
                                     <div class="h-1.5 rounded-full bg-sky-500" style="width: 61%"></div>
                                 </div>
                             </div>
-                        </div><!--end card & col-->
+                        </div>
                         <div class="card">
                             <div class="card-body">
                                 <div class="flex">
@@ -733,7 +751,7 @@
                                     <div class="h-1.5 rounded-full bg-green-500" style="width: 87%"></div>
                                 </div>
                             </div>
-                        </div><!--end card & col-->
+                        </div>
                         <div class="card">
                             <div class="card-body">
                                 <div class="flex">
@@ -789,7 +807,7 @@
                                     <div class="h-1.5 bg-purple-500 rounded-full" style="width: 65%"></div>
                                 </div>
                             </div>
-                        </div><!--end card & col-->
+                        </div>
                         <div class="card">
                             <div class="card-body">
                                 <div class="flex">
@@ -845,7 +863,7 @@
                                     <div class="h-1.5 bg-purple-500 rounded-full" style="width: 65%"></div>
                                 </div>
                             </div>
-                        </div><!--end card & col-->
+                        </div>
                         <div class="card">
                             <div class="card-body">
                                 <div class="flex">
@@ -901,7 +919,7 @@
                                     <div class="h-1.5 bg-purple-500 rounded-full" style="width: 65%"></div>
                                 </div>
                             </div>
-                        </div><!--end card & col-->
+                        </div>
                         <div class="card">
                             <div class="card-body">
                                 <div class="flex">
@@ -957,7 +975,7 @@
                                     <div class="h-1.5 bg-purple-500 rounded-full" style="width: 65%"></div>
                                 </div>
                             </div>
-                        </div><!--end card & col-->
+                        </div>
                         <div class="card">
                             <div class="card-body">
                                 <div class="flex">
@@ -1013,8 +1031,8 @@
                                     <div class="h-1.5 bg-purple-500 rounded-full" style="width: 65%"></div>
                                 </div>
                             </div>
-                        </div><!--end card & col-->
-                    </div><!--end grid-->
+                        </div>
+                    </div>
                     <div class="flex flex-col items-center gap-4 mt-2 mb-4 md:flex-row">
                         <div class="grow">
                             <p class="text-slate-500 dark:text-zink-200">Showing <b>8</b> of <b>30</b> Results</p>
@@ -1066,9 +1084,10 @@
                             </li>
                         </ul>
                     </div>
-                </div>
-                <!--end tab pane-->
-                <div class="hidden tab-pane" id="followersTabs">
+                </div> -->
+
+                <!--end tab pane Followers-->
+                <!-- <div class="hidden tab-pane" id="followersTabs">
                     <h5 class="mb-4 underline">Followers</h5>
                     <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-x-5">
                         <div class="relative card">
@@ -1101,7 +1120,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div><!--end card-->
+                        </div>
                         <div class="relative card">
                             <div class="card-body">
                                 <p
@@ -1132,7 +1151,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div><!--end card-->
+                        </div>
                         <div class="relative card">
                             <div class="card-body">
                                 <p
@@ -1163,7 +1182,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div><!--end card-->
+                        </div>
                         <div class="relative card">
                             <div class="card-body">
                                 <p
@@ -1194,7 +1213,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div><!--end card-->
+                        </div>
                         <div class="relative card">
                             <div class="card-body">
                                 <p
@@ -1225,7 +1244,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div><!--end card-->
+                        </div>
                         <div class="relative card">
                             <div class="card-body">
                                 <p
@@ -1256,7 +1275,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div><!--end card-->
+                        </div>
                         <div class="relative card">
                             <div class="card-body">
                                 <p
@@ -1287,7 +1306,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div><!--end card-->
+                        </div>
                         <div class="relative card">
                             <div class="card-body">
                                 <p
@@ -1318,8 +1337,8 @@
                                     </div>
                                 </div>
                             </div>
-                        </div><!--end card-->
-                    </div><!--end grid-->
+                        </div>
+                    </div>
                     <div class="flex flex-col items-center gap-4 mb-4 md:flex-row">
                         <div class="grow">
                             <p class="text-slate-500 dark:text-zink-200">Showing <b>8</b> of <b>18</b> Results</p>
@@ -1361,7 +1380,8 @@
                             </li>
                         </ul>
                     </div>
-                </div>
+                </div> -->
+
                 <!--end tab pane-->
             </div>
             <!--end tab content-->

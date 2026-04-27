@@ -147,7 +147,7 @@
                     <div class="overflow-x-auto">
                         <table class="w-full">
                             <thead>
-                                <tr>
+                                <tr class="bg-slate-100 dark:bg-zink-600 border-b border-slate-200 dark:border-zink-500">
                                     <th class="px-3.5 py-2.5 font-semibold border-b border-slate-200 dark:border-zink-500">#
                                     </th>
                                     <th class="px-3.5 py-2.5 font-semibold border-b border-slate-200 dark:border-zink-500">
@@ -203,22 +203,43 @@
                                             {{ $leaveItem->date_to }}
                                         </td>
                                         <td class="px-3.5 py-2.5 border-y border-slate-200 dark:border-zink-500">
-                                            @if ($leaveItem->status == 'Approved')
-                                                <span
-                                                    class="px-2.5 py-0.5 inline-block text-xs font-medium rounded border bg-green-100 border-green-100 text-green-500 dark:bg-green-400/20 dark:border-transparent">
-                                                    {{ __('messages.approved') }}
-                                                </span>
-                                            @elseif($leaveItem->status == 'Pending')
-                                                <span
-                                                    class="px-2.5 py-0.5 inline-block text-xs font-medium rounded border bg-yellow-100 border-yellow-100 text-yellow-500 dark:bg-yellow-400/20 dark:border-transparent">
-                                                    {{ __('messages.pending') }}
-                                                </span>
-                                            @elseif($leaveItem->status == 'Rejected')
-                                                <span
-                                                    class="px-2.5 py-0.5 inline-block text-xs font-medium rounded border bg-red-100 border-red-100 text-red-500 dark:bg-red-400/20 dark:border-transparent">
-                                                    {{ __('messages.rejected') }}
-                                                </span>
-                                            @endif
+                                            <div class="flex flex-col gap-1">
+                                                <!-- Manager Status -->
+                                                <div class="flex items-center gap-1">
+                                                    <span class="text-[10px] font-bold uppercase text-slate-400">{{ __('messages.manager') }}:</span>
+                                                    @if ($leaveItem->manager_status == 'Approved')
+                                                        <span class="px-1.5 py-0.5 inline-block text-[10px] font-medium rounded border bg-green-100 border-green-100 text-green-500 dark:bg-green-400/20 dark:border-transparent">
+                                                            {{ __('messages.approved') }}
+                                                        </span>
+                                                    @elseif($leaveItem->manager_status == 'Pending')
+                                                        <span class="px-1.5 py-0.5 inline-block text-[10px] font-medium rounded border bg-yellow-100 border-yellow-100 text-yellow-500 dark:bg-yellow-400/20 dark:border-transparent">
+                                                            {{ __('messages.pending') }}
+                                                        </span>
+                                                    @elseif($leaveItem->manager_status == 'Rejected')
+                                                        <span class="px-1.5 py-0.5 inline-block text-[10px] font-medium rounded border bg-red-100 border-red-100 text-red-500 dark:bg-red-400/20 dark:border-transparent">
+                                                            {{ __('messages.rejected') }}
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                                
+                                                <!-- HR/Final Status -->
+                                                <div class="flex items-center gap-1 border-t border-slate-100 pt-1 mt-1 dark:border-zink-500">
+                                                    <span class="text-[10px] font-bold uppercase text-slate-400">{{ __('messages.final') }}:</span>
+                                                    @if ($leaveItem->status == 'Approved')
+                                                        <span class="px-1.5 py-0.5 inline-block text-[10px] font-bold rounded border bg-green-100 border-green-100 text-green-500 dark:bg-green-400/20 dark:border-transparent">
+                                                            {{ __('messages.approved') }}
+                                                        </span>
+                                                    @elseif($leaveItem->status == 'Pending')
+                                                        <span class="px-1.5 py-0.5 inline-block text-[10px] font-bold rounded border bg-yellow-100 border-yellow-100 text-yellow-500 dark:bg-yellow-400/20 dark:border-transparent">
+                                                            {{ __('messages.pending') }}
+                                                        </span>
+                                                    @elseif($leaveItem->status == 'Rejected')
+                                                        <span class="px-1.5 py-0.5 inline-block text-[10px] font-bold rounded border bg-red-100 border-red-100 text-red-500 dark:bg-red-400/20 dark:border-transparent">
+                                                            {{ __('messages.rejected') }}
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            </div>
                                         </td>
                                         <td class="px-3.5 py-2.5 border-y border-slate-200 dark:border-zink-500">
                                             <div class="flex gap-2">
@@ -228,33 +249,44 @@
                                                     <i data-lucide="eye" class="size-4"></i>
                                                 </a>
 
-                                                <a href="{{ route('hr/leave/edit', $leaveItem->id) }}"
-                                                    class="flex items-center justify-center transition-all duration-200 ease-linear rounded-md size-8 text-custom-500 bg-custom-100 hover:text-white hover:bg-custom-500 dark:bg-custom-500/20 dark:hover:bg-custom-500"
-                                                    title="{{ __('messages.edit') }}">
-                                                    <i data-lucide="edit" class="size-4"></i>
-                                                </a>
+                                                @if(Auth::user()->role_name == 'HR' || Auth::user()->role_name == 'Admin' || Auth::user()->role_name == 'Manager')
+                                                    <a href="{{ route('hr/leave/edit', $leaveItem->id) }}"
+                                                        class="flex items-center justify-center transition-all duration-200 ease-linear rounded-md size-8 text-custom-500 bg-custom-100 hover:text-white hover:bg-custom-500 dark:bg-custom-500/20 dark:hover:bg-custom-500"
+                                                        title="{{ __('messages.edit') }}">
+                                                        <i data-lucide="edit" class="size-4"></i>
+                                                    </a>
 
-                                                @if ($leaveItem->status == 'Pending')
-                                                    <button type="button"
-                                                        onclick="updateLeaveStatus({{ $leaveItem->id }}, 'Approved')"
-                                                        class="flex items-center justify-center text-green-500 transition-all duration-200 ease-linear bg-green-100 rounded-md size-8 hover:text-white hover:bg-green-500 dark:bg-green-500/20 dark:hover:bg-green-500"
-                                                        title="{{ __('messages.approve') }}">
-                                                        <i data-lucide="check" class="size-4"></i>
-                                                    </button>
+                                                    @php
+                                                        $showApproveButtons = false;
+                                                        if (Auth::user()->role_name == 'Manager' && $leaveItem->manager_status == 'Pending') {
+                                                            $showApproveButtons = true;
+                                                        } elseif ((Auth::user()->role_name == 'HR' || Auth::user()->role_name == 'Admin') && $leaveItem->manager_status == 'Approved' && $leaveItem->status == 'Pending') {
+                                                            $showApproveButtons = true;
+                                                        }
+                                                    @endphp
 
-                                                    <button type="button"
-                                                        onclick="updateLeaveStatus({{ $leaveItem->id }}, 'Rejected')"
+                                                    @if ($showApproveButtons)
+                                                        <button type="button"
+                                                            onclick="updateLeaveStatus({{ $leaveItem->id }}, 'Approved')"
+                                                            class="flex items-center justify-center text-green-500 transition-all duration-200 ease-linear bg-green-100 rounded-md size-8 hover:text-white hover:bg-green-500 dark:bg-green-500/20 dark:hover:bg-green-500"
+                                                            title="{{ __('messages.approve') }}">
+                                                            <i data-lucide="check" class="size-4"></i>
+                                                        </button>
+
+                                                        <button type="button"
+                                                            onclick="updateLeaveStatus({{ $leaveItem->id }}, 'Rejected')"
+                                                            class="flex items-center justify-center text-red-500 transition-all duration-200 ease-linear bg-red-100 rounded-md size-8 hover:text-white hover:bg-red-500 dark:bg-red-400/20 dark:hover:bg-red-500"
+                                                            title="{{ __('messages.reject') }}">
+                                                            <i data-lucide="x" class="size-4"></i>
+                                                        </button>
+                                                    @endif
+
+                                                    <button type="button" onclick="confirmDelete({{ $leaveItem->id }})"
                                                         class="flex items-center justify-center text-red-500 transition-all duration-200 ease-linear bg-red-100 rounded-md size-8 hover:text-white hover:bg-red-500 dark:bg-red-500/20 dark:hover:bg-red-500"
-                                                        title="{{ __('messages.reject') }}">
-                                                        <i data-lucide="x" class="size-4"></i>
+                                                        title="{{ __('messages.delete') }}">
+                                                        <i data-lucide="trash-2" class="size-4"></i>
                                                     </button>
                                                 @endif
-
-                                                <button type="button" onclick="confirmDelete({{ $leaveItem->id }})"
-                                                    class="flex items-center justify-center text-red-500 transition-all duration-200 ease-linear bg-red-100 rounded-md size-8 hover:text-white hover:bg-red-500 dark:bg-red-500/20 dark:hover:bg-red-500"
-                                                    title="{{ __('messages.delete') }}">
-                                                    <i data-lucide="trash-2" class="size-4"></i>
-                                                </button>
                                             </div>
                                         </td>
                                     </tr>

@@ -32,11 +32,10 @@
                                             <label for="employee_name"
                                                 class="inline-block mb-2 text-base font-medium dark:text-zink-200">{{ __('messages.employee') }}</label>
                                             <select name="employee_name" id="employee_name"
-                                                class="form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500"
-                                                data-choices="">
+                                                class="form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500">
                                                 <option value="">{{ __('messages.select_employee') }}</option>
                                                 @foreach ($users as $key => $user)
-                                                    <option value="{{ $user->name }}" data-id="{{ $user->user_id }}"
+                                                    <option value="{{ $user->user_id }}" data-name="{{ $user->name }}"
                                                         data-email="{{ $user->email }}">
                                                         {{ $user->name }} - {{ $user->user_id }}
                                                     </option>
@@ -59,8 +58,7 @@
                                             <label for="leave_type"
                                                 class="inline-block mb-2 text-base font-medium dark:text-zink-200">{{ __('messages.leave_type') }}</label>
                                             <select name="leave_type" id="leave_type"
-                                                class="leave_type form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500"
-                                                data-choices="" data-choices-search-false="">
+                                                class="leave_type form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500">
                                                 <option value="">{{ __('messages.select_leave_type') }}</option>
                                                 @foreach ($leaveInformation as $info)
                                                     <option value="{{ $info->leave_type }}"
@@ -165,17 +163,23 @@
                     <div class="card mt-4">
                         <div class="card-body">
                             <h6 class="mb-4 text-15 dark:text-zink-100">{{ __('messages.leave_information') }} ({{ date('Y') }})</h6>
-                            <div>
-                                <table class="w-full mb-0">
+                            <div class="overflow-x-auto">
+                                <table class="w-full mb-0 text-sm">
+                                    <thead>
+                                        <tr class="text-slate-500 dark:text-zink-200 border-b border-slate-200 dark:border-zink-500">
+                                            <th class="px-3.5 py-2.5 ltr:text-left rtl:text-right font-semibold">{{ __('messages.leave_type') }}</th>
+                                            <th class="px-3.5 py-2.5 ltr:text-right rtl:text-left font-semibold">{{ __('messages.duration') }}</th>
+                                        </tr>
+                                    </thead>
                                     <tbody>
                                         @foreach ($leaveInformation as $key => $value)
-                                            <tr>
-                                                <td class="px-3.5 py-2.5 first:pl-0 last:pr-0 border-y border-transparent dark:text-zink-100">
+                                            <tr class="border-b border-slate-200 dark:border-zink-500 last:border-0">
+                                                <td class="px-3.5 py-2.5 text-slate-600 dark:text-zink-200">
                                                     {{ $value->leave_type }}
                                                 </td>
-                                                <th class="px-3.5 py-2.5 first:pl-0 last:pr-0 border-y border-transparent dark:text-zink-100">
+                                                <td class="px-3.5 py-2.5 ltr:text-right rtl:text-left font-medium dark:text-zink-100">
                                                     {{ $value->leave_days }}
-                                                </th>
+                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -193,62 +197,86 @@
         var url = "{{ route('hr/get/information/leave') }}";
         var employeeInfoUrl = "{{ route('hr/get/employee/leave/info') }}";
 
-        // Handle employee selection
-        $('#employee_name').on('change', function() {
-            var selected = $(this).find(':selected');
-            var employeeId = selected.data('id');
-            var employeeName = selected.val();
+        $(document).ready(function() {
+            // Initialize Choices
+            if (typeof Choices !== 'undefined') {
+                const employeeEl = document.getElementById('employee_name');
+                if (employeeEl) {
+                    employeeChoices = new Choices(employeeEl, {
+                        searchEnabled: true,
+                        itemSelectText: '',
+                    });
+                }
+                const leaveTypeEl = document.getElementById('leave_type');
+                if (leaveTypeEl) {
+                    leaveTypeChoices = new Choices(leaveTypeEl, {
+                        searchEnabled: false,
+                        itemSelectText: '',
+                    });
+                }
+            }
 
-            $('#employeeId').val(employeeId || '');
+            // Handle employee selection
+            $('#employee_name').on('change', function() {
+                var employeeId = $(this).val();
+                var selected = $(this).find('option:selected');
+                var employeeName = selected.data('name') || selected.text().split(' - ')[0];
 
-            if (employeeId) {
-                $('#selectedEmployeeName').text(employeeName);
-                $('#employeeLeaveInfo').show();
-                $('#leaveInfoContent').html('<p class="text-center dark:text-zink-300">{{ __('messages.loading') }}</p>');
+                $('#employeeId').val(employeeId || '');
 
-                $.ajax({
-                    url: employeeInfoUrl,
-                    type: 'POST',
-                    data: {
-                        staff_id: employeeId,
-                        _token: $('meta[name="csrf-token"]').attr('content')
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.response_code == 200) {
-                            var html = '<table class="w-full mb-0">';
-                            $.each(response.data, function(key, value) {
-                                html += '<tr>' +
-                                    '<td class="px-3.5 py-2.5 border-y border-transparent dark:text-zink-100">' +
-                                    key + '</td>' +
-                                    '<th class="px-3.5 py-2.5 border-y border-transparent dark:text-zink-100">' +
-                                    value + ' {{ __('messages.days') }}</th>' +
-                                    '</tr>';
-                            });
-                            html += '</table>';
-                            $('#leaveInfoContent').html(html);
+                if (employeeId) {
+                    $('#selectedEmployeeName').text(employeeName);
+                    $('#employeeLeaveInfo').show();
+                    $('#leaveInfoContent').html('<p class="text-center dark:text-zink-300">{{ __('messages.loading') }}</p>');
 
-                            // Reset remaining leave field when employee changes
-                            $('#remaining_leave').val('0');
-                            $('#leave_type').val('');
-                        } else {
+                    $.ajax({
+                        url: employeeInfoUrl,
+                        type: 'POST',
+                        data: {
+                            staff_id: employeeId,
+                            _token: $('meta[name="csrf-token"]').attr('content')
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.response_code == 200) {
+                                var html = '<table class="w-full mb-0">';
+                                $.each(response.data, function(key, value) {
+                                    html += '<tr>' +
+                                        '<td class="px-3.5 py-2.5 border-y border-transparent dark:text-zink-100">' +
+                                        key + '</td>' +
+                                        '<th class="px-3.5 py-2.5 border-y border-transparent dark:text-zink-100">' +
+                                        value + ' {{ __('messages.days') }}</th>' +
+                                        '</tr>';
+                                });
+                                html += '</table>';
+                                $('#leaveInfoContent').html(html);
+
+                                // Reset remaining leave field when employee changes
+                                $('#remaining_leave').val('0');
+                                if (leaveTypeChoices) {
+                                    leaveTypeChoices.setChoiceByValue('');
+                                } else {
+                                    $('#leave_type').val('');
+                                }
+                            } else {
+                                $('#leaveInfoContent').html(
+                                    '<p class="text-center text-red-500 dark:text-red-400">{{ __('messages.failed_to_load') }}</p>'
+                                );
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(error);
                             $('#leaveInfoContent').html(
-                                '<p class="text-center text-red-500 dark:text-red-400">{{ __('messages.failed_to_load') }}</p>'
+                                '<p class="text-center text-red-500 dark:text-red-400">{{ __('messages.error_loading') }}</p>'
                             );
                         }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(error);
-                        $('#leaveInfoContent').html(
-                            '<p class="text-center text-red-500 dark:text-red-400">{{ __('messages.error_loading') }}</p>'
-                        );
-                    }
-                });
-            } else {
-                $('#employeeLeaveInfo').hide();
-                $('#leaveInfoContent').html(
-                    '<p class="text-center text-slate-500 dark:text-zink-300">{{ __('messages.select_employee_to_view') }}</p>');
-            }
+                    });
+                } else {
+                    $('#employeeLeaveInfo').hide();
+                    $('#leaveInfoContent').html(
+                        '<p class="text-center text-slate-500 dark:text-zink-300">{{ __('messages.select_employee_to_view') }}</p>');
+                }
+            });
         });
 
         function handleLeaveTypeChange() {
@@ -257,7 +285,7 @@
             var numberOfDay = $('#number_of_day').val() || 0;
 
             if (!employeeId) {
-                toastr.warning('{{ __('messages.select_employee_to_view') }}');
+                // toastr.warning('{{ __('messages.select_employee_to_view') }}');
                 return;
             }
 
@@ -279,14 +307,15 @@
                             // Disable submit button if no remaining leaves
                             if (data.leave_type <= 0) {
                                 $('#apply_leave').prop('disabled', true);
-                                toastr.warning('{{ __('messages.no_remaining_leaves') }}');
+                                // toastr.warning('{{ __('messages.no_remaining_leaves') }}');
                             } else {
                                 $('#apply_leave').prop('disabled', false);
                             }
                         }
                     },
                     error: function() {
-                        toastr.error('{{ __('messages.error_loading') }}');
+                        // toastr.error('{{ __('messages.error_loading') }}');
+                        console.error('Error loading leave information');
                     }
                 });
             }
@@ -309,9 +338,16 @@
             }
         }
 
-        function generateLeaveDates(numDays, startDate) {
+        /* function generateLeaveDates(numDays, startDate) {
             var container = $('#leave_dates_container');
             container.empty();
+
+            var leaveType = $('#leave_type').val();
+            // Show details only for Annual Leave (الإجازة السنوية)
+            if (leaveType !== 'الإجازة السنوية') {
+                calculateTotalDays();
+                return;
+            }
 
             if (numDays > 1) {
                 container.append('<h6 class="mb-3 text-15 dark:text-zink-100">{{ __('messages.leave_dates_details') }}</h6>');
@@ -350,19 +386,96 @@
                 container.append(dateHtml);
             }
 
+            // Calculate total days initially
+            calculateTotalDays();
+
+            $('.leave-day-select').on('change', calculateTotalDays);
+        } */
+        function generateLeaveDates(numDays, startDate) {
+            var container = $('#leave_dates_container');
+            container.empty();
+
+            var leaveType = $('#leave_type').val();
+
+            // For non-annual leave, generate hidden inputs only (no UI)
+            if (leaveType !== 'الإجازة السنوية') {
+                for (let i = 0; i < numDays; i++) {
+                    let currentDate = new Date(startDate);
+                    currentDate.setDate(startDate.getDate() + i);
+                    let formattedDate = currentDate.toLocaleDateString('en-GB', {
+                        day: '2-digit', month: 'short', year: 'numeric'
+                    });
+                    container.append(
+                        '<input type="hidden" name="leave_date[]" value="' + formattedDate + '">' +
+                        '<input type="hidden" name="select_leave_day[]" value="Full-Day Leave">'
+                    );
+                }
+                calculateTotalDays();
+                return;
+            }
+
+            // Annual leave - show UI as before
+            if (numDays > 1) {
+                container.append('<h6 class="mb-3 text-15 dark:text-zink-100">{{ __("messages.leave_dates_details") }}</h6>');
+            }
+
+            for (let i = 0; i < numDays; i++) {
+                let currentDate = new Date(startDate);
+                currentDate.setDate(startDate.getDate() + i);
+                let formattedDate = currentDate.toLocaleDateString('en-GB', {
+                    day: '2-digit', month: 'short', year: 'numeric'
+                });
+
+                let dateHtml = `
+                <div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-12 mb-4">
+                    <div class="xl:col-span-6">
+                        <label class="inline-block mb-2 text-base font-medium dark:text-zink-200">{{ __('messages.leave_date') }} ${i+1}</label>
+                        <input type="text" name="leave_date[]"
+                            class="form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500"
+                            value="${formattedDate}" readonly>
+                    </div>
+                    <div class="xl:col-span-6">
+                        <label class="inline-block mb-2 text-base font-medium dark:text-zink-200">{{ __('messages.leave_day') }} ${i+1}</label>
+                        <select name="select_leave_day[]" class="form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500 leave-day-select">
+                            <option value="Full-Day Leave">{{ __('messages.full_day_leave') }}</option>
+                            <option value="Half-Day Morning Leave">{{ __('messages.half_day_morning') }}</option>
+                            <option value="Half-Day Afternoon Leave">{{ __('messages.half_day_afternoon') }}</option>
+                            <option value="Public Holiday">{{ __('messages.public_holiday') }}</option>
+                            <option value="Off Schedule">{{ __('messages.off_schedule') }}</option>
+                        </select>
+                    </div>
+                </div>`;
+
+                container.append(dateHtml);
+            }
+
+            calculateTotalDays();
             $('.leave-day-select').on('change', calculateTotalDays);
         }
 
         function calculateTotalDays() {
             var totalDays = 0;
-            $('.leave-day-select').each(function() {
-                var value = $(this).val();
-                if (value.includes('Half-Day')) {
-                    totalDays += 0.5;
-                } else {
-                    totalDays += 1;
+            var leaveType = $('#leave_type').val();
+
+            if (leaveType === 'الإجازة السنوية' && $('.leave-day-select').length > 0) {
+                $('.leave-day-select').each(function() {
+                    var value = $(this).val();
+                    if (value === 'Public Holiday' || value === 'Off Schedule') {
+                        totalDays += 0;
+                    } else if (value.includes('Half-Day')) {
+                        totalDays += 0.5;
+                    } else {
+                        totalDays += 1;
+                    }
+                });
+            } else {
+                // For non-annual leave or when no list is shown, use simple diff
+                var dateFrom = new Date($('#date_from').val());
+                var dateTo = new Date($('#date_to').val());
+                if (!isNaN(dateFrom) && !isNaN(dateTo) && dateFrom <= dateTo) {
+                    totalDays = Math.ceil((dateTo - dateFrom) / (1000 * 3600 * 24)) + 1;
                 }
-            });
+            }
 
             $('#number_of_day').val(totalDays);
 
@@ -371,7 +484,10 @@
         }
 
         // Event listeners
-        $(document).on('change', '#leave_type', handleLeaveTypeChange);
+        $(document).on('change', '#leave_type', function() {
+            countLeaveDays(); // Refresh list visibility and recalculate
+            handleLeaveTypeChange();
+        });
         $(document).on('change', '#date_from, #date_to', countLeaveDays);
 
         // Reset form
@@ -381,9 +497,17 @@
             $('#number_of_day').val('0');
             $('#date_from').val('');
             $('#date_to').val('');
-            $('#leave_type').val('');
             $('#remaining_leave').val('0');
-            $('#employee_name').val('').trigger('change');
+            if (employeeChoices) {
+                employeeChoices.setChoiceByValue('');
+            } else {
+                $('#employee_name').val('').trigger('change');
+            }
+            if (leaveTypeChoices) {
+                leaveTypeChoices.setChoiceByValue('');
+            } else {
+                $('#leave_type').val('');
+            }
             $('#employeeId').val('');
             $('#employeeLeaveInfo').hide();
             $('#apply_leave').prop('disabled', false);
@@ -392,16 +516,7 @@
         });
 
         // Initialize Choices for select elements if needed
-        if (typeof Choices !== 'undefined') {
-            new Choices('#employee_name', {
-                searchEnabled: true,
-                itemSelectText: '',
-            });
-            new Choices('#leave_type', {
-                searchEnabled: false,
-                itemSelectText: '',
-            });
-        }
+        var employeeChoices, leaveTypeChoices;
     </script>
 @endsection
 @endsection

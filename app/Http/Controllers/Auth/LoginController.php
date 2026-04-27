@@ -67,6 +67,11 @@ class LoginController extends Controller
                 // Update last login
                 $user->update(['last_login' => $todayDate]);
 
+                if ($user->role_name == 'Employee') {
+                    flash()->success(__('messages.success_login'));
+                    return redirect()->route('page/account', $user->user_id);
+                }
+
                 flash()->success(__('messages.success_login'));
                 return redirect()->intended('home');
             } else {

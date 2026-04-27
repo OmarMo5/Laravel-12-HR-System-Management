@@ -269,7 +269,7 @@
                 </div>
                 
                 <!-- Late Days Card -->
-                <div class="card border-l-4 border-l-yellow-500 shadow-sm hover:shadow-md transition-all bg-white dark:bg-zink-700">
+                <!-- <div class="card border-l-4 border-l-yellow-500 shadow-sm hover:shadow-md transition-all bg-white dark:bg-zink-700">
                     <div class="card-body py-3">
                         <div class="flex items-center justify-between">
                             <div>
@@ -281,10 +281,10 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 
                 <!-- Early Departure Card -->
-                <div class="card border-l-4 border-l-orange-500 shadow-sm hover:shadow-md transition-all bg-white dark:bg-zink-700">
+                <!-- <div class="card border-l-4 border-l-orange-500 shadow-sm hover:shadow-md transition-all bg-white dark:bg-zink-700">
                     <div class="card-body py-3">
                         <div class="flex items-center justify-between">
                             <div>
@@ -296,7 +296,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 
                 <!-- Total Hours Card -->
                 <div class="card border-l-4 border-l-purple-500 shadow-sm hover:shadow-md transition-all bg-white dark:bg-zink-700">

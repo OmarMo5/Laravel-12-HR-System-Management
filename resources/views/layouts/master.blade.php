@@ -4,13 +4,13 @@
 
 <head>
     <meta charset="utf-8">
-    <title>{{ __('messages.hr') }} | Admin & Dashboard Template</title>
+    <title>{{ __('messages.hr') }} | HR System Management</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta content="Minimal Admin & Dashboard Template" name="description">
     <meta content="Omar Mokhtar" name="author">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- App favicon -->
-    <!-- <link rel="shortcut icon" href="{{ URL::to('assets/images/favicon.ico') }}"> -->
+    <link rel="shortcut icon" href="{{ URL::to('assets/images/favicon.ico') }}">
     <!-- Layout config Js -->
     <script src="{{ URL::to('assets/js/layout.js') }}"></script>
     <!-- StarCode CSS -->
@@ -33,6 +33,10 @@
             overflow: hidden;
             margin-bottom: 0px !important;
             font-size: 16px;
+        }
+
+        [x-cloak] {
+            display: none !important;
         }
     </style>
 </head>
@@ -462,7 +466,7 @@
             <!-- End Page-content -->
 
             <!-- Page-footer -->
-            <footer
+            <!-- <footer
                 class="ltr:md:left-vertical-menu rtl:md:right-vertical-menu group-data-[sidebar-size=md]:ltr:md:left-vertical-menu-md group-data-[sidebar-size=md]:rtl:md:right-vertical-menu-md group-data-[sidebar-size=sm]:ltr:md:left-vertical-menu-sm group-data-[sidebar-size=sm]:rtl:md:right-vertical-menu-sm absolute right-0 bottom-0 px-4 h-14 group-data-[layout=horizontal]:ltr:left-0  group-data-[layout=horizontal]:rtl:right-0 left-0 border-t py-3 flex items-center dark:border-zink-600">
                 <div
                     class="group-data-[layout=horizontal]:mx-auto group-data-[layout=horizontal]:max-w-screen-2xl w-full">
@@ -479,7 +483,7 @@
                         </div>
                     </div>
                 </div>
-            </footer>
+            </footer> -->
             <!-- End Page-footer -->
         </div>
     </div>

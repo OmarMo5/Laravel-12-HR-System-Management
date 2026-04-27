@@ -76,6 +76,7 @@
                                 </a>
                             @endif
                             
+                            @if (in_array(Auth::user()->role_name, ['Admin', 'HR']))
                             <div class="shrink-0">
                                 <button data-modal-target="addHolidayModal" type="button"
                                     class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">
@@ -89,6 +90,7 @@
                                     <span class="align-middle">{{ __('messages.add_holiday') }}</span>
                                 </button>
                             </div>
+                            @endif
                         </div>
                     </div>
 
@@ -115,7 +117,7 @@
                     <div class="overflow-x-auto">
                         <table class="w-full" style="width:100%">
                             <thead>
-                                <tr>
+                                <tr class="bg-slate-100 dark:bg-zink-600 border-b border-slate-200 dark:border-zink-500">
                                     <th hidden>No</th>
                                     <th class="px-3.5 py-2.5 font-semibold border border-slate-200 dark:border-zink-500">
                                         {{ __('messages.no') }}</th>
@@ -127,8 +129,10 @@
                                         {{ __('messages.holiday_name') }}</th>
                                     <th class="px-3.5 py-2.5 font-semibold border border-slate-200 dark:border-zink-500">
                                         {{ __('messages.type') }}</th>
+                                    @if (in_array(Auth::user()->role_name, ['Admin', 'HR']))
                                     <th class="px-3.5 py-2.5 font-semibold border border-slate-200 dark:border-zink-500">
                                         {{ __('messages.action') }}</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
@@ -165,6 +169,7 @@
                                         <td id="holiday_type" class="px-3.5 py-2.5 border border-slate-200 dark:border-zink-500">
                                             {{ $value->holiday_type }}
                                         </td>
+                                        @if (in_array(Auth::user()->role_name, ['Admin', 'HR']))
                                         <td class="px-3.5 py-2.5 border border-slate-200 dark:border-zink-500">
                                             <div class="flex gap-2 justify-center">
                                                 <a href="#!" data-modal-target="editHolidayModal" id="updateHoliday"
@@ -183,6 +188,7 @@
                                                 </a>
                                             </div>
                                         </td>
+                                        @endif
                                     </tr>
                                 @empty
                                     <tr>

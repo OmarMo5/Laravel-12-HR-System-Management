@@ -4,12 +4,12 @@
 
 <head>
     <meta charset="utf-8">
-    <title>404 | StarCode</title>
+    <title>404 | Not Found</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta content="Minimal Admin & Dashboard Template" name="description">
     <meta content="Omar Mokhtar" name="author">
     <!-- App favicon -->
-    {{-- <link rel="shortcut icon" href="{{ URL::to('assets/images/favicon1.ico') }}"> --}}
+    <link rel="shortcut icon" href="{{ URL::to('assets/images/favicon.ico') }}">
     <!-- Layout config Js -->
     <script src="{{ URL::to('assets/js/layout.js') }}"></script>
     <!-- StarCode CSS -->

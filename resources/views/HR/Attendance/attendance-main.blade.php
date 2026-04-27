@@ -72,18 +72,9 @@
                 <form method="GET" action="{{ route('hr/attendance/main/page') }}" id="filterForm">
                     <div class="grid grid-cols-1 gap-4 mb-5 lg:grid-cols-12">
 
-                        {{-- Search --}}
-                        <!-- <div class="lg:col-span-3">
-                            <div class="relative">
-                                <input type="text" name="search" id="searchInput" value="{{ $search }}"
-                                    class="ltr:pl-8 rtl:pr-8 form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500"
-                                    placeholder="{{ __('messages.search_for') }}" autocomplete="off">
-                                <i data-lucide="search" class="inline-block size-4 absolute ltr:left-2.5 rtl:right-2.5 top-2.5 text-slate-500"></i>
-                            </div>
-                        </div> -->
-
                         {{-- Month --}}
                         <div class="lg:col-span-2">
+                            <label class="block text-sm font-medium mb-1 text-slate-600 dark:text-zink-300">{{ __('messages.month') }}</label>
                             <select name="month" id="monthSelect"
                                 class="form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500">
                                 @foreach(range(1,12) as $m)
@@ -96,6 +87,7 @@
 
                         {{-- Year --}}
                         <div class="lg:col-span-2">
+                            <label class="block text-sm font-medium mb-1 text-slate-600 dark:text-zink-300">{{ __('messages.year') }}</label>
                             <select name="year" id="yearSelect"
                                 class="form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500">
                                 @foreach(range(date('Y')-2, date('Y')+1) as $y)
@@ -104,63 +96,91 @@
                             </select>
                         </div>
 
-                        {{-- Submit --}}
-                        <!-- <div class="lg:col-span-2">
+                        {{-- Per Page --}}
+                        <div class="lg:col-span-1">
+                            <label class="block text-sm font-medium mb-1 text-slate-600 dark:text-zink-300">{{ __('messages.show') }}</label>
+                            <select name="per_page" id="perPageSelect"
+                                class="form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500">
+                                <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                                <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
+                                <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                                <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
+                            </select>
+                        </div>
+
+                        {{-- Search --}}
+                        <div class="lg:col-span-3">
+                            <label class="block text-sm font-medium mb-1 text-slate-600 dark:text-zink-300">{{ __('messages.search') }}</label>
+                            <div class="relative">
+                                <input type="text" name="search" id="searchInput" value="{{ $search }}"
+                                    class="ltr:pl-8 rtl:pr-8 form-input border-slate-200 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-100 focus:outline-none focus:border-custom-500 w-full"
+                                    placeholder="{{ __('messages.search_for') }}" autocomplete="off">
+                                <i data-lucide="search" class="inline-block size-4 absolute ltr:left-2.5 rtl:right-2.5 top-2.5 text-slate-500"></i>
+                            </div>
+                        </div>
+
+                        {{-- Filter Button --}}
+                        <div class="lg:col-span-2 flex items-end">
                             <button type="submit"
                                 class="w-full text-white btn bg-custom-500 border-custom-500 hover:bg-custom-600 focus:ring focus:ring-custom-100">
                                 <i data-lucide="filter" class="inline-block size-4 ltr:mr-1 rtl:ml-1"></i>
                                 {{ __('messages.filter') }}
                             </button>
-                        </div> -->
+                        </div>
 
-                        {{-- Legend - Updated for Friday & Saturday weekend --}}
-                        <div class="lg:col-span-3 flex items-center gap-3 flex-wrap text-xs">
-                            <span class="flex items-center gap-1">
-                                <span class="inline-block w-3 h-3 rounded-full bg-green-500"></span> {{ __('messages.present') }}
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <span class="inline-block w-3 h-3 rounded-full bg-yellow-500"></span> {{ __('messages.late') }}
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <span class="inline-block w-3 h-3 rounded-full bg-orange-500"></span> {{ __('messages.early_departure') }}
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <span class="inline-block w-3 h-3 rounded-full bg-red-500"></span> {{ __('messages.absent') }}
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <span class="inline-block w-3 h-3 rounded-full bg-purple-500"></span> {{ __('messages.weekend_friday_saturday') }}
-                            </span>
+                        {{-- Export Button - واضح في الـ Light Mode --}}
+                        <div class="lg:col-span-2 flex items-end">
+                            <button type="button" onclick="exportAttendance()"
+                                class="w-full btn bg-emerald-500 hover:bg-emerald-600 text-white border-emerald-500 focus:ring focus:ring-emerald-200 transition-all duration-200">
+                                <i data-lucide="file-spreadsheet" class="inline-block size-4 ltr:mr-1 rtl:ml-1"></i>
+                                {{ __('messages.export_excel') }}
+                            </button>
                         </div>
 
                     </div>
                 </form>
 
-                {{-- Table with horizontal scroll --}}
+                {{-- Legend --}}
+                <div class="flex items-center gap-4 flex-wrap text-xs mb-4 pb-2 border-b border-slate-200 dark:border-zink-500">
+                    <span class="flex items-center gap-1.5">
+                        <span class="inline-block w-3 h-3 rounded-full bg-green-500"></span>
+                        <span class="text-slate-600 dark:text-zink-300">{{ __('messages.present') }}</span>
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <span class="inline-block w-3 h-3 rounded-full bg-yellow-500"></span>
+                        <span class="text-slate-600 dark:text-zink-300">{{ __('messages.late') }}</span>
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <span class="inline-block w-3 h-3 rounded-full bg-orange-500"></span>
+                        <span class="text-slate-600 dark:text-zink-300">{{ __('messages.early_departure') }}</span>
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <span class="inline-block w-3 h-3 rounded-full bg-red-500"></span>
+                        <span class="text-slate-600 dark:text-zink-300">{{ __('messages.absent') }}</span>
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <span class="inline-block w-3 h-3 rounded-full bg-purple-500"></span>
+                        <span class="text-slate-600 dark:text-zink-300">{{ __('messages.weekend_friday_saturday') }}</span>
+                    </span>
+                </div>
+
+                {{-- Table --}}
                 <div class="overflow-x-auto">
                     <table class="w-full whitespace-nowrap text-sm" id="mainAttendanceTable">
                         <thead class="ltr:text-left rtl:text-right bg-slate-100 text-slate-500 dark:text-zink-200 dark:bg-zink-600">
                             <tr>
-                                <th class="px-3.5 py-2.5 font-semibold border-b border-slate-200 dark:border-zink-500 sticky ltr:left-0 rtl:right-0 bg-slate-100 dark:bg-zink-600 z-10 min-w-[180px]">
+                                <th class="px-3.5 py-2.5 font-semibold border-b border-slate-200 dark:border-zink-500 sticky ltr:left-0 rtl:right-0 bg-slate-100 dark:bg-zink-600 z-10 min-w-[220px]">
                                     {{ __('messages.employee_name') }}
                                 </th>
                                 @for($d = 1; $d <= $daysInMonth; $d++)
                                     @php
                                         $dayObj   = Carbon\Carbon::create($year, $month, $d, 0, 0, 0, 'Africa/Cairo');
-                                        $isWeekend = ($dayObj->dayOfWeek == 5 || $dayObj->dayOfWeek == 6); // Friday (5) or Saturday (6)
+                                        $isWeekend = ($dayObj->dayOfWeek == 5 || $dayObj->dayOfWeek == 6);
                                         $isToday   = $dayObj->isToday();
-                                        
-                                        // Get day name in Arabic or English based on locale
-                                        $dayName = '';
-                                        if(app()->getLocale() == 'ar') {
-                                            $dayNames = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-                                            $dayName = $dayNames[$dayObj->dayOfWeek];
-                                        } else {
-                                            $dayName = $dayObj->format('D');
-                                        }
                                     @endphp
                                     <th class="px-2 py-2.5 font-semibold border-b border-slate-200 dark:border-zink-500 text-center w-10
-                                        {{ $isWeekend ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600' : '' }}
-                                        {{ $isToday ? 'bg-custom-100 text-custom-500 dark:bg-custom-500/20' : '' }}">
+                                        {{ $isWeekend ? 'bg-purple-200 dark:bg-purple-800/40 text-purple-700 dark:text-purple-300' : '' }}
+                                        {{ $isToday ? 'bg-custom-200 text-custom-700 dark:bg-custom-500/30 dark:text-custom-300' : '' }}">
                                         <div class="text-sm font-bold">{{ str_pad($d, 2, '0', STR_PAD_LEFT) }}</div>
                                         <div class="text-[10px] font-normal opacity-80 mt-0.5">
                                             @if($dayObj->dayOfWeek == 5)
@@ -168,43 +188,41 @@
                                             @elseif($dayObj->dayOfWeek == 6)
                                                 {{ app()->getLocale() == 'ar' ? 'سبت' : 'SAT' }}
                                             @else
-                                                {{ $dayName }}
+                                                {{ $dayObj->format('D') }}
                                             @endif
                                         </div>
                                     </th>
                                 @endfor
-                                <th class="px-3.5 py-2.5 font-semibold border-b border-slate-200 dark:border-zink-500 text-center min-w-[90px]">
+                                <th class="px-3.5 py-2.5 font-semibold border-b border-slate-200 dark:border-zink-500 text-center min-w-[100px] bg-green-100 dark:bg-emerald-800 dark:text-emerald-100">
                                     {{ __('messages.present_days') }}
                                 </th>
-                                <th class="px-3.5 py-2.5 font-semibold border-b border-slate-200 dark:border-zink-500 text-center min-w-[90px]">
+                                <th class="px-3.5 py-2.5 font-semibold border-b border-slate-200 dark:border-zink-500 text-center min-w-[100px] bg-red-100 dark:bg-rose-800 dark:text-rose-100">
                                     {{ __('messages.absent_days') }}
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($users as $user)
+                            @forelse($attendances as $attendance)
                                 @php
-                                    $userAttendance = $attendanceMatrix[$user->user_id] ?? [];
+                                    $userAttendance = $attendanceMatrix[$attendance->user_id] ?? [];
                                     $presentCount = 0;
                                     $absentCount  = 0;
                                 @endphp
-                                <tr class="border-y border-slate-200 dark:border-zink-500 hover:bg-slate-50 dark:hover:bg-zink-600/50 transition-colors">
-                                    {{-- Employee Name Column (Sticky) --}}
-                                    <td class="px-3.5 py-2.5 sticky ltr:left-0 rtl:right-0 bg-white dark:bg-zink-700 z-10 border-y border-slate-200 dark:border-zink-500">
+                                <tr class="border-y border-slate-200 dark:border-zink-500 hover:bg-slate-50 dark:hover:bg-zink-700 transition-colors">
+                                    <td class="px-3.5 py-2.5 sticky ltr:left-0 rtl:right-0 bg-white dark:bg-zink-800 z-10 border-y border-slate-200 dark:border-zink-500">
                                         <div class="flex items-center gap-3">
                                             <div class="size-9 rounded-full bg-slate-100 dark:bg-zink-600 shrink-0 overflow-hidden ring-2 ring-slate-200 dark:ring-zink-500">
-                                                <img src="{{ $user->avatar ? asset('assets/images/user/'.$user->avatar) : asset('assets/images/profile.png') }}"
-                                                    alt="{{ $user->name }}" class="w-full h-full object-cover rounded-full">
+                                                <img src="{{ $attendance->avatar ? asset('assets/images/user/'.$attendance->avatar) : asset('assets/images/profile.png') }}"
+                                                    alt="{{ $attendance->name }}" class="w-full h-full object-cover rounded-full">
                                             </div>
                                             <div>
-                                                <p class="font-medium text-slate-700 dark:text-zink-100">{{ $user->name }}</p>
-                                                <p class="text-xs text-slate-400 dark:text-zink-300">{{ $user->user_id }}</p>
-                                                <p class="text-xs text-slate-400 dark:text-zink-300 mt-0.5">{{ $user->position ?? '—' }}</p>
+                                                <p class="font-medium text-slate-700 dark:text-zink-100">{{ $attendance->name }}</p>
+                                                <p class="text-xs text-slate-400 dark:text-zink-400">{{ $attendance->user_id }}</p>
+                                                <p class="text-xs text-slate-400 dark:text-zink-400 mt-0.5">{{ $attendance->position ?? '—' }}</p>
                                             </div>
                                         </div>
                                     </td>
 
-                                    {{-- Days Columns --}}
                                     @for($d = 1; $d <= $daysInMonth; $d++)
                                         @php
                                             $dayObj    = Carbon\Carbon::create($year, $month, $d, 0, 0, 0, 'Africa/Cairo');
@@ -213,7 +231,6 @@
                                             $isFuture  = $dayObj->isFuture();
                                             $status    = $userAttendance[$d] ?? null;
 
-                                            // Calculate present/absent counts (excluding weekends and future days)
                                             if (!$isWeekend && !$isFuture && $status !== null) {
                                                 if (in_array($status, ['present','late','early_departure','late_early','approved'])) {
                                                     $presentCount++;
@@ -221,77 +238,79 @@
                                                     $absentCount++;
                                                 }
                                             } elseif (!$isWeekend && !$isFuture && $status === null) {
-                                                // Working day without record = absent
                                                 $absentCount++;
+                                            }
+                                            
+                                            $statusColor = '';
+                                            $statusIcon = '';
+                                            $statusTitle = '';
+                                            
+                                            if ($isWeekend) {
+                                                $statusColor = 'text-purple-500 dark:text-purple-400';
+                                                $statusIcon = 'calendar-off';
+                                                $statusTitle = __('messages.weekend');
+                                            } elseif ($isFuture) {
+                                                $statusColor = 'text-slate-300 dark:text-zink-500';
+                                                $statusIcon = 'minus';
+                                                $statusTitle = '';
+                                            } elseif ($status === null) {
+                                                $statusColor = 'text-red-500 dark:text-red-400';
+                                                $statusIcon = 'x-circle';
+                                                $statusTitle = __('messages.absent');
+                                            } elseif (in_array($status, ['present', 'approved'])) {
+                                                $statusColor = 'text-green-500 dark:text-green-400';
+                                                $statusIcon = 'check-circle';
+                                                $statusTitle = __('messages.present');
+                                            } elseif ($status === 'late') {
+                                                $statusColor = 'text-yellow-500 dark:text-yellow-400';
+                                                $statusIcon = 'clock';
+                                                $statusTitle = __('messages.late');
+                                            } elseif ($status === 'early_departure') {
+                                                $statusColor = 'text-orange-500 dark:text-orange-400';
+                                                $statusIcon = 'log-out';
+                                                $statusTitle = __('messages.early_departure');
+                                            } elseif ($status === 'late_early') {
+                                                $statusColor = 'text-red-500 dark:text-red-400';
+                                                $statusIcon = 'alert-triangle';
+                                                $statusTitle = __('messages.late_early');
+                                            } elseif ($status === 'absent' || $status === 'rejected') {
+                                                $statusColor = 'text-red-500 dark:text-red-400';
+                                                $statusIcon = 'x-circle';
+                                                $statusTitle = __('messages.absent');
+                                            } else {
+                                                $statusColor = 'text-slate-400 dark:text-zink-500';
+                                                $statusIcon = 'minus';
+                                                $statusTitle = ucfirst($status);
                                             }
                                         @endphp
                                         <td class="px-1 py-2.5 text-center border-y border-slate-200 dark:border-zink-500
-                                            {{ $isWeekend ? 'bg-purple-50 dark:bg-purple-900/10' : '' }}
+                                            {{ $isWeekend ? 'bg-purple-50 dark:bg-purple-900/15' : '' }}
                                             {{ $isToday ? 'bg-custom-50 dark:bg-custom-500/10' : '' }}">
-                                            @if($isWeekend)
-                                                {{-- Friday or Saturday weekend --}}
-                                                <div class="flex flex-col items-center">
-                                                    <i data-lucide="calendar-off" class="size-4 text-purple-400 dark:text-purple-500 mx-auto"></i>
-                                                    <span class="text-[10px] text-purple-400 dark:text-purple-500 mt-0.5 font-medium">
+                                            <div class="flex flex-col items-center group cursor-pointer" title="{{ $statusTitle }}">
+                                                <i data-lucide="{{ $statusIcon }}" class="size-4 {{ $statusColor }} mx-auto"></i>
+                                                @if($isWeekend)
+                                                    <span class="text-[10px] {{ $statusColor }} mt-0.5 font-medium">
                                                         {{ $dayObj->dayOfWeek == 5 ? __('messages.fri_short') : __('messages.sat_short') }}
                                                     </span>
-                                                </div>
-                                            @elseif($isFuture)
-                                                <span class="text-slate-300 dark:text-zink-500 text-xs">—</span>
-                                            @elseif($status === null)
-                                                {{-- Working day without record = absent --}}
-                                                <div class="flex flex-col items-center group cursor-pointer" title="{{ __('messages.absent_no_record') }}">
-                                                    <i data-lucide="x-circle" class="size-4 text-red-400 mx-auto"></i>
-                                                    <span class="text-[10px] text-red-400 mt-0.5 hidden group-hover:inline">{{ __('messages.absent') }}</span>
-                                                </div>
-                                            @elseif(in_array($status, ['present', 'approved']))
-                                                <div class="flex flex-col items-center group" title="{{ __('messages.present') }}">
-                                                    <i data-lucide="check-circle" class="size-4 text-green-500 mx-auto"></i>
-                                                    <span class="text-[10px] text-green-500 mt-0.5 hidden group-hover:inline">{{ __('messages.present') }}</span>
-                                                </div>
-                                            @elseif($status === 'late')
-                                                <div class="flex flex-col items-center group" title="{{ __('messages.late') }}">
-                                                    <i data-lucide="clock" class="size-4 text-yellow-500 mx-auto"></i>
-                                                    <span class="text-[10px] text-yellow-500 mt-0.5 hidden group-hover:inline">{{ __('messages.late') }}</span>
-                                                </div>
-                                            @elseif($status === 'early_departure')
-                                                <div class="flex flex-col items-center group" title="{{ __('messages.early_departure') }}">
-                                                    <i data-lucide="log-out" class="size-4 text-orange-500 mx-auto"></i>
-                                                    <span class="text-[10px] text-orange-500 mt-0.5 hidden group-hover:inline">{{ __('messages.early') }}</span>
-                                                </div>
-                                            @elseif($status === 'late_early')
-                                                <div class="flex flex-col items-center group" title="{{ __('messages.late_early') }}">
-                                                    <i data-lucide="alert-triangle" class="size-4 text-red-400 mx-auto"></i>
-                                                    <span class="text-[10px] text-red-400 mt-0.5 hidden group-hover:inline">{{ __('messages.both') }}</span>
-                                                </div>
-                                            @elseif($status === 'absent' || $status === 'rejected')
-                                                <div class="flex flex-col items-center group" title="{{ __('messages.absent') }}">
-                                                    <i data-lucide="x-circle" class="size-4 text-red-500 mx-auto"></i>
-                                                    <span class="text-[10px] text-red-500 mt-0.5 hidden group-hover:inline">{{ __('messages.absent') }}</span>
-                                                </div>
-                                            @else
-                                                <div class="flex flex-col items-center" title="{{ ucfirst($status) }}">
-                                                    <i data-lucide="minus" class="size-4 text-slate-400 mx-auto"></i>
-                                                </div>
-                                            @endif
+                                                @endif
+                                            </div>
                                         </td>
                                     @endfor
 
-                                    {{-- Totals --}}
-                                    <td class="px-3.5 py-2.5 text-center border-y border-slate-200 dark:border-zink-500 bg-green-50 dark:bg-green-900/10">
-                                        <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400">
+                                    <td class="px-3.5 py-2.5 text-center border-y border-slate-200 dark:border-zink-500 bg-green-50 dark:bg-emerald-900/40">
+                                        <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-green-500 text-white dark:bg-emerald-600 dark:text-emerald-50">
                                             {{ $presentCount }}
                                         </span>
                                      </td>
-                                    <td class="px-3.5 py-2.5 text-center border-y border-slate-200 dark:border-zink-500 bg-red-50 dark:bg-red-900/10">
-                                        <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400">
+                                    <td class="px-3.5 py-2.5 text-center border-y border-slate-200 dark:border-zink-500 bg-red-50 dark:bg-rose-900/40">
+                                        <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-red-500 text-white dark:bg-rose-600 dark:text-rose-50">
                                             {{ $absentCount }}
                                         </span>
                                      </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="{{ $daysInMonth + 3 }}" class="px-3.5 py-12 text-center text-slate-500 dark:text-zink-200">
+                                    <td colspan="{{ $daysInMonth + 3 }}" class="px-3.5 py-12 text-center text-slate-500 dark:text-zink-300">
                                         <i data-lucide="inbox" class="size-12 mx-auto mb-3 text-slate-300 dark:text-zink-500"></i>
                                         <p>{{ __('messages.no_records') }}</p>
                                     </td>
@@ -302,17 +321,15 @@
                 </div>
 
                 {{-- Pagination --}}
-                <div class="flex flex-col items-center mt-5 md:flex-row">
-                    <div class="mb-4 grow md:mb-0">
-                        <p class="text-slate-500 dark:text-zink-200">
-                            {{ __('messages.showing') }} <b>{{ $users->firstItem() ?? 0 }}</b>
-                            {{ __('messages.to') }} <b>{{ $users->lastItem() ?? 0 }}</b>
-                            {{ __('messages.of') }} <b>{{ $users->total() }}</b>
-                            {{ __('messages.results') }}
-                        </p>
+                <div class="flex flex-col items-center justify-between mt-5 md:flex-row gap-3">
+                    <div class="text-sm text-slate-500 dark:text-zink-300">
+                        {{ __('messages.showing') }} <b>{{ $attendances->firstItem() ?? 0 }}</b>
+                        {{ __('messages.to') }} <b>{{ $attendances->lastItem() ?? 0 }}</b>
+                        {{ __('messages.of') }} <b>{{ $attendances->total() }}</b>
+                        {{ __('messages.results') }}
                     </div>
                     <div class="pagination-wrapper">
-                        {{ $users->appends(request()->query())->links() }}
+                        {{ $attendances->appends(request()->query())->links() }}
                     </div>
                 </div>
 
@@ -325,12 +342,11 @@
 
 @section('script')
 <script>
-    // Initialize Lucide icons
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }
 
-    // Auto-submit form when month/year changes
+    // Auto-submit form when month/year/per_page changes
     document.getElementById('monthSelect')?.addEventListener('change', function () {
         document.getElementById('filterForm').submit();
     });
@@ -338,8 +354,12 @@
     document.getElementById('yearSelect')?.addEventListener('change', function () {
         document.getElementById('filterForm').submit();
     });
+    
+    document.getElementById('perPageSelect')?.addEventListener('change', function () {
+        document.getElementById('filterForm').submit();
+    });
 
-    // Live search with debounce (500ms)
+    // Live search with debounce
     let searchTimeout;
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
@@ -351,7 +371,15 @@
         });
     }
 
-    // Re-initialize icons after any AJAX or DOM changes (if needed)
+    // Export to Excel
+    function exportAttendance() {
+        let currentUrl = new URL(window.location.href);
+        let params = currentUrl.searchParams;
+        
+        let exportUrl = '{{ route("hr/attendance/export") }}?' + params.toString();
+        window.open(exportUrl, '_blank');
+    }
+
     function refreshIcons() {
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
@@ -359,18 +387,7 @@
     }
 </script>
 
-{{-- Additional Styles for better weekend visibility --}}
 <style>
-    /* Tooltip-like hover effects */
-    td .flex-col {
-        transition: all 0.2s ease;
-    }
-    
-    td .flex-col:hover {
-        transform: scale(1.1);
-    }
-    
-    /* Custom scrollbar for table */
     .overflow-x-auto::-webkit-scrollbar {
         height: 6px;
     }
@@ -389,7 +406,6 @@
         background: #94a3b8;
     }
     
-    /* Dark mode scrollbar */
     .dark .overflow-x-auto::-webkit-scrollbar-track {
         background: #1e293b;
     }
@@ -398,13 +414,22 @@
         background: #475569;
     }
     
-    /* Sticky column shadow */
     .sticky.ltr\:left-0, .sticky.rtl\:right-0 {
         box-shadow: 2px 0 5px -2px rgba(0,0,0,0.1);
+        z-index: 20;
     }
     
     .dark .sticky.ltr\:left-0, .dark .sticky.rtl\:right-0 {
         box-shadow: 2px 0 5px -2px rgba(0,0,0,0.3);
+    }
+    
+    /* تحسين ظهور زر الـ Export */
+    .btn.bg-emerald-500 {
+        background-color: #10b981 !important;
+        color: white !important;
+    }
+    .btn.bg-emerald-500:hover {
+        background-color: #059669 !important;
     }
 </style>
 @endsection

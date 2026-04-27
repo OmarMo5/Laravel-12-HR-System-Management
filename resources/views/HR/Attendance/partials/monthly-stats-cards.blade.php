@@ -14,7 +14,7 @@
             </div>
         </div>
     </div>
-    <div class="col-span-1">
+    <!-- <div class="col-span-1">
         <div class="card">
             <div class="card-body">
                 <div class="flex items-center gap-3">
@@ -43,7 +43,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
     <div class="col-span-1">
         <div class="card">
             <div class="card-body">

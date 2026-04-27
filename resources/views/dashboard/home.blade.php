@@ -19,12 +19,12 @@
         <div class="grid grid-cols-12 2xl:grid-cols-12 gap-x-5">
             <!-- Welcome Section -->
             <div class="col-span-12 md:order-1 xl:col-span-8 2xl:col-span-6">
-                <h5 class="mb-2">{{ __('messages.welcome') }} Omar Mokhtar 🎉</h5>
-                <p class="mb-5 text-slate-500 dark:text-zink-200">
-                    {{ __('messages.pending_salary') }} <a href="#" class="underline text-slate-800 dark:text-zink-50">Omar Mokhtar</a>
+                <h5 class="mb-2">{{ __('messages.welcome') }} {{ Auth::user()->name }} 🎉</h5>
+                <!-- <p class="mb-5 text-slate-500 dark:text-zink-200">
+                    {{ __('messages.pending_salary') }} <a href="#" class="underline text-slate-800 dark:text-zink-50">{{ Auth::user()->name }}</a>
                     {{ __('messages.pending_since') }} 05 Dec, 2024.
                     <a href="#" class="text-red-500">{{ __('messages.learn_more') }}</a>
-                </p>
+                </p> -->
             </div>
             
             <!-- Attendance Stats -->

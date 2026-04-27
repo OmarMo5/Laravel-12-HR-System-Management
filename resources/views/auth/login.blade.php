@@ -72,13 +72,13 @@
                             data-lucide="github" class="size-4"></i></button>
                 </div>
 
-                <div class="mt-10 text-center">
+                <!-- <div class="mt-10 text-center">
                     <p class="mb-0 text-slate-500 dark:text-zink-200">{{ __('messages.dont_have_account') }}
                         <a href="{{ route('register') }}"
                             class="font-semibold underline transition-all duration-150 ease-linear text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500">
                             {{ __('messages.sign_up') }}</a>
                     </p>
-                </div>
+                </div> -->
             </form>
         </div>
     </div>

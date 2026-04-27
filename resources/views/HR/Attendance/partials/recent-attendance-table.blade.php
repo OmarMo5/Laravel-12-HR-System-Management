@@ -1,7 +1,7 @@
 <div class="overflow-x-auto">
     <table class="w-full">
         <thead class="bg-slate-100">
-            <tr>
+            <tr class="bg-slate-100 dark:bg-zink-600 border-b border-slate-200 dark:border-zink-500">
                 <th class="px-3.5 py-2.5 font-semibold text-left">{{ __('messages.date') }}</th>
                 <th class="px-3.5 py-2.5 font-semibold text-left">{{ __('messages.check_in') }}</th>
                 <th class="px-3.5 py-2.5 font-semibold text-left">{{ __('messages.check_out') }}</th>

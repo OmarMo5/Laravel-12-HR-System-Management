@@ -16,33 +16,61 @@ class HomeController extends Controller
 
     public function index()
     {
+        $user = auth()->user();
+        if ($user->role_name == 'Employee') {
+            return redirect()->route('page/account', $user->user_id);
+        }
+
+        $isManager = ($user->role_name == 'Manager');
+        $department = $user->department;
+
         // --------------------------------------------------------------
         // 1. بيانات الموظفين الكلية
         // --------------------------------------------------------------
-        $totalEmployees = User::count();
+        $totalEmployeesQuery = User::query();
+        if ($isManager) {
+            $totalEmployeesQuery->where('department', $department);
+        }
+        $totalEmployees = $totalEmployeesQuery->count();
         
         // --------------------------------------------------------------
         // 2. بيانات الحضور والغياب والتأخير (لليوم الحالي)
         // --------------------------------------------------------------
         $today = Carbon::today()->toDateString();
         
-        $attendanceToday = Attendance::where('date', $today)
-            ->whereNotNull('check_in')
-            ->count();
+        $attendanceTodayQuery = Attendance::where('date', $today)
+            ->whereNotNull('check_in');
         
-        $lateToday = Attendance::where('date', $today)
-            ->whereNotNull('check_in')
-            ->whereTime('check_in', '>', '09:00:00')
-            ->count();
+        if ($isManager) {
+            $attendanceTodayQuery->whereHas('user', function($q) use ($department) {
+                $q->where('department', $department);
+            });
+        }
+        $attendanceToday = $attendanceTodayQuery->count();
         
-        $absentToday = $totalEmployees - $attendanceToday;
+        $lateTodayQuery = Attendance::where('date', $today)
+            ->whereNotNull('check_in')
+            ->whereTime('check_in', '>', '09:00:00');
+        
+        if ($isManager) {
+            $lateTodayQuery->whereHas('user', function($q) use ($department) {
+                $q->where('department', $department);
+            });
+        }
+        $lateToday = $lateTodayQuery->count();
+        
+        $absentToday = max(0, $totalEmployees - $attendanceToday);
         
         // --------------------------------------------------------------
         // 3. بيانات الموظفين
         // --------------------------------------------------------------
-        $employees = User::select('user_id', 'name', 'email', 'designation', 'position', 'status', 'avatar')
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $employeesQuery = User::select('user_id', 'name', 'email', 'designation', 'position', 'status', 'avatar')
+            ->orderBy('created_at', 'desc');
+        
+        if ($isManager) {
+            $employeesQuery->where('department', $department);
+        }
+        $employees = $employeesQuery->get();
         
         $employeePerformance = $employees->map(function ($employee) {
             $performances = ['Low', 'Good', 'Excellent', 'Average'];
@@ -70,7 +98,12 @@ class HomeController extends Controller
         // --------------------------------------------------------------
         // 4. حساب نسبة الزيادة
         // --------------------------------------------------------------
-        $lastMonthCount = User::whereMonth('created_at', Carbon::now()->subMonth()->month)->count();
+        $lastMonthQuery = User::whereMonth('created_at', Carbon::now()->subMonth()->month);
+        if ($isManager) {
+            $lastMonthQuery->where('department', $department);
+        }
+        $lastMonthCount = $lastMonthQuery->count();
+        
         $employeeIncreasePercent = $lastMonthCount > 0 
             ? round((($totalEmployees - $lastMonthCount) / $lastMonthCount) * 100)
             : 0;

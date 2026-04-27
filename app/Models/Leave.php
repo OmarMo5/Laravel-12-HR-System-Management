@@ -21,6 +21,7 @@ class Leave extends Model
         'number_of_day',
         'reason',
         'status',
+        'manager_status',
         'approved_by',
     ];
 
