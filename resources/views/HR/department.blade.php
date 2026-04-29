@@ -209,12 +209,12 @@
                                     <th
                                         class="px-3.5 py-2.5 font-semibold border border-slate-200 dark:border-zink-500 dark:text-zink-100">
                                         {{ __('messages.head_of_department') }}</th>
-                                    <th
+                                    <!-- <th
                                         class="px-3.5 py-2.5 font-semibold border border-slate-200 dark:border-zink-500 dark:text-zink-100">
                                         {{ __('messages.phone_number') }}</th>
                                     <th
                                         class="px-3.5 py-2.5 font-semibold border border-slate-200 dark:border-zink-500 dark:text-zink-100">
-                                        {{ __('messages.email') }}</th>
+                                        {{ __('messages.email') }}</th> -->
                                     <th
                                         class="px-3.5 py-2.5 font-semibold border border-slate-200 dark:border-zink-500 dark:text-zink-100">
                                         {{ __('messages.total_employee') }}</th>
@@ -239,28 +239,28 @@
                                             class="head-of-name px-3.5 py-2.5 border border-slate-200 dark:border-zink-500 dark:text-zink-200">
                                             {{ $value->head_of }}
                                         </td>
-                                        <td
+                                        <!-- <td
                                             class="phone-number px-3.5 py-2.5 border border-slate-200 dark:border-zink-500 dark:text-zink-200">
                                             {{ $value->phone_number }}
                                         </td>
                                         <td
                                             class="email-address px-3.5 py-2.5 border border-slate-200 dark:border-zink-500 dark:text-zink-200">
                                             {{ $value->email }}
-                                        </td>
+                                        </td> -->
                                         <td
                                             class="total-employee px-3.5 py-2.5 border border-slate-200 dark:border-zink-500 dark:text-zink-200">
                                             {{ $value->users_count ?? 0 }}
                                         </td>
                                         <td class="px-3.5 py-2.5 border border-slate-200 dark:border-zink-500">
                                             <div class="flex gap-2">
-                                                <a href="javascript:void(0);" data-modal-target="editDepartmentModal"
+                                                <!-- <a href="javascript:void(0);" data-modal-target="editDepartmentModal"
                                                     class="update-record-btn flex items-center justify-center transition-all duration-200 ease-linear rounded-md size-8 bg-slate-100 dark:bg-zink-600 dark:text-zink-200 text-slate-500 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-100 dark:hover:bg-custom-500/20"><i
-                                                        data-lucide="pencil" class="size-4"></i></a>
+                                                        data-lucide="pencil" class="size-4"></i></a> -->
                                                 <a href="javascript:void(0);" data-modal-target="deleteModal"
                                                     class="delete-record-btn flex items-center justify-center transition-all duration-200 ease-linear rounded-md size-8 bg-slate-100 dark:bg-zink-600 dark:text-zink-200 text-slate-500 hover:text-red-500 dark:hover:text-red-500 hover:bg-red-100 dark:hover:bg-red-500/20"><i
                                                         data-lucide="trash-2" class="size-4"></i></a>
                                             </div>
-                                        </td>
+                                        </td> 
                                     </tr>
                                 @empty
                                     <tr>
@@ -323,7 +323,7 @@
     <!-- End Page-content -->
 
     <!-- add department modal -->
-    <div id="addDepartmentModal" modal-center=""
+    <!-- <div id="addDepartmentModal" modal-center=""
         class="fixed flex flex-col hidden transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4 show">
         <div class="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600">
             <div class="flex items-center justify-between p-4 border-b dark:border-zink-500">
@@ -356,7 +356,7 @@
                                 class="form-select border-slate-200 dark:border-zink-500 dark:bg-zink-700 dark:text-zink-100 dark:focus:border-custom-800 focus:outline-none focus:border-custom-500 @error('head_of') is-invalid @enderror"
                                 required>
                                 <option value="">{{ __('messages.select_manager') }}</option>
-                                @foreach ($managers as $manager)
+                                @foreach ($allManagers as $manager)
                                     <option value="{{ $manager->name }}"
                                         {{ old('head_of') == $manager->name ? 'selected' : '' }}>
                                         {{ $manager->name }} ({{ $manager->user_id }})
@@ -368,11 +368,6 @@
                                     <strong>{{ $message }}</strong>
                                 </span>
                             @enderror
-                            @if ($managers->isEmpty())
-                                <span class="text-yellow-500 text-sm mt-1 block">
-                                    <strong>⚠️ لا يوجد مدراء في النظام. قم بإضافة موظف بدور Manager أولاً.</strong>
-                                </span>
-                            @endif
                         </div>
                         <div class="xl:col-span-12">
                             <label for="phoneNumberInput"
@@ -409,11 +404,79 @@
                 </form>
             </div>
         </div>
+    </div> -->
+    <!-- Add Department Modal -->
+    <div id="addDepartmentModal" modal-center=""
+        class="fixed flex flex-col hidden transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4 show">
+        <div class="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600">
+            <div class="flex items-center justify-between p-4 border-b dark:border-zink-500">
+                <h5 class="text-16 dark:text-zink-100">{{ __('messages.add_department') }}</h5>
+                <button type="button" onclick="closeModal('addDepartmentModal')"
+                    class="transition-all duration-200 ease-linear text-slate-400 hover:text-red-500"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="max-h-[calc(100vh_-_180px)] p-4 overflow-y-auto">
+                <form action="{{ route('hr/department/save') }}" method="POST">
+                    @csrf
+                    <div class="grid grid-cols-1 gap-4">
+                        <!-- اسم القسم - Required -->
+                        <div>
+                            <label class="inline-block mb-2 text-base font-medium dark:text-zink-100">
+                                {{ __('messages.department_name') }} <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="department" id="departmentInput"
+                                class="form-input border-slate-200 dark:border-zink-500 dark:bg-zink-700 dark:text-zink-100 w-full rounded-md"
+                                placeholder="{{ __('messages.enter_department_name') }}" required>
+                        </div>
+                        
+                        <!-- رئيس القسم - Optional -->
+                        <div>
+                            <label class="inline-block mb-2 text-base font-medium dark:text-zink-100">
+                                {{ __('messages.head_of_department') }} <span class="text-gray-400 text-xs">(اختياري)</span>
+                            </label>
+                            <select name="head_of" id="headOfInput"
+                                class="form-select border-slate-200 dark:border-zink-500 dark:bg-zink-700 dark:text-zink-100 w-full rounded-md">
+                                <option value="">-- اختر مدير القسم (اختياري) --</option>
+                                @foreach ($allManagers as $manager)
+                                    <option value="{{ $manager->name }}">{{ $manager->name }} ({{ $manager->user_id }})</option>
+                                @endforeach
+                            </select>
+                            <p class="text-xs text-gray-400 mt-1">يمكنك إضافة رئيس القسم لاحقاً من خلال التعديل</p>
+                        </div>
+                        
+                        <!-- رقم الهاتف - Optional -->
+                        <div>
+                            <label class="inline-block mb-2 text-base font-medium dark:text-zink-100">
+                                {{ __('messages.phone_number') }} <span class="text-gray-400 text-xs">(اختياري)</span>
+                            </label>
+                            <input type="text" name="phone_number" id="phoneNumberInput"
+                                class="form-input border-slate-200 dark:border-zink-500 dark:bg-zink-700 dark:text-zink-100 w-full rounded-md"
+                                placeholder="{{ __('messages.enter_phone') }}">
+                        </div>
+                        
+                        <!-- البريد الإلكتروني - Optional -->
+                        <div>
+                            <label class="inline-block mb-2 text-base font-medium dark:text-zink-100">
+                                {{ __('messages.email') }} <span class="text-gray-400 text-xs">(اختياري)</span>
+                            </label>
+                            <input type="email" name="email" id="emailInput"
+                                class="form-input border-slate-200 dark:border-zink-500 dark:bg-zink-700 dark:text-zink-100 w-full rounded-md"
+                                placeholder="{{ __('messages.enter_email') }}">
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-2 mt-4">
+                        <button type="button" onclick="closeModal('addDepartmentModal')"
+                            class="px-4 py-2 border rounded-md hover:bg-slate-100 dark:border-zink-500 dark:text-zink-100">{{ __('messages.cancel') }}</button>
+                        <button type="submit"
+                            class="px-4 py-2 bg-custom-500 text-white rounded-md hover:bg-custom-600">{{ __('messages.add') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
     <!--end add department-->
 
     <!-- edit department modal -->
-    <div id="editDepartmentModal" modal-center=""
+    <!-- <div id="editDepartmentModal" modal-center=""
         class="fixed flex flex-col hidden transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4 show">
         <div class="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600">
             <div class="flex items-center justify-between p-4 border-b dark:border-zink-500">
@@ -446,7 +509,7 @@
                                 class="form-select border-slate-200 dark:border-zink-500 dark:bg-zink-700 dark:text-zink-100 dark:focus:border-custom-800 focus:outline-none focus:border-custom-500"
                                 required>
                                 <option value="">{{ __('messages.select_manager') }}</option>
-                                @foreach ($managers as $manager)
+                                @foreach ($allManagers as $manager)
                                     <option value="{{ $manager->name }}">
                                         {{ $manager->name }} ({{ $manager->user_id }})
                                     </option>
@@ -481,6 +544,66 @@
                                     <strong>{{ $message }}</strong>
                                 </span>
                             @enderror
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-2 mt-4">
+                        <button type="button" data-modal-close="editDepartmentModal"
+                            class="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10 dark:text-red-400">{{ __('messages.cancel') }}</button>
+                        <button type="submit"
+                            class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">{{ __('messages.update_department') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div> -->
+    <!-- edit department modal -->
+    <div id="editDepartmentModal" modal-center=""
+        class="fixed flex flex-col hidden transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4 show">
+        <div class="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600">
+            <div class="flex items-center justify-between p-4 border-b dark:border-zink-500">
+                <h5 class="text-16 dark:text-zink-100">{{ __('messages.edit_department') }}</h5>
+                <button type="button" data-modal-close="editDepartmentModal"
+                    class="transition-all duration-200 ease-linear text-slate-400 hover:text-red-500"><i data-lucide="x"
+                        class="w-5 h-5"></i></button>
+            </div>
+            <div class="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto">
+                <form action="{{ route('hr/department/save') }}" method="POST" id="editDepartmentForm">
+                    @csrf
+                    <input type="hidden" name="id_update" id="e_id_update" value="" />
+                    <div class="grid grid-cols-1 gap-4 xl:grid-cols-12">
+                        <div class="xl:col-span-12">
+                            <label for="e_department_input"
+                                class="inline-block mb-2 text-base font-medium dark:text-zink-100">{{ __('messages.department_name') }}</label>
+                            <input type="text" name="department" id="e_department_input"
+                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                                placeholder="{{ __('messages.enter_department_name') }}" required>
+                        </div>
+                        <div class="xl:col-span-12">
+                            <label for="e_head_of_input"
+                                class="inline-block mb-2 text-base font-medium dark:text-zink-100">{{ __('messages.head_of_department') }} <span class="text-gray-400 text-xs">(اختياري)</span></label>
+                            <select name="head_of" id="e_head_of_input"
+                                class="form-select border-slate-200 dark:border-zink-500 dark:bg-zink-700 dark:text-zink-100 dark:focus:border-custom-800 focus:outline-none focus:border-custom-500">
+                                <option value="">{{ __('messages.select_manager') }}</option>
+                                @foreach ($allManagers as $manager)
+                                    <option value="{{ $manager->name }}">
+                                        {{ $manager->name }} ({{ $manager->user_id }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="xl:col-span-12">
+                            <label for="e_phone_number_input"
+                                class="inline-block mb-2 text-base font-medium dark:text-zink-100">{{ __('messages.phone_number') }} <span class="text-gray-400 text-xs">(اختياري)</span></label>
+                            <input type="text" name="phone_number" id="e_phone_number_input"
+                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                                placeholder="{{ __('messages.enter_phone') }}">
+                        </div>
+                        <div class="xl:col-span-12">
+                            <label for="e_email_input"
+                                class="inline-block mb-2 text-base font-medium dark:text-zink-100">{{ __('messages.email') }} <span class="text-gray-400 text-xs">(اختياري)</span></label>
+                            <input type="email" name="email" id="e_email_input"
+                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                                placeholder="{{ __('messages.enter_email') }}">
                         </div>
                     </div>
                     <div class="flex justify-end gap-2 mt-4">

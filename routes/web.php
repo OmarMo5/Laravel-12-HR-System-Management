@@ -75,6 +75,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
             Route::post('employee/update', 'employeeUpdateRecord')->name('hr/employee/update');
             Route::post('employee/delete', 'employeeDeleteRecord')->name('hr/employee/delete');
             Route::get('employee/export', 'exportEmployees')->name('hr/employee/export');
+            Route::get('employee/import-template', 'downloadImportTemplate')->name('hr/employee/import-template');
+            Route::post('employee/import', 'importEmployees')->name('hr/employee/import');
 
             // Holiday routes
             Route::get('holidays/page', 'holidayPage')->name('hr/holidays/page');
@@ -119,6 +121,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
 
             // Department routes
             Route::get('department/page', 'department')->name('hr/department/page');
+            Route::get('department/org-chart', 'departmentOrgChart')->name('hr/department/org-chart');
+
             Route::post('department/save', 'saveRecordDepartment')->name('hr/department/save');
             Route::post('department/delete', 'deleteRecordDepartment')->name('hr/department/delete');
         });

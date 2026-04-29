@@ -48,6 +48,19 @@
                                 </a>
                             </div>
 
+                            {{-- زر Import --}}
+                            <!-- <div>
+                                <button data-modal-target="importEmployeeModal" type="button"
+                                    class="text-white btn bg-green-500 border-green-500 hover:text-white hover:bg-green-600 hover:border-green-600 focus:text-white focus:bg-green-600 focus:border-green-600 focus:ring focus:ring-green-100 active:text-white active:bg-green-600 active:border-green-600 active:ring active:ring-green-100 dark:ring-green-400/20">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-upload inline-block size-4 mr-1">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="17 8 12 3 7 8"></polyline>
+                                        <line x1="12" x2="12" y1="3" y2="15"></line>
+                                    </svg>
+                                    <span class="align-middle">{{ __('messages.import') }}</span>
+                                </button>
+                            </div> -->
+
                             {{-- Add Employee --}}
                             <div>
                                 <button data-modal-target="addEmployeeModal" type="button"
@@ -673,7 +686,7 @@
     </div>
 
     {{-- ══════════════════════════════════════════════════════════════
-         EDIT EMPLOYEE MODAL – تصغير الحجم وتحسين التمرير
+         EDIT EMPLOYEE MODAL 
     ══════════════════════════════════════════════════════════════ --}}
     <div id="editEmployeeModal" modal-center=""
         class="fixed flex flex-col transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4
@@ -1023,6 +1036,74 @@
         </div>
     </div>
 
+    {{-- ══════════════════════════════════════════════════════════════
+     IMPORT EMPLOYEES MODAL
+    ══════════════════════════════════════════════════════════════ --}}
+    <div id="importEmployeeModal" modal-center=""
+        class="fixed flex flex-col hidden transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4">
+        <div class="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600">
+            <div class="flex items-center justify-between p-4 border-b dark:border-zink-500 shrink-0">
+                <h5 class="text-16 font-semibold">{{ __('messages.import_employees') }}</h5>
+                <button data-modal-close="importEmployeeModal"
+                    class="transition-all duration-200 ease-linear text-slate-400 hover:text-red-500">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <div class="max-h-[calc(theme('height.screen')_-_180px)] overflow-y-auto p-4">
+                <form id="import-form" action="{{ route('hr/employee/import') }}" method="POST"
+                    enctype="multipart/form-data">
+                    @csrf
+                    
+                    <div class="mb-4 p-3 bg-blue-50 dark:bg-blue-500/10 rounded-md border border-blue-200 dark:border-blue-500/30">
+                        <div class="flex items-start gap-2">
+                            <i data-lucide="info" class="size-5 text-blue-500 shrink-0 mt-0.5"></i>
+                            <div class="text-sm text-blue-700 dark:text-blue-300">
+                                <p class="font-semibold mb-1">{{ __('messages.import_instructions') }}</p>
+                                <ul class="list-disc list-inside space-y-1 text-xs">
+                                    <li>{{ __('messages.import_format_csv') }}</li>
+                                    <li>{{ __('messages.import_required_fields') }}</li>
+                                    <li>{{ __('messages.import_download_template') }}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="inline-block mb-2 text-sm font-medium">
+                            {{ __('messages.import_file') }} <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <input type="file" name="import_file" id="import_file" accept=".csv,.xlsx,.xls,.txt"
+                                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 w-full"
+                                required>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">{{ __('messages.import_file_hint') }}</p>
+                    </div>
+                    
+                    <div class="flex justify-between items-center gap-2 mt-4 pt-3 border-t border-slate-200 dark:border-zink-500">
+                        <a href="{{ route('hr/employee/import-template') }}"
+                            class="text-custom-500 bg-white btn border border-custom-500 hover:text-white hover:bg-custom-500 dark:bg-zink-600">
+                            <i data-lucide="download" class="size-4 inline-block mr-1"></i>
+                            {{ __('messages.download_template') }}
+                        </a>
+                        <div class="flex gap-2">
+                            <button type="reset" data-modal-close="importEmployeeModal"
+                                class="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 dark:bg-zink-600">
+                                {{ __('messages.cancel') }}
+                            </button>
+                            <button type="submit"
+                                class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600">
+                                <i data-lucide="upload" class="size-4 inline-block mr-1"></i>
+                                {{ __('messages.import') }}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     {{-- DELETE MODAL --}}
     <div id="deleteModal" modal-center=""
         class="fixed flex flex-col hidden transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4 show">
@@ -1077,6 +1158,11 @@
     }
 
     $(document).ready(function() {
+
+        // ── Show import modal on button click ───────────────────────────────────
+        $('[data-modal-target="importEmployeeModal"]').on('click', function() {
+            $('#importEmployeeModal').removeClass('hidden');
+        });
 
         // ── Re-open modal if validation failed ───────────────────────────────────
         @if ($errors->create->any() || session('open_add_modal'))

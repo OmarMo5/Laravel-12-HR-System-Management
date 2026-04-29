@@ -21,10 +21,10 @@
                     </h4>
                     <p class="text-slate-500">{{ __('messages.your_check_in_time') }}</p>
                     @if ($todayAttendance && $todayAttendance->late_minutes > 0)
-                        <span class="inline-block px-2.5 py-1 mt-2 text-xs font-medium rounded bg-yellow-100 text-yellow-600">
+                        <!-- <span class="inline-block px-2.5 py-1 mt-2 text-xs font-medium rounded bg-yellow-100 text-yellow-600">
                             {{ __('messages.late_by') }} {{ round($todayAttendance->late_minutes) }}
                             {{ __('messages.minutes') }}
-                        </span>
+                        </span> -->
                     @endif
                 </div>
             @else

@@ -425,6 +425,13 @@ return [
     'error_loading' => 'خطأ في تحميل البيانات',
     'no_remaining_leaves' => 'لا توجد إجازات متبقية لهذا النوع!',
     'leave_dates_details' => 'تفاصيل أيام الإجازة',
+    'manager_approved_leave_title' => '✅ موافقة المدير على الإجازة',
+    'manager_approved_leave_message' => 'وافق المدير على طلب إجازة :employee من نوع (:type). مطلوب موافقتك النهائية الآن.',
+    'manager_rejected_leave_title' => '❌ رفض المدير للإجازة',
+    'manager_rejected_leave_message' => 'رفض المدير طلب إجازة :employee من نوع (:type).',
+    'Approved' => 'مقبولة',
+    'Pending' => 'معلقة',
+    'Rejected' => 'مرفوضة',
     'add_leave_button' => 'منج أجازة',
 
     /* Login/Register */
@@ -581,4 +588,17 @@ return [
     'remote' => 'عمل من المنزل (Remote)',
     'hybrid' => 'نظام هجين (Hybrid)',
     'contractor' => 'موظف أجير',
+
+    'org_chart' => 'الهيكل التنظيمي',
+    'ceo' => 'الرئيس التنفيذي',
+
+    'import' => 'استيراد',
+    'import_employees' => 'استيراد الموظفين',
+    'import_instructions' => 'تعليمات الاستيراد:',
+    'import_format_csv' => 'الملف المدعوم: CSV (Excel)',
+    'import_required_fields' => 'الحقول المطلوبة: الاسم والبريد الإلكتروني',
+    'import_download_template' => 'يمكنك تحميل القالب أدناه',
+    'import_file' => 'اختر ملف الاستيراد',
+    'import_file_hint' => 'الحد الأقصى 5 ميجابايت، صيغ مدعومة: CSV, XLSX, XLS',
+    'download_template' => 'تحميل القالب',
 ];

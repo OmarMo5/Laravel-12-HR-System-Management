@@ -427,6 +427,13 @@ return [
     'error_loading' => 'Error loading data',
     'no_remaining_leaves' => 'No remaining leaves for this type!',
     'leave_dates_details' => 'Leave Days Details',
+    'manager_approved_leave_title' => '✅ Manager Approved Leave',
+    'manager_approved_leave_message' => 'The manager has approved :employee\'s :type leave request. Your final approval is now required.',
+    'manager_rejected_leave_title' => '❌ Manager Rejected Leave',
+    'manager_rejected_leave_message' => 'The manager has rejected :employee\'s :type leave request.',
+    'Approved' => 'Approved',
+    'Pending' => 'Pending',
+    'Rejected' => 'Rejected',
 
     /* Login/Register */
     'welcome_back' => 'Welcome Back !',
@@ -582,4 +589,17 @@ return [
     'remote' => 'Remote',
     'hybrid' => 'Hybrid Work',
     'contractor' => 'Contractor',
+
+    'org_chart' => 'Org Chart',
+    'ceo' => 'CEO',
+
+    'import' => 'Import',
+    'import_employees' => 'Import Employees',
+    'import_instructions' => 'Import Instructions:',
+    'import_format_csv' => 'Supported file: CSV (Excel)',
+    'import_required_fields' => 'Required fields: Name and Email',
+    'import_download_template' => 'You can download the template below',
+    'import_file' => 'Select Import File',
+    'import_file_hint' => 'Max 5MB, supported formats: CSV, XLSX, XLS',
+    'download_template' => 'Download Template',
 ];

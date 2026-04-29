@@ -29,7 +29,7 @@
                                         alt="" class="w-full h-full object-cover">
                                 </div>
                                 <div>
-                                    <h4 class="text-xl text-white mb-1">{{ $user->name ?? 'Employee' }}</h4>
+                                    <h4 class="text-xl text-white/60 mb-1">{{ $user->name ?? 'Employee' }}</h4>
                                     <p class="text-white/80 text-sm">{{ $user->user_id ?? '—' }} •
                                         {{ $user->position ?? 'Employee' }}</p>
                                     <div class="flex gap-3 mt-2">

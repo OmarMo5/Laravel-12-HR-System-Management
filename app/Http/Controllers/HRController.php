@@ -200,6 +200,250 @@ class HRController extends Controller
     }
 
     // ─────────────────────────────────────────────────────────────
+    //  Import Employees from CSV/Excel
+    // ─────────────────────────────────────────────────────────────
+    /**
+     * Show import form modal (via AJAX or direct view)
+     */
+    public function importEmployeesForm()
+    {
+        return view('HR.employee-import-modal');
+    }
+
+    /**
+     * Process import file and insert employees
+     */
+    public function importEmployees(Request $request)
+    {
+        $request->validate([
+            'import_file' => 'required|file|mimes:csv,xlsx,xls,txt|max:5120',
+        ]);
+
+        try {
+            $file = $request->file('import_file');
+            $extension = $file->getClientOriginalExtension();
+            
+            // Read CSV file
+            $handle = fopen($file->getPathname(), 'r');
+            if (!$handle) {
+                flash()->error('Cannot read the uploaded file.');
+                return redirect()->back();
+            }
+            
+            // Add UTF-8 BOM handling
+            $bom = fgets($handle, 4);
+            if ($bom && substr($bom, 0, 3) === "\xEF\xBB\xBF") {
+                // BOM detected, rewind and skip it
+                rewind($handle);
+                fread($handle, 3);
+            } else {
+                rewind($handle);
+            }
+            
+            // Read headers
+            $headers = fgetcsv($handle);
+            if (!$headers) {
+                fclose($handle);
+                flash()->error('The file appears to be empty or invalid.');
+                return redirect()->back();
+            }
+            
+            // Map headers to expected columns
+            $expectedHeaders = ['#', 'employee_id', 'name', 'email', 'phone', 'job_type', 'department', 'designation', 'role', 'gender', 'location', 'join_date', 'experience', 'last_login'];
+            
+            // Find column indices
+            $indices = [];
+            foreach ($expectedHeaders as $expected) {
+                $indices[$expected] = array_search($expected, array_map('strtolower', $headers)) !== false 
+                    ? array_search($expected, array_map('strtolower', $headers)) 
+                    : null;
+            }
+            
+            $successCount = 0;
+            $errorCount = 0;
+            $errors = [];
+            $rowNumber = 1;
+            
+            while (($row = fgetcsv($handle)) !== false) {
+                $rowNumber++;
+                
+                // Skip empty rows
+                if (empty(array_filter($row))) continue;
+                
+                // Map data
+                $name = $indices['name'] !== null ? trim($row[$indices['name']] ?? '') : '';
+                $email = $indices['email'] !== null ? trim($row[$indices['email']] ?? '') : '';
+                $phone = $indices['phone'] !== null ? trim($row[$indices['phone']] ?? '') : '';
+                $department = $indices['department'] !== null ? trim($row[$indices['department']] ?? '') : '';
+                $designation = $indices['designation'] !== null ? trim($row[$indices['designation']] ?? '') : '';
+                $jobType = $indices['job_type'] !== null ? trim($row[$indices['job_type']] ?? '') : '';
+                $joinDate = $indices['join_date'] !== null ? trim($row[$indices['join_date']] ?? '') : '';
+                $role = $indices['role'] !== null ? trim($row[$indices['role']] ?? '') : '';
+                $gender = $indices['gender'] !== null ? trim($row[$indices['gender']] ?? '') : '';
+                $location = $indices['location'] !== null ? trim($row[$indices['location']] ?? '') : '';
+                $experience = $indices['experience'] !== null ? trim($row[$indices['experience']] ?? '') : '';
+                
+                // Validate required fields
+                if (empty($name) || empty($email)) {
+                    $errorCount++;
+                    $errors[] = "Row {$rowNumber}: Name and Email are required.";
+                    continue;
+                }
+                
+                // Check if email already exists
+                if (User::where('email', $email)->exists()) {
+                    $errorCount++;
+                    $errors[] = "Row {$rowNumber}: Email '{$email}' already exists in the system.";
+                    continue;
+                }
+                
+                // Map job type to correct value
+                $jobTypeMapped = $jobType;
+                $jobTypeLower = strtolower($jobType);
+                if (strpos($jobTypeLower, 'full') !== false || strpos($jobTypeLower, 'onsite') !== false) {
+                    $jobTypeMapped = 'Full-Time Onsite';
+                } elseif (strpos($jobTypeLower, 'part') !== false) {
+                    $jobTypeMapped = 'Part-Time';
+                } elseif (strpos($jobTypeLower, 'remote') !== false) {
+                    $jobTypeMapped = 'Remote';
+                } elseif (strpos($jobTypeLower, 'hybrid') !== false) {
+                    $jobTypeMapped = 'Hybrid Work';
+                } elseif (strpos($jobTypeLower, 'contract') !== false) {
+                    $jobTypeMapped = 'Contractor';
+                }
+                
+                // Map gender
+                $genderMapped = $gender;
+                $genderLower = strtolower($gender);
+                if ($genderLower === 'male' || $genderLower === 'ذكر') {
+                    $genderMapped = 'Male';
+                } elseif ($genderLower === 'female' || $genderLower === 'انثى' || $genderLower === 'أنثى') {
+                    $genderMapped = 'Female';
+                } else {
+                    $genderMapped = 'Male'; // Default
+                }
+                
+                // Parse join date
+                $joinDateParsed = null;
+                if (!empty($joinDate)) {
+                    try {
+                        $joinDateParsed = Carbon::parse($joinDate)->format('Y-m-d');
+                    } catch (\Exception $e) {
+                        $joinDateParsed = Carbon::now()->format('Y-m-d');
+                    }
+                } else {
+                    $joinDateParsed = Carbon::now()->format('Y-m-d');
+                }
+                
+                // Auto-generate employee ID
+                $newEmployeeId = $this->generateEmployeeId();
+                while (User::where('user_id', $newEmployeeId)->exists()) {
+                    $num = (int) substr($newEmployeeId, strlen('ASC_')) + 1;
+                    $newEmployeeId = 'ASC_' . str_pad($num, 3, '0', STR_PAD_LEFT);
+                }
+                
+                // Create employee
+                $user = new User();
+                $user->user_id = $newEmployeeId;
+                $user->name = $name;
+                $user->email = $email;
+                $user->phone_number = $phone;
+                $user->department = $department;
+                $user->designation = $designation;
+                $user->position = $jobTypeMapped;
+                $user->join_date = $joinDateParsed;
+                $user->role_name = $role;
+                $user->status = $genderMapped;
+                $user->location = $location;
+                $user->experience = is_numeric($experience) ? $experience : 0;
+                $user->password = Hash::make('password123'); // Default password
+                $user->save();
+                
+                $successCount++;
+            }
+            
+            fclose($handle);
+            
+            $message = "Import completed: {$successCount} employees added successfully.";
+            if ($errorCount > 0) {
+                $message .= " {$errorCount} rows failed.";
+                if (!empty($errors)) {
+                    \Log::warning('Import errors: ' . implode('; ', $errors));
+                }
+            }
+            
+            flash()->success($message);
+            
+        } catch (\Exception $e) {
+            \Log::error('Import error: ' . $e->getMessage());
+            flash()->error('Import failed: ' . $e->getMessage());
+        }
+        
+        return redirect()->route('hr/employee/list');
+    }
+
+    /**
+     * Download import template
+     */
+    public function downloadImportTemplate()
+    {
+        $fileName = 'employees_import_template.csv';
+        
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+        
+        $callback = function() {
+            $handle = fopen('php://output', 'w');
+            fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            
+            // Headers
+            fputcsv($handle, [
+                '#',
+                'employee_id',
+                'name',
+                'email',
+                'phone',
+                'job_type',
+                'department',
+                'designation',
+                'role',
+                'gender',
+                'location',
+                'join_date',
+                'experience',
+                'last_login'
+            ]);
+            
+            // Example row
+            fputcsv($handle, [
+                '1',
+                'ASC_001',
+                'John Doe',
+                'john@example.com',
+                '1234567890',
+                'Full-Time Onsite',
+                'IT',
+                'Software Engineer',
+                'Employee',
+                'Male',
+                'Cairo',
+                '2024-01-15',
+                '2',
+                '2024-01-15'
+            ]);
+            
+            fclose($handle);
+        };
+        
+        return response()->stream($callback, 200, $headers);
+    }
+
+    // ─────────────────────────────────────────────────────────────
     //  Save (Create) Employee
     // ─────────────────────────────────────────────────────────────
     public function employeeSaveRecord(Request $request)
@@ -1081,6 +1325,7 @@ class HRController extends Controller
                 if ($newStatus === 'Rejected') {
                     $leave->status = 'Rejected';
                     $this->sendLeaveStatusNotification($leave, $oldStatus, 'Rejected');
+                    $this->notifyManagerRejection($leave);
                 } else {
                     $this->notifyManagerApproval($leave);
                 }
@@ -1147,7 +1392,7 @@ class HRController extends Controller
             $employee = User::where('user_id', $leave->staff_id)->first();
             if (!$employee) return;
 
-            $manager = User::where('role_name', 'Manager')->where('department', $employee->department)->where('status', 'Active')->first();
+            $manager = User::where('role_name', 'Manager')->where('department', $employee->department)->first();
             if ($manager) {
                 Notification::create([
                     'user_id'  => $manager->user_id,
@@ -1161,7 +1406,7 @@ class HRController extends Controller
                 ]);
             }
 
-            $hrAdmins = User::whereIn('role_name', ['HR', 'Admin'])->where('status', 'Active')->get();
+            $hrAdmins = User::whereIn('role_name', ['HR', 'Admin'])->get();
             foreach ($hrAdmins as $u) {
                 Notification::create([
                     'user_id'  => $u->user_id,
@@ -1185,21 +1430,47 @@ class HRController extends Controller
             $employee = User::where('user_id', $leave->staff_id)->first();
             if (!$employee) return;
 
-            $hrAdmins = User::whereIn('role_name', ['HR', 'Admin'])->where('status', 'Active')->get();
+            $hrAdmins = User::whereIn('role_name', ['HR', 'Admin'])->get();
             foreach ($hrAdmins as $u) {
                 Notification::create([
                     'user_id'  => $u->user_id,
                     'type'     => 'manager_approved_leave',
-                    'title'    => app()->getLocale() === 'ar' ? '✅ موافقة المدير على الإجازة' : '✅ Manager Approved Leave',
-                    'message'  => app()->getLocale() === 'ar'
-                        ? "وافق المدير على طلب إجازة {$employee->name} ({$leave->leave_type}). يمكنك الآن إعطاء الموافقة النهائية."
-                        : "The manager approved {$employee->name}'s {$leave->leave_type} leave. You can now provide final approval.",
+                    'title'    => __('messages.manager_approved_leave_title'),
+                    'message'  => __('messages.manager_approved_leave_message', [
+                        'employee' => $employee->name,
+                        'type' => $leave->leave_type
+                    ]),
                     'leave_id' => $leave->id,
                     'is_read'  => false,
                 ]);
             }
         } catch (\Exception $e) {
             \Log::error('Error notifying manager approval: ' . $e->getMessage());
+        }
+    }
+
+    private function notifyManagerRejection($leave)
+    {
+        try {
+            $employee = User::where('user_id', $leave->staff_id)->first();
+            if (!$employee) return;
+
+            $hrAdmins = User::whereIn('role_name', ['HR', 'Admin'])->get();
+            foreach ($hrAdmins as $u) {
+                Notification::create([
+                    'user_id'  => $u->user_id,
+                    'type'     => 'manager_rejected_leave',
+                    'title'    => __('messages.manager_rejected_leave_title'),
+                    'message'  => __('messages.manager_rejected_leave_message', [
+                        'employee' => $employee->name,
+                        'type' => $leave->leave_type
+                    ]),
+                    'leave_id' => $leave->id,
+                    'is_read'  => false,
+                ]);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error notifying manager rejection: ' . $e->getMessage());
         }
     }
 
@@ -1653,21 +1924,114 @@ class HRController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate($perPage);
 
-        $managers = User::where('role_name', 'Manager')
+        $allManagers = User::where('role_name', 'Manager')
             ->orWhere('role_name', 'manager')
             ->orderBy('name', 'asc')
             ->get();
 
-        return view('HR.department', compact('departmentList', 'search', 'managers', 'perPage'));
+        return view('HR.department', compact('departmentList', 'search', 'allManagers', 'perPage'));
+    }
+    /**
+     * Display organizational chart with CEO -> Managers -> Employees
+    */
+    public function departmentOrgChart()
+    {
+        // 1. جلب الـ CEO (أعلى هرم - رول CEO أو Owner)
+        $ceo = User::where(function($query) {
+            $query->where('role_name', 'CEO')
+                ->orWhere('role_name', 'Owner')
+                ->orWhere('role_name', 'ceo')
+                ->orWhere('role_name', 'owner');
+        })->first();
+
+        // جلب الموظفين تحت الـ CEO (إن وجدوا)
+        $ceoEmployees = [];
+        if ($ceo) {
+            $ceoEmployees = User::where('department', $ceo->department)
+                ->where('id', '!=', $ceo->id)
+                ->whereNotIn('role_name', ['CEO', 'Owner', 'ceo', 'owner', 'Manager', 'manager'])
+                ->select('id', 'user_id', 'name', 'department', 'avatar', 'position', 'role_name')
+                ->get()
+                ->map(function($user) {
+                    return [
+                        'id' => $user->user_id,
+                        'name' => $user->name,
+                        'position' => $user->position,
+                        'avatar' => $user->avatar,
+                        'role' => $user->role_name,
+                    ];
+                })->toArray();
+        }
+
+        // 2. جلب كل المدراء (role Manager)
+        $managers = User::where(function($query) {
+            $query->where('role_name', 'Manager')
+                ->orWhere('role_name', 'manager');
+        })->orderBy('name', 'asc')->get();
+
+        // 3. بناء بيانات المدراء مع موظفيهم
+        $managersData = [];
+        foreach ($managers as $manager) {
+            // جلب الموظفين تحت هذا المدير (نفس القسم)
+            $employees = User::where('department', $manager->department)
+                ->where('id', '!=', $manager->id)
+                ->whereNotIn('role_name', ['CEO', 'Owner', 'ceo', 'owner', 'Manager', 'manager'])
+                ->select('id', 'user_id', 'name', 'department', 'avatar', 'position', 'role_name')
+                ->get()
+                ->map(function($user) {
+                    return [
+                        'id' => $user->user_id,
+                        'name' => $user->name,
+                        'position' => $user->position,
+                        'avatar' => $user->avatar,
+                        'role' => $user->role_name,
+                    ];
+                })->toArray();
+
+            $managersData[] = [
+                'id' => $manager->user_id,
+                'name' => $manager->name,
+                'department' => $manager->department ?? 'General',
+                'email' => $manager->email,
+                'phone' => $manager->phone_number,
+                'avatar' => $manager->avatar,
+                'total_employees' => count($employees),
+                'employees' => $employees,
+            ];
+        }
+
+        // 4. تجهيز بيانات الـ CEO
+        $ceoData = null;
+        if ($ceo) {
+            $ceoData = [
+                'id' => $ceo->user_id,
+                'name' => $ceo->name,
+                'role' => $ceo->role_name,
+                'department' => $ceo->department ?? 'CEO Office',
+                'email' => $ceo->email,
+                'phone' => $ceo->phone_number,
+                'avatar' => $ceo->avatar,
+                'total_employees' => count($ceoEmployees),
+                'employees' => $ceoEmployees,
+            ];
+        }
+
+        // جلب كل المدراء لعملية الإضافة والتعديل
+        $allManagers = User::where(function($query) {
+            $query->where('role_name', 'Manager')
+                ->orWhere('role_name', 'manager');
+        })->orderBy('name', 'asc')->get();
+
+        return view('HR.department-org', compact('ceoData', 'managersData', 'allManagers'));
     }
 
     public function saveRecordDepartment(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'department'   => 'required|string|max:255|unique:departments,department,' . $request->id_update,
-            'head_of'      => 'required|string|max:255|exists:users,name',
-            'phone_number' => 'required|numeric',
-            'email'        => 'required|email|max:255',
+            'head_of'      => 'nullable|string|max:255|exists:users,name',
+            'phone_number' => 'nullable|numeric',
+            'email'        => 'nullable|email|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -1681,9 +2045,9 @@ class HRController extends Controller
             $employeeCount = User::where('department', $request->department)->count();
             $data = [
                 'department'     => $request->department,
-                'head_of'        => $request->head_of,
-                'phone_number'   => $request->phone_number,
-                'email'          => $request->email,
+                'head_of'        => $request->head_of ?? null,
+                'phone_number'   => $request->phone_number ?? null,
+                'email'          => $request->email ?? null,
                 'total_employee' => $employeeCount,
             ];
 

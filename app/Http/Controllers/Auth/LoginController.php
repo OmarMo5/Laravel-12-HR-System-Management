@@ -69,9 +69,13 @@ class LoginController extends Controller
 
                 if ($user->role_name == 'Employee') {
                     flash()->success(__('messages.success_login'));
-                    return redirect()->route('page/account', $user->user_id);
+                    return redirect()->route('employee/attendance/dashboard', $user->user_id);
                 }
-
+                if ($user->role_name == 'Manager') {
+                    flash()->success(__('messages.success_login'));
+                    return redirect()->route('employee/attendance/dashboard', $user->user_id);
+                }
+                
                 flash()->success(__('messages.success_login'));
                 return redirect()->intended('home');
             } else {

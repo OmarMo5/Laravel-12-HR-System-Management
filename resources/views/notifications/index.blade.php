@@ -31,8 +31,12 @@
                     @endif
                 </div>
                 <div class="flex-1">
-                    <h4 class="font-semibold text-slate-800 dark:text-zink-100">{{ $notification->title }}</h4>
-                    <p class="text-sm text-slate-600 dark:text-zink-300 mt-1">{{ $notification->message }}</p>
+                    <h4 class="font-semibold text-slate-800 dark:text-zink-100">
+                        {{ str_starts_with($notification->title, 'messages.') ? __($notification->title) : $notification->title }}
+                    </h4>
+                    <p class="text-sm text-slate-600 dark:text-zink-300 mt-1">
+                        {{ str_starts_with($notification->message, 'messages.') ? __($notification->message) : $notification->message }}
+                    </p>
                     <p class="text-xs text-slate-400 dark:text-zink-400 mt-2">{{ $notification->created_at->diffForHumans() }}</p>
                 </div>
                 @if(!$notification->is_read)

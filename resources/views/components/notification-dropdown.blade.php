@@ -1,8 +1,26 @@
 <div class="relative" x-data="{ open: false }" @click.away="open = false">
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+    </style>
     <button @click="open = !open" class="relative flex items-center justify-center transition-all duration-200 ease-linear rounded-md size-9 text-slate-500 hover:text-slate-700 dark:text-zink-200 dark:hover:text-zink-100">
         <i data-lucide="bell" class="size-5"></i>
         @if($unreadCount > 0)
-            <span class="absolute top-0 right-0 inline-flex items-center justify-center px-1 py-0 text-[10px] font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full min-w-[16px] h-4">
+            <span class="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-red-500 border-2 border-white rounded-full dark:border-zink-700 shadow-sm animate-pulse">
                 {{ $unreadCount > 9 ? '9+' : $unreadCount }}
             </span>
         @endif
@@ -26,7 +44,7 @@
             </div>
         </div>
         
-        <div class="max-h-96 overflow-y-auto">
+        <div class="max-h-[400px] overflow-y-auto custom-scrollbar" data-simplebar>
             @forelse($notifications as $notification)
                 <a href="{{ route('notifications.show', $notification->id) }}" 
                    class="flex items-start gap-3 p-3 transition-colors duration-200 border-b border-slate-100 hover:bg-slate-50 dark:border-zink-600 dark:hover:bg-zink-600 {{ !$notification->is_read ? 'bg-blue-50 dark:bg-zink-600/50' : '' }}">
@@ -47,10 +65,10 @@
                     </div>
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-medium text-slate-800 dark:text-zink-100">
-                            {{ $notification->title }}
+                            {{ str_starts_with($notification->title, 'messages.') ? __($notification->title) : $notification->title }}
                         </p>
                         <p class="text-xs text-slate-500 dark:text-zink-300 line-clamp-2">
-                            {{ $notification->message }}
+                            {{ str_starts_with($notification->message, 'messages.') ? __($notification->message) : $notification->message }}
                         </p>
                         <p class="mt-1 text-xs text-slate-400 dark:text-zink-400">
                             {{ $notification->created_at->diffForHumans() }}
