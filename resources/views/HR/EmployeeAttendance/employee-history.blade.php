@@ -356,8 +356,8 @@
                                     <th class="px-3 py-2 text-left text-xs font-semibold">{{ __('messages.check_in') }}</th>
                                     <th class="px-3 py-2 text-left text-xs font-semibold">{{ __('messages.check_out') }}</th>
                                     <!-- <th class="px-3 py-2 text-left text-xs font-semibold">{{ __('messages.status') }}</th> -->
-                                    <th class="px-3 py-2 text-left text-xs font-semibold">{{ __('messages.hours') }}</th>
-                                    <th class="px-3 py-2 text-left text-xs font-semibold">{{ __('messages.overtime') }}</th>
+                                    <th class="px-3 py-2 text-left text-xs font-semibold">{{ __('messages.submitted_h') }}</th>
+                                    <th class="px-3 py-2 text-left text-xs font-semibold">{{ __('messages.difference') }}</th>
                                 </tr>
                             </thead>
                             <tbody id="attendanceTableBody">
@@ -402,11 +402,47 @@
                                         </span>
                                     </td> -->
                                     <td class="px-3 py-2 border-b text-xs font-semibold">
-                                        {{ $attendance->working_hours ? number_format($attendance->working_hours, 1) . 'h' : '—' }}
+                                        @if($attendance->working_hours)
+                                            @php
+                                                $workingHours = abs($attendance->working_hours);
+                                                $totalMinutes = round($workingHours * 60);
+                                                $h = floor($totalMinutes / 60);
+                                                $m = $totalMinutes % 60;
+                                                
+                                                $whText = '';
+                                                if ($h > 0) $whText .= $h . ' ' . __('messages.hrs') . ' ';
+                                                if ($m > 0) {
+                                                    if ($h > 0) $whText .= __('messages.and') . ' ';
+                                                    $whText .= $m . ' ' . __('messages.minutes');
+                                                }
+                                                if ($h == 0 && $m == 0) $whText = '0';
+                                            @endphp
+                                            {{ $whText }}
+                                        @else
+                                            —
+                                        @endif
                                     </td>
                                     <td class="px-3 py-2 border-b text-xs">
-                                        @if($attendance->overtime_hours > 0)
-                                            <span class="text-green-600 font-semibold">+{{ number_format($attendance->overtime_hours, 1) }}h</span>
+                                        @if($attendance->working_hours)
+                                            @php
+                                                $requiredHours = 8.5;
+                                                $diffHours = $attendance->working_hours - $requiredHours;
+                                                $totalDiffMinutes = round(abs($diffHours) * 60);
+                                                $dh = floor($totalDiffMinutes / 60);
+                                                $dm = $totalDiffMinutes % 60;
+                                                
+                                                $diffText = '';
+                                                if ($dh > 0) $diffText .= $dh . ' ' . __('messages.hrs') . ' ';
+                                                if ($dm > 0) {
+                                                    if ($dh > 0) $diffText .= __('messages.and') . ' ';
+                                                    $diffText .= $dm . ' ' . __('messages.minutes');
+                                                }
+                                                if ($dh == 0 && $dm == 0) $diffText = '0';
+                                                
+                                                $label = $diffHours >= 0 ? 'زيادة' : 'ناقص';
+                                                $colorClass = $diffHours >= 0 ? 'text-green-600' : 'text-red-500';
+                                            @endphp
+                                            <span class="{{ $colorClass }} font-semibold">{{ $label }} {{ $diffText }}</span>
                                         @else
                                             —
                                         @endif

@@ -1,8 +1,7 @@
 <?php
-
+// app/Models/User.php
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -11,76 +10,72 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
-        'user_id',
-        'name',
-        'email',
-        'join_date',
-        'experience',
-        'last_login',
-        'phone_number',
-        'location',
-        'status',
-        'role_name',
-        'avatar',
-        'position',
-        'designation',
-        'department',
-        'password',
+        'user_id', 'name', 'email', 'phone_number', 'password',
+        'role_name', 'role_id', 'status', 'avatar'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
+    protected $hidden = ['password', 'remember_token'];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
-
-    /** auto generate id */
+    // Auto-generate user_id like K-0001
     protected static function boot()
     {
         parent::boot();
 
-        self::creating(function ($model) {
-            // Retrieve the last user record ordered by user_id
-            $lastUser = self::orderBy('user_id', 'desc')->first();
-
-            // Determine the next ID number
-            $nextID = $lastUser ? intval(substr($lastUser->user_id, 3)) + 1 : 1;
-
-            do {
-                // Generate the new user_id
-                $model->user_id = 'KH-' . sprintf("%04s", $nextID++);
-            } while (self::where('user_id', $model->user_id)->exists());
+        static::creating(function ($model) {
+            $lastUser = self::orderBy('id', 'desc')->first();
+            $lastId = $lastUser ? (int) substr($lastUser->user_id, 2) : 0;
+            $model->user_id = 'K-' . str_pad($lastId + 1, 4, '0', STR_PAD_LEFT);
         });
     }
 
-    /**
-     * Relationship with Department
-     */
-    public function departmentRelation()
+    // ========== NEW RELATIONSHIPS ==========
+    public function profile()
     {
-        return $this->belongsTo(Department::class, 'department', 'department');
+        return $this->hasOne(EmployeeProfile::class);
+    }
+
+    public function jobInfo()
+    {
+        return $this->hasOne(JobInformation::class);
+    }
+
+    public function hiringInfo()
+    {
+        return $this->hasOne(HiringInformation::class);
+    }
+
+    public function salary()
+    {
+        return $this->hasOne(Salary::class);
+    }
+
+    // تأكد إن العلاقة كده بالظبط
+public function insurance()
+{
+    return $this->hasOne(Insurance::class, 'user_id', 'id');
+}
+
+    public function documents()
+    {
+        return $this->hasOne(EmployeeDocument::class);
+    }
+
+    public function evaluations()
+    {
+        return $this->hasMany(ManagerEvaluation::class);
+    }
+
+    public function hasAnyRole($roles)
+    {
+        if (is_array($roles)) {
+            return in_array(strtolower($this->role_name), array_map('strtolower', $roles));
+        }
+        return strtolower($this->role_name) == strtolower($roles);
     }
 }

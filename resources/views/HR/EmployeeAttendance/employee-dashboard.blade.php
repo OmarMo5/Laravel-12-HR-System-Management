@@ -1,350 +1,329 @@
 @extends('layouts.master')
+
 @section('content')
-    <div
-        class="group-data-[sidebar-size=lg]:ltr:md:ml-vertical-menu group-data-[sidebar-size=lg]:rtl:md:mr-vertical-menu group-data-[sidebar-size=md]:ltr:ml-vertical-menu-md group-data-[sidebar-size=md]:rtl:mr-vertical-menu-md group-data-[sidebar-size=sm]:ltr:ml-vertical-menu-sm group-data-[sidebar-size=sm]:rtl:mr-vertical-menu-sm pt-[calc(theme('spacing.header')_*_1)] pb-[calc(theme('spacing.header')_*_0.8)] px-4">
-        <div class="container-fluid group-data-[content=boxed]:max-w-boxed mx-auto">
+<style>
+    .pf-container { background-color: #f8f9fa; min-height: 100vh; }
+    .dark .pf-container { background-color: #1a1d21; }
+    
+    .pf-stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+    .pf-stat-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+    .dark .pf-stat-card { background: #212529; border-color: #32383e; }
+    
+    .pf-stat-label { color: #6b7280; font-size: 0.75rem; font-weight: 600; text-transform: capitalize; margin-bottom: 0.5rem; }
+    .pf-stat-value { color: #111827; font-size: 1.25rem; font-weight: 700; }
+    .dark .pf-stat-value { color: #f8f9fa; }
+    
+    .pf-calendar-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+    .dark .pf-calendar-card { background: #212529; border-color: #32383e; }
+    
+    .pf-grid-header { display: grid; grid-template-columns: repeat(7, 1fr); background-color: #f9fafb; border-bottom: 1px solid #e5e7eb; }
+    .dark .pf-grid-header { background-color: #2b3035; border-color: #32383e; }
+    
+    .pf-header-cell { padding: 0.75rem; text-align: center; font-size: 0.75rem; font-weight: 700; color: #4b5563; text-transform: capitalize; }
+    
+    .pf-grid-body { display: grid; grid-template-columns: repeat(7, 1fr); }
+    .pf-day-cell { aspect-ratio: 1 / 1; padding: 1rem; border-right: 1px solid #f3f4f6; border-bottom: 1px solid #f3f4f6; position: relative; cursor: pointer; transition: background-color 0.2s; }
+    .dark .pf-day-cell { border-color: #32383e; }
+    .pf-day-cell:hover { background-color: #f9fafb; }
+    .dark .pf-day-cell:hover { background-color: #2b3035; }
+    
+    .pf-date-num { font-size: 0.875rem; font-weight: 700; color: #1f2937; margin-bottom: 0.75rem; display: inline-block; }
+    .dark .pf-date-num { color: #f8f9fa; }
+    .pf-today-badge { background-color: #3b82f6; color: #fff; padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; }
+    
+    .pf-diff-pill { width: 100%; padding: 0.25rem; border-radius: 9999px; text-align: center; font-size: 0.6875rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .pf-diff-neg { background-color: #fee2e2; color: #b91c1c; }
+    .pf-diff-pos { background-color: #dcfce7; color: #15803d; }
+    
+    .pf-cell-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; }
+    .pf-footer-label { font-size: 0.625rem; font-weight: 600; color: #9ca3af; text-transform: uppercase; line-height: 1; }
+    .pf-footer-val { font-size: 0.75rem; font-weight: 700; color: #374151; }
+    .dark .pf-footer-val { color: #dee2e6; }
 
-            <!-- Page Header -->
-            <div class="flex flex-col gap-2 py-4 md:flex-row md:items-center print:hidden">
-                <div class="grow">
-                    <h5 class="text-16">{{ __('messages.my_attendance_dashboard') }}</h5>
-                </div>
-                <ul class="flex items-center gap-2 text-sm font-normal shrink-0">
-                    <li
-                        class="relative before:content-['\ea54'] before:font-remix ltr:before:-right-1 rtl:before:-left-1 before:absolute before:text-[18px] before:-top-[3px] ltr:pr-4 rtl:pl-4 before:text-slate-400">
-                        <a href="#!" class="text-slate-400">{{ __('messages.attendance') }}</a>
-                    </li>
-                    <li class="text-slate-700">{{ __('messages.hr_management') }}</li>
-                </ul>
-            </div>
+    /* PeopleForce Drawer Styles */
+    .pf-drawer-overlay { position: fixed; inset: 0; background: rgba(31, 41, 55, 0.4); backdrop-blur: 2px; z-index: 2000; }
+    .pf-drawer { position: fixed; top: 0; bottom: 0; right: 0; width: 100%; max-width: 450px; background: #fff; z-index: 2001; box-shadow: -10px 0 15px -3px rgba(0, 0, 0, 0.1); display: flex; flex-direction: column; }
+    .dark .pf-drawer { background: #212529; }
+    
+    .pf-drawer-header { padding: 1.5rem; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center; }
+    .dark .pf-drawer-header { border-color: #32383e; }
+    .pf-drawer-title { font-size: 1.125rem; font-weight: 700; color: #111827; }
+    .dark .pf-drawer-title { color: #f8f9fa; }
+    
+    .pf-drawer-stats { display: grid; grid-template-columns: repeat(4, 1fr); padding: 1.5rem; border-bottom: 1px solid #f3f4f6; text-align: center; }
+    .dark .pf-drawer-stats { border-color: #32383e; }
+    .pf-drawer-stat-label { font-size: 0.6875rem; font-weight: 600; color: #6b7280; margin-bottom: 0.5rem; }
+    .pf-drawer-stat-val { font-size: 0.875rem; font-weight: 700; color: #111827; }
+    .dark .pf-drawer-stat-val { color: #f8f9fa; }
+    
+    .pf-entry-section { padding: 1.5rem; }
+    .pf-entry-title { font-size: 0.75rem; font-weight: 700; color: #111827; margin-bottom: 1rem; border-bottom: 1px solid #f3f4f6; padding-bottom: 0.5rem; }
+    .dark .pf-entry-title { color: #f8f9fa; border-color: #32383e; }
+    
+    .pf-entry-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+    .pf-entry-label { display: flex; items-center: center; gap: 0.75rem; font-size: 0.8125rem; font-weight: 500; color: #374151; }
+    .dark .pf-entry-label { color: #ced4da; }
+    .pf-dot { width: 8px; height: 8px; border-radius: 9999px; background-color: #10b981; }
+    .pf-entry-time { font-size: 0.8125rem; font-weight: 600; color: #111827; }
+    .dark .pf-entry-time { color: #f8f9fa; }
+    .pf-entry-duration { font-size: 0.8125rem; font-weight: 600; color: #3b82f6; }
 
-            <!-- User Info Card -->
-            <div class="grid grid-cols-1 gap-5 mb-5 lg:grid-cols-4">
-                <div class="lg:col-span-4">
-                    <div class="card bg-gradient-to-r from-slate-700 to-slate-800">
-                        <div class="card-body">
-                            <div class="flex items-center gap-4">
-                                <div class="size-16 rounded-full border-2 border-white overflow-hidden">
-                                    <img src="{{ $user && $user->avatar ? asset('assets/images/user/' . $user->avatar) : asset('assets/images/profile.png') }}"
-                                        alt="" class="w-full h-full object-cover">
-                                </div>
-                                <div>
-                                    <h4 class="text-xl text-white/60 mb-1">{{ $user->name ?? 'Employee' }}</h4>
-                                    <p class="text-white/80 text-sm">{{ $user->user_id ?? '—' }} •
-                                        {{ $user->position ?? 'Employee' }}</p>
-                                    <div class="flex gap-3 mt-2">
-                                        <span class="text-xs text-white/60">
-                                            <i data-lucide="mail" class="inline-block size-3 mr-1"></i>
-                                            {{ $user->email ?? '—' }}
-                                        </span>
-                                        <span class="text-xs text-white/60">
-                                            <i data-lucide="phone" class="inline-block size-3 mr-1"></i>
-                                            {{ $user->phone_number ?? '—' }}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    /* Dropdown */
+    .pf-dropdown { position: relative; display: inline-block; }
+    .pf-dropdown-content { display: none; position: absolute; background-color: #fff; min-width: 180px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1); z-index: 1002; border-radius: 0.75rem; border: 1px solid #e5e7eb; top: 110%; overflow: hidden; }
+    .dark .pf-dropdown-content { background-color: #2b3035; border-color: #32383e; }
+    .pf-dropdown-content.show { display: block; }
 
-            <!-- Server Time Card -->
-            <div class="grid grid-cols-1 gap-5 mb-5 lg:grid-cols-3">
-                <div class="lg:col-span-3">
-                    <div class="card overflow-hidden bg-gradient-to-r from-custom-500 to-custom-600">
-                        <div class="card-body">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h6 class="mb-2 text-15 text-white/80">{{ __('messages.server_time') }}</h6>
-                                    <h2 class="mb-1 text-3xl text-white" id="server-time">
-                                        {{ $currentTime->format('h:i:s A') }}</h2>
-                                    <p class="text-white/80">{{ $currentTime->format('l, d F Y') }}</p>
-                                </div>
-                                <div class="text-right">
-                                    <div class="inline-block p-4 rounded-full bg-white/10">
-                                        <i data-lucide="clock" class="size-12 text-white"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    @media (max-width: 1024px) { .pf-stats-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 768px) { .pf-stats-grid { grid-template-columns: repeat(2, 1fr); } .pf-drawer { max-width: 100%; } }
+</style>
 
-            <!-- Check In/Out Cards Containers -->
-            <div class="grid grid-cols-1 gap-5 mb-5 lg:grid-cols-2">
-                <div id="checkInCardContainer" class="col-span-1">
-                    @include('HR.Attendance.partials.check-in-card', ['checkedIn' => $checkedIn, 'todayAttendance' => $todayAttendance, 'checkedOut' => $checkedOut])
-                </div>
-                <div id="checkOutCardContainer" class="col-span-1">
-                    @include('HR.Attendance.partials.check-out-card', ['checkedIn' => $checkedIn, 'checkedOut' => $checkedOut, 'todayAttendance' => $todayAttendance])
-                </div>
-            </div>
-
-            <!-- Monthly Stats Container -->
-            <div id="statsCardsContainer">
-                @include('HR.Attendance.partials.monthly-stats-cards', ['monthlyStats' => $monthlyStats])
-            </div>
-
-            <!-- Recent Attendance Container -->
-            <div class="card">
-                <div class="card-body">
-                    <div class="flex items-center justify-between mb-4">
-                        <h6 class="text-15">{{ __('messages.recent_attendance') }}</h6>
-                        <a href="{{ route('employee/attendance/history') }}" class="text-custom-500 hover:underline">
-                            {{ __('messages.view_all') }} <i data-lucide="arrow-right" class="inline-block size-4"></i>
-                        </a>
-                    </div>
-                    <div id="recentAttendanceContainer">
-                        @include('HR.Attendance.partials.recent-attendance-table', ['recentAttendance' => $recentAttendance])
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modals (Check In & Check Out) - نفس الكود اللي عندك من قبل -->
-            <div id="checkInModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-all duration-300" style="display: none;">
-                <div class="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl dark:bg-zink-700 transform transition-all duration-300 scale-100">
-                    <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-zink-500 bg-gradient-to-r from-custom-500 to-custom-600 rounded-t-2xl sticky top-0 z-10">
-                        <div class="flex items-center gap-3">
-                            <div class="size-14 rounded-full bg-white/20 flex items-center justify-center">
-                                <i data-lucide="log-in" class="size-7 text-white"></i>
-                            </div>
-                            <div>
-                                <h5 class="text-2xl font-semibold text-white">{{ __('messages.check_in_confirmation') }}</h5>
-                                <p class="text-sm text-white/80">{{ __('messages.please_confirm_check_in') }}</p>
-                            </div>
-                        </div>
-                        <button type="button" class="text-white/80 hover:text-white transition-colors" data-modal-close="checkInModal">
-                            <i data-lucide="x" class="size-7"></i>
+<div x-data="{ 
+    viewMode: 'grid', 
+    showDrawer: false, 
+    selectedDay: null,
+    showMonthDropdown: false,
+    listPage: 1,
+    perPage: 10,
+    calendarDataCount: {{ count($listData) }},
+    
+    get totalPages() { return Math.ceil(this.calendarDataCount / this.perPage); }
+}" 
+class="pf-container group-data-[sidebar-size=lg]:ltr:md:ml-vertical-menu group-data-[sidebar-size=lg]:rtl:md:mr-vertical-menu group-data-[sidebar-size=md]:ltr:ml-vertical-menu-md group-data-[sidebar-size=md]:rtl:mr-vertical-menu-md group-data-[sidebar-size=sm]:ltr:ml-vertical-menu-sm group-data-[sidebar-size=sm]:rtl:mr-vertical-menu-sm pt-[calc(theme('spacing.header')_*_1)] pb-8 px-4">
+    
+    <div class="max-w-[1600px] mx-auto">
+        <!-- Header -->
+        <div class="flex flex-col gap-4 mb-6 md:flex-row md:items-center md:justify-between pt-4">
+            <div class="flex items-center gap-6">
+                <h2 class="text-2xl font-bold text-slate-800 dark:text-zink-50">{{ __('messages.my_attendance') }}</h2>
+                <div class="flex items-center gap-3">
+                    <div class="pf-dropdown">
+                        <button @click="showMonthDropdown = !showMonthDropdown" @click.away="showMonthDropdown = false" class="flex items-center gap-2 px-4 py-2 text-sm font-bold text-slate-700 dark:text-zink-100 bg-white dark:bg-zink-700 border border-slate-200 dark:border-zink-600 rounded-xl shadow-sm hover:bg-slate-50 transition-colors">
+                            {{ __('messages.select_month') }}
+                            <i data-lucide="calendar" class="size-4 text-slate-400"></i>
                         </button>
-                    </div>
-                    <div class="p-8">
-                        <div class="mb-8 p-8 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-500/10 dark:to-indigo-500/10 rounded-xl border-2 border-blue-200 dark:border-blue-800">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-lg font-medium text-blue-600 dark:text-blue-400 mb-2">{{ __('messages.check_in_time') }}</p>
-                                    <h2 class="text-5xl font-bold text-blue-700 dark:text-blue-300 font-mono" id="checkInTimeDisplay">{{ $currentTime->format('h:i:s A') }}</h2>
-                                    <p class="text-base text-blue-500 dark:text-blue-400 mt-3">
-                                        <i data-lucide="calendar" class="inline-block size-4 mr-1"></i>
-                                        {{ $currentTime->format('l, d F Y') }}
-                                    </p>
-                                </div>
-                                <div class="size-24 rounded-full bg-blue-500/20 flex items-center justify-center animate-pulse">
-                                    <i data-lucide="clock" class="size-12 text-blue-600 dark:text-blue-400"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-6">
-                            <label class="block mb-3 text-base font-semibold text-slate-700 dark:text-zink-200">{{ __('messages.notes_optional') }}</label>
-                            <textarea id="checkInNotes" rows="4" class="w-full px-5 py-4 text-base border-2 border-slate-200 dark:border-zink-500 rounded-xl focus:border-custom-500 dark:focus:border-custom-800 focus:ring-2 focus:ring-custom-500/20 dark:focus:ring-custom-800/20 outline-none transition-all resize-none bg-white dark:bg-zink-600" placeholder="{{ __('messages.add_remarks') }}"></textarea>
-                        </div>
-                        <div class="p-5 bg-amber-50 dark:bg-amber-500/10 rounded-xl border border-amber-200 dark:border-amber-800">
-                            <div class="flex items-start gap-3">
-                                <div class="size-10 rounded-full bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center shrink-0">
-                                    <i data-lucide="info" class="size-5 text-amber-600 dark:text-amber-400"></i>
-                                </div>
-                                <div>
-                                    <h6 class="text-base font-semibold text-amber-700 dark:text-amber-300 mb-1">{{ __('messages.server_time_used') }}</h6>
-                                    <p class="text-base text-amber-600 dark:text-amber-400">{{ __('messages.server_time_info') }}</p>
-                                </div>
-                            </div>
+                        <div class="pf-dropdown-content shadow-2xl" :class="{ 'show': showMonthDropdown }">
+                            @php $months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']; @endphp
+                            @foreach($months as $index => $mKey)
+                                <a href="{{ route('employee/attendance/dashboard', ['month' => $index + 1, 'year' => $selectedDate->year]) }}" class="block px-4 py-3 text-sm font-semibold hover:bg-slate-100 dark:hover:bg-zink-600 {{ ($index + 1) == $selectedDate->month ? 'text-blue-600' : 'text-slate-700 dark:text-zink-200' }}">
+                                    {{ __('messages.' . $mKey) }}
+                                </a>
+                            @endforeach
                         </div>
                     </div>
-                    <div class="flex justify-end gap-3 p-6 border-t border-slate-200 dark:border-zink-500 bg-slate-50 dark:bg-zink-800 rounded-b-2xl sticky bottom-0">
-                        <button type="button" data-modal-close="checkInModal" class="px-8 py-3 text-base font-medium text-slate-700 bg-white border-2 border-slate-300 rounded-xl hover:bg-slate-50 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-500 dark:hover:bg-zink-500 transition-all duration-200 hover:scale-105">{{ __('messages.cancel') }}</button>
-                        <button type="button" id="confirmCheckIn" class="px-10 py-3 text-base font-medium text-white bg-gradient-to-r from-custom-500 to-custom-600 rounded-xl hover:from-custom-600 hover:to-custom-700 transition-all duration-200 hover:scale-105 shadow-lg shadow-custom-500/30"><i data-lucide="check-circle" class="inline-block size-5 mr-2"></i>{{ __('messages.confirm_check_in') }}</button>
+                    
+                    <div class="flex items-center bg-white dark:bg-zink-700 border border-slate-200 dark:border-zink-600 rounded-xl p-1 shadow-sm">
+                        <a href="{{ route('employee/attendance/dashboard', ['month' => $selectedDate->copy()->subMonth()->month, 'year' => $selectedDate->copy()->subMonth()->year]) }}" class="p-2 hover:bg-slate-100 dark:hover:bg-zink-600 rounded-lg text-slate-400 transition-all"><i data-lucide="chevron-left" class="size-4"></i></a>
+                        <a href="{{ route('employee/attendance/dashboard', ['month' => $selectedDate->copy()->addMonth()->month, 'year' => $selectedDate->copy()->addMonth()->year]) }}" class="p-2 hover:bg-slate-100 dark:hover:bg-zink-600 rounded-lg text-slate-400 ml-1 transition-all"><i data-lucide="chevron-right" class="size-4"></i></a>
                     </div>
+                    <span class="text-base font-bold text-slate-800 dark:text-zink-50">{{ __('messages.' . strtolower($selectedDate->format('F'))) }}, {{ $selectedDate->year }}</span>
                 </div>
             </div>
 
-            <div id="checkOutModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-all duration-300" style="display: none;">
-                <div class="relative w-full max-w-2xl max-h-[50vh] overflow-y-auto bg-white rounded-2xl shadow-2xl dark:bg-zink-700 transform transition-all duration-300 scale-100">
-                    <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-zink-500 bg-gradient-to-r from-amber-500 to-orange-500 rounded-t-2xl sticky top-0 z-10">
-                        <div class="flex items-center gap-3">
-                            <div class="size-14 rounded-full bg-white/20 flex items-center justify-center">
-                                <i data-lucide="log-out" class="size-7 text-white"></i>
-                            </div>
-                            <div>
-                                <h5 class="text-2xl font-semibold text-white">{{ __('messages.check_out_confirmation') }}</h5>
-                                <p class="text-sm text-white/80">{{ __('messages.please_confirm_check_out') }}</p>
-                            </div>
-                        </div>
-                        <button type="button" class="text-white/80 hover:text-white transition-colors" data-modal-close="checkOutModal">
-                            <i data-lucide="x" class="size-7"></i>
-                        </button>
-                    </div>
-                    <div class="p-8">
-                        <div class="mb-8 p-4 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-500/10 dark:to-orange-500/10 rounded-xl border-2 border-amber-200 dark:border-amber-800">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-lg font-medium text-amber-600 dark:text-amber-400 mb-2">{{ __('messages.check_out_time') }}</p>
-                                    <h2 class="text-5xl font-bold text-amber-700 dark:text-amber-300 font-mono" id="checkOutTimeDisplay">{{ $currentTime->format('h:i:s A') }}</h2>
-                                    <p class="text-base text-amber-500 dark:text-amber-400 mt-3">
-                                        <i data-lucide="calendar" class="inline-block size-4 mr-1"></i>
-                                        {{ $currentTime->format('l, d F Y') }}
-                                    </p>
-                                </div>
-                                <div class="size-24 rounded-full bg-amber-500/20 flex items-center justify-center animate-pulse">
-                                    <i data-lucide="clock" class="size-12 text-amber-600 dark:text-amber-400"></i>
-                                </div>
-                            </div>
-                        </div>
-                        @if ($checkedIn && !$checkedOut)
-                            <div class="mb-6 p-4 bg-green-50 dark:bg-green-500/10 rounded-xl border border-green-200 dark:border-green-800">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <p class="text-base font-medium text-green-600 dark:text-green-400 mb-1">{{ __('messages.todays_working_hours') }}</p>
-                                        <h3 class="text-3xl font-bold text-green-700 dark:text-green-300">{{ $todayAttendance ? \Carbon\Carbon::parse($todayAttendance->check_in)->diffInHours(\Carbon\Carbon::now()) : 0 }} {{ __('messages.hrs') }}</h3>
-                                    </div>
-                                    <i data-lucide="trending-up" class="size-10 text-green-500"></i>
-                                </div>
-                            </div>
-                        @endif
-                        <div class="mb-6">
-                            <label class="block mb-3 text-base font-semibold text-slate-700 dark:text-zink-200">{{ __('messages.notes_optional') }}</label>
-                            <textarea id="checkOutNotes" rows="4" class="w-full px-5 py-4 text-base border-2 border-slate-200 dark:border-zink-500 rounded-xl focus:border-amber-500 dark:focus:border-amber-800 focus:ring-2 focus:ring-amber-500/20 dark:focus:ring-amber-800/20 outline-none transition-all resize-none bg-white dark:bg-zink-600" placeholder="{{ __('messages.add_remarks') }}"></textarea>
-                        </div>
-                    </div>
-                    <div class="flex justify-end gap-3 p-6 border-t border-slate-200 dark:border-zink-500 bg-slate-50 dark:bg-zink-800 rounded-b-2xl sticky bottom-0">
-                        <button type="button" data-modal-close="checkOutModal" class="px-8 py-3 text-base font-medium text-slate-700 bg-white border-2 border-slate-300 rounded-xl hover:bg-slate-50 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-500 dark:hover:bg-zink-500 transition-all duration-200 hover:scale-105">{{ __('messages.cancel') }}</button>
-                        <button type="button" id="confirmCheckOut" class="px-10 py-3 text-base font-medium text-white bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl hover:from-amber-600 hover:to-orange-600 transition-all duration-200 hover:scale-105 shadow-lg shadow-amber-500/30"><i data-lucide="check-circle" class="inline-block size-5 mr-2"></i>{{ __('messages.confirm_check_out') }}</button>
-                    </div>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center bg-white dark:bg-zink-700 border border-slate-200 dark:border-zink-600 rounded-xl p-1 shadow-sm">
+                    <button @click="viewMode = 'grid'" :class="viewMode === 'grid' ? 'bg-slate-100 dark:bg-zink-600 text-blue-600' : 'text-slate-400'" class="p-2 rounded-lg transition-all"><i data-lucide="grid-3x3" class="size-4"></i></button>
+                    <button @click="viewMode = 'list'" :class="viewMode === 'list' ? 'bg-slate-100 dark:bg-zink-600 text-blue-600' : 'text-slate-400'" class="p-2 rounded-lg transition-all ml-1"><i data-lucide="list" class="size-4"></i></button>
                 </div>
             </div>
         </div>
+
+        <!-- Stats Grid -->
+        <div class="pf-stats-grid">
+            <div class="pf-stat-card"><p class="pf-stat-label">{{ __('messages.expected_hours') }}</p><h3 class="pf-stat-value">
+                @php
+                    $eh = floor($monthlyStats['expected_hours']);
+                    $em = round(($monthlyStats['expected_hours'] - $eh) * 60);
+                @endphp
+                {{ sprintf('%d:%02d', $eh, $em) }}
+            </h3></div>
+            <div class="pf-stat-card"><p class="pf-stat-label">{{ __('messages.worked_hours') }}</p><h3 class="pf-stat-value">
+                @php
+                    $wh = abs($monthlyStats['worked_hours']);
+                    $wh_h = floor($wh);
+                    $wh_m = round(($wh - $wh_h) * 60);
+                @endphp
+                {{ sprintf('%d:%02d', $wh_h, $wh_m) }}
+            </h3></div>
+            <div class="pf-stat-card"><p class="pf-stat-label">{{ __('messages.break_hours') }}</p><h3 class="pf-stat-value">0:24</h3></div>
+            <div class="pf-stat-card"><p class="pf-stat-label">{{ __('messages.leave_hours') }}</p><h3 class="pf-stat-value">{{ $monthlyStats['leave_hours'] }}:00</h3></div>
+            <div class="pf-stat-card"><p class="pf-stat-label">{{ __('messages.remaining_hours') }}</p><h3 class="pf-stat-value {{ $monthlyStats['remaining_hours'] > 0 ? 'text-[#e66c4c]' : 'text-green-500' }}">
+                @php
+                    $rh = abs($monthlyStats['remaining_hours']);
+                    $rh_h = floor($rh);
+                    $rh_m = round(($rh - $rh_h) * 60);
+                @endphp
+                {{ ($monthlyStats['remaining_hours'] < 0 ? '-' : '') . sprintf('%d:%02d', $rh_h, $rh_m) }}
+            </h3></div>
+        </div>
+
+        <!-- Calendar Section -->
+        <div x-show="viewMode === 'grid'" class="pf-calendar-card">
+            <div class="pf-grid-header">@foreach(['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as $day)<div class="pf-header-cell">{{ __('messages.' . $day) }}</div>@endforeach</div>
+            <div class="pf-grid-body">
+                @php $firstDay = ($selectedDate->copy()->startOfMonth()->dayOfWeek + 6) % 7; @endphp
+                @for($i = 0; $i < $firstDay; $i++)<div class="pf-day-cell bg-slate-50/20 dark:bg-zink-800/10"></div>@endfor
+                @foreach($calendarData as $day)
+                    <div @click="selectedDay = {{ json_encode($day) }}; showDrawer = true;" class="pf-day-cell">
+                        <div class="mb-3">@if($day['is_today'])<span class="pf-today-badge">{{ $day['day_num'] }} {{ __('messages.' . strtolower($selectedDate->format('F'))) }}</span>@else<span class="pf-date-num">{{ $day['day_num'] }} {{ __('messages.' . strtolower($selectedDate->format('F'))) }}</span>@endif</div>
+                        <div class="mb-5">
+                            @if($day['status'] === 'weekend') <div class="h-[22px]"></div>
+                            @elseif($day['status'] === 'holiday' || $day['status'] === 'leave') <div class="pf-diff-pill bg-blue-50 text-blue-600 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-900/30 truncate px-2">{{ $day['status'] === 'holiday' ? $day['holiday']->holiday_name : $day['leave']->leave_type }}</div>
+                            @elseif($day['status'] !== 'future')
+                                @php 
+                                    $dailyExpected = ($day['status'] === 'weekend' || $day['status'] === 'holiday') ? 0 : 8.5;
+                                    $diff = ($day['attendance'] ? $day['attendance']->working_hours : 0) - $dailyExpected; 
+                                @endphp
+                                <div class="pf-diff-pill {{ $diff >= 0 ? 'pf-diff-pos' : 'pf-diff-neg' }}">
+                                    {{ $diff >= 0 ? '+' : '' }}{{ sprintf('%d:%02d', floor(abs($diff)), abs($diff * 60) % 60) }}
+                                </div>
+                            @else <div class="h-[22px]"></div> @endif
+                        </div>
+                        @if($day['status'] !== 'future' && $day['status'] !== 'weekend' && $day['status'] !== 'holiday')
+                            <div class="pf-cell-footer"><div class="flex flex-col"><span class="pf-footer-label">{{ __('messages.expected') }}</span><span class="pf-footer-val">8:30</span></div><div class="flex flex-col items-end"><span class="pf-footer-label">{{ __('messages.worked') }}</span><span class="pf-footer-val">
+                                @if($day['attendance'])
+                                    @php
+                                        $wh_cell = abs($day['attendance']->working_hours);
+                                        $wh_cell_h = floor($wh_cell);
+                                        $wh_cell_m = round(($wh_cell - $wh_cell_h) * 60);
+                                    @endphp
+                                    {{ sprintf('%d:%02d', $wh_cell_h, $wh_cell_m) }}
+                                @else
+                                    0:00
+                                @endif
+                            </span></div></div>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        <!-- List View -->
+        <div x-show="viewMode === 'list'" class="pf-calendar-card">
+            <div class="overflow-x-auto"><table class="w-full text-left"><thead class="bg-slate-50 dark:bg-zink-600 border-b border-slate-200 dark:border-zink-600"><tr><th class="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-slate-500">{{ __('messages.day_date') }}</th><th class="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-slate-500">{{ __('messages.start_end') }}</th><th class="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-slate-500">{{ __('messages.submitted_h') }}</th><th class="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-slate-500">{{ __('messages.expected') }}</th><th class="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-slate-500">{{ __('messages.difference') }}</th><th class="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-slate-500">{{ __('messages.status') }}</th><th class="px-6 py-5 text-right">{{ __('messages.action') }}</th></tr></thead><tbody class="divide-y divide-slate-100 dark:divide-zink-700">
+                @foreach($listData as $index => $day)
+                    <tr class="hover:bg-slate-50 dark:hover:bg-zink-600/30 transition-all" x-show="listPage === {{ ceil(($index + 1) / 10) }}">
+                        <td class="px-6 py-5"><span class="text-sm font-bold text-slate-800 dark:text-zink-50">{{ $day['date']->format('d M, l') }}</span>@if($day['is_today'])<span class="ml-2 px-2 py-0.5 rounded-full bg-blue-500 text-white text-[9px] font-black uppercase">{{ __('messages.today') }}</span>@endif</td>
+                        <td class="px-6 py-5 text-sm font-mono text-slate-500">{{ $day['attendance'] ? $day['attendance']->formatted_check_in . ' / ' . $day['attendance']->formatted_check_out : '--:-- / --:--' }}</td>
+                        <td class="px-6 py-5 text-base font-black text-slate-800 dark:text-zink-50">
+                            @if($day['attendance'] && $day['attendance']->working_hours)
+                                @php
+                                    $workingHours = abs($day['attendance']->working_hours);
+                                    $totalMinutes = round($workingHours * 60);
+                                    $h = floor($totalMinutes / 60);
+                                    $m = $totalMinutes % 60;
+                                @endphp
+                                {{ sprintf('%02d:%02d', $h, $m) }}
+                            @else
+                                00:00
+                            @endif
+                        </td>
+                        <td class="px-6 py-5 text-sm font-bold text-slate-400">{{ ($day['status'] === 'weekend' || $day['status'] === 'holiday') ? '0:00' : '8:30' }}</td>
+                        <td class="px-6 py-5">
+                            @php 
+                                $dailyExpected = ($day['status'] === 'weekend' || $day['status'] === 'holiday') ? 0 : 8.5;
+                                $diff = ($day['attendance'] ? $day['attendance']->working_hours : 0) - $dailyExpected;
+                                $totalDiffMinutes = round(abs($diff) * 60);
+                                $dh = floor($totalDiffMinutes / 60);
+                                $dm = $totalDiffMinutes % 60;
+                                
+                                $diffText = '';
+                                if ($dh > 0) {
+                                    $diffText .= $dh . ' ' . __('messages.hrs');
+                                }
+                                if ($dm > 0) {
+                                    if ($dh > 0) $diffText .= ' ' . __('messages.and') . ' ';
+                                    $diffText .= $dm . ' ' . __('messages.minutes');
+                                }
+                                if ($dh == 0 && $dm == 0) $diffText = '0';
+                                
+                                $label = $diff >= 0 ? 'زيادة' : 'ناقص';
+                            @endphp
+                            <span class="font-black {{ $diff >= 0 ? 'text-[#3ab67d]' : 'text-[#e66c4c]' }}">
+                                {{ $label }} {{ $diffText }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-5">
+                            @if($day['attendance'])
+                                @if($day['attendance']->status == 'late' || $day['attendance']->status == 'late_early')
+                                    <span class="px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 text-[10px] font-bold">{{ __('messages.late') }}</span>
+                                @endif
+                                @if($day['attendance']->status == 'early_departure' || $day['attendance']->status == 'late_early')
+                                    <span class="px-2 py-1 rounded-full bg-orange-100 text-orange-700 text-[10px] font-bold ml-1">{{ __('messages.early_departure') }}</span>
+                                @endif
+                                @if($day['attendance']->status == 'present' || $day['attendance']->status == 'approved')
+                                    <span class="px-2 py-1 rounded-full bg-green-100 text-green-700 text-[10px] font-bold">{{ __('messages.present') }}</span>
+                                @endif
+                            @else
+                                <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">{{ __('messages.' . $day['status']) ?? $day['status'] }}</span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-5 text-right"><button @click="selectedDay = {{ json_encode($day) }}; showDrawer = true;" class="p-3 bg-slate-50 dark:bg-zink-600 text-slate-400 hover:text-blue-500 rounded-xl"><i data-lucide="eye" class="size-4"></i></button></td>
+                    </tr>
+                @endforeach
+            </tbody></table></div>
+            <div class="px-8 py-6 flex items-center justify-between border-t border-slate-100"><span class="text-xs font-black text-slate-400 uppercase tracking-[2px]">{{ __('messages.page') }} <span class="text-slate-800 dark:text-zink-50" x-text="listPage"></span> / <span x-text="totalPages"></span></span><div class="flex items-center gap-3"><button @click="if(listPage > 1) listPage--" class="p-3 bg-white dark:bg-zink-700 border border-slate-200 rounded-xl" :disabled="listPage === 1"><i data-lucide="chevron-left" class="size-4"></i></button><button @click="if(listPage < totalPages) listPage++" class="p-3 bg-white dark:bg-zink-700 border border-slate-200 rounded-xl" :disabled="listPage === totalPages"><i data-lucide="chevron-right" class="size-4"></i></button></div></div>
+        </div>
     </div>
 
-    @section('script')
-    <style>
-        [id$="Modal"] { animation: fadeIn 0.3s ease; }
-        [id$="Modal"]>div { animation: slideIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideIn { from { transform: translateY(-20px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
-        [id$="Modal"] { z-index: 99999 !important; }
-    </style>
-    <script>
-        function updateServerTime() {
-            let now = new Date();
-            let hours = now.getHours();
-            let minutes = now.getMinutes().toString().padStart(2, '0');
-            let seconds = now.getSeconds().toString().padStart(2, '0');
-            let ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12;
-            hours = hours ? hours : 12;
-            $('#server-time').text(hours + ':' + minutes + ':' + seconds + ' ' + ampm);
-        }
-        setInterval(updateServerTime, 1000);
+    <!-- PeopleForce Drawer (Pixel Perfect Replicated) -->
+    <template x-if="showDrawer">
+        <div class="pf-drawer-overlay" @click="showDrawer = false" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+            <div class="pf-drawer" @click.stop x-transition:enter="transform transition ease-in-out duration-500" x-transition:enter-start="ltr:translate-x-full rtl:-translate-x-full" x-transition:enter-end="translate-x-0">
+                <!-- Header -->
+                <div class="pf-drawer-header">
+                    <h2 class="pf-drawer-title" x-text="selectedDay ? moment(selectedDay.date_string).format('DD MMM YYYY, dddd') : ''"></h2>
+                    <button @click="showDrawer = false" class="p-2 hover:bg-slate-100 dark:hover:bg-zink-600 rounded-lg text-slate-400 transition-colors">
+                        <i data-lucide="x" class="size-5"></i>
+                    </button>
+                </div>
+                
+                <!-- Quick Stats Row -->
+                <div class="pf-drawer-stats">
+                    <div><p class="pf-drawer-stat-label">Worked</p><p class="pf-drawer-stat-val" x-text="selectedDay.attendance ? (Math.floor(Math.abs(selectedDay.attendance.working_hours)) + ':' + String(Math.round((Math.abs(selectedDay.attendance.working_hours) % 1) * 60)).padStart(2, '0')) : '0:00'"></p></div>
+                    <div><p class="pf-drawer-stat-label">Break</p><p class="pf-drawer-stat-val">--:--</p></div>
+                    <div><p class="pf-drawer-stat-label">Leave</p><p class="pf-drawer-stat-val" x-text="selectedDay.status === 'leave' ? '8:30' : '--:--'"></p></div>
+                    <div><p class="pf-drawer-stat-label">Expected</p><p class="pf-drawer-stat-val" x-text="selectedDay.status === 'weekend' || selectedDay.status === 'holiday' ? '0:00' : '8:30'"></p></div>
+                </div>
 
-        $('#checkInBtn').on('click', function() {
-            let now = new Date();
-            let hours = now.getHours();
-            let minutes = now.getMinutes().toString().padStart(2, '0');
-            let seconds = now.getSeconds().toString().padStart(2, '0');
-            let ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12;
-            hours = hours ? hours : 12;
-            $('#checkInTimeDisplay').text(hours + ':' + minutes + ':' + seconds + ' ' + ampm);
-            openModal('checkInModal');
-        });
+                <!-- Entry Section -->
+                <div class="pf-entry-section">
+                    <h3 class="pf-entry-title">Entry 1</h3>
+                    <div class="flex flex-col gap-5">
+                        <div class="pf-entry-row">
+                            <div class="pf-entry-label"><i data-lucide="play-circle" class="size-4 text-[#10b981]"></i> Clock in</div>
+                            <div class="pf-entry-time" x-text="selectedDay.attendance ? moment(selectedDay.attendance.check_in, 'HH:mm:ss').format('HH:mm') : '--:--'"></div>
+                        </div>
+                        <div class="pf-entry-row">
+                            <div class="pf-entry-label"><i data-lucide="pause-circle" class="size-4 text-amber-500"></i> Break</div>
+                            <div class="pf-entry-time">--:--</div>
+                        </div>
+                        <div class="pf-entry-row">
+                            <div class="pf-entry-label"><i data-lucide="stop-circle" class="size-4 text-[#ef4444]"></i> Clock out</div>
+                            <div class="flex items-center gap-10">
+                                <div class="pf-entry-time" x-text="selectedDay.attendance ? moment(selectedDay.attendance.check_out, 'HH:mm:ss').format('HH:mm') : '--:--'"></div>
+                                <div class="pf-entry-duration" x-text="selectedDay.attendance ? (Math.floor(Math.abs(selectedDay.attendance.working_hours)) + ':' + String(Math.round((Math.abs(selectedDay.attendance.working_hours) % 1) * 60)).padStart(2, '0')) : ''"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        $('#checkOutBtn').on('click', function() {
-            let now = new Date();
-            let hours = now.getHours();
-            let minutes = now.getMinutes().toString().padStart(2, '0');
-            let seconds = now.getSeconds().toString().padStart(2, '0');
-            let ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12;
-            hours = hours ? hours : 12;
-            $('#checkOutTimeDisplay').text(hours + ':' + minutes + ':' + seconds + ' ' + ampm);
-            openModal('checkOutModal');
-        });
+                <!-- Add Entry Button -->
+                <div class="mt-auto p-6 border-t border-slate-100 dark:border-zink-600">
+                    <button class="flex items-center gap-2 px-4 py-2 text-sm font-bold text-slate-600 dark:text-zink-200 bg-slate-50 dark:bg-zink-600 rounded-lg hover:bg-slate-100 transition-all border border-slate-200 dark:border-zink-500">
+                        <i data-lucide="plus" class="size-4"></i>
+                        New entry
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+</div>
+@endsection
 
-        $('#confirmCheckIn').on('click', function() {
-            let notes = $('#checkInNotes').val();
-            let button = $(this);
-            button.prop('disabled', true).html('<i class="animate-spin inline-block size-4 mr-2">⏳</i> {{ __('messages.processing') }}');
-            $.ajax({
-                url: '{{ route('employee/attendance/check-in') }}',
-                type: 'POST',
-                data: { notes: notes, _token: '{{ csrf_token() }}' },
-                success: function(response) {
-                    if (response.success) {
-                        closeModal('checkInModal');
-                        if (response.html) {
-                            if (response.html.recentAttendance) $('#recentAttendanceContainer').html(response.html.recentAttendance);
-                            if (response.html.statsCards) $('#statsCardsContainer').html(response.html.statsCards);
-                            if (response.html.checkInCard) $('#checkInCardContainer').html(response.html.checkInCard);
-                            if (response.html.checkOutCard) $('#checkOutCardContainer').html(response.html.checkOutCard);
-                            $('#checkInBtn').off('click').on('click', function() {
-                                let now = new Date();
-                                let hours = now.getHours();
-                                let minutes = now.getMinutes().toString().padStart(2, '0');
-                                let seconds = now.getSeconds().toString().padStart(2, '0');
-                                let ampm = hours >= 12 ? 'PM' : 'AM';
-                                hours = hours % 12;
-                                hours = hours ? hours : 12;
-                                $('#checkInTimeDisplay').text(hours + ':' + minutes + ':' + seconds + ' ' + ampm);
-                                openModal('checkInModal');
-                            });
-                            $('#checkOutBtn').off('click').on('click', function() {
-                                let now = new Date();
-                                let hours = now.getHours();
-                                let minutes = now.getMinutes().toString().padStart(2, '0');
-                                let seconds = now.getSeconds().toString().padStart(2, '0');
-                                let ampm = hours >= 12 ? 'PM' : 'AM';
-                                hours = hours % 12;
-                                hours = hours ? hours : 12;
-                                $('#checkOutTimeDisplay').text(hours + ':' + minutes + ':' + seconds + ' ' + ampm);
-                                openModal('checkOutModal');
-                            });
-                        }
-                        if (typeof lucide !== 'undefined') lucide.createIcons();
-                        Swal.fire({ icon: 'success', title: '{{ __('messages.success') }}', text: response.message, timer: 1500, showConfirmButton: false });
-                    }
-                },
-                error: function(xhr) {
-                    button.prop('disabled', false).html('<i data-lucide="check-circle" class="inline-block size-5 mr-2"></i> {{ __('messages.confirm_check_in') }}');
-                    if (typeof lucide !== 'undefined') lucide.createIcons();
-                    Swal.fire({ icon: 'error', title: '{{ __('messages.error') }}', text: xhr.responseJSON?.message || 'Check-in failed!' });
-                }
-            });
-        });
-
-        $('#confirmCheckOut').on('click', function() {
-            let notes = $('#checkOutNotes').val();
-            let button = $(this);
-            button.prop('disabled', true).html('<i class="animate-spin inline-block size-4 mr-2">⏳</i> {{ __('messages.processing') }}');
-            $.ajax({
-                url: '{{ route('employee/attendance/check-out') }}',
-                type: 'POST',
-                data: { notes: notes, _token: '{{ csrf_token() }}' },
-                success: function(response) {
-                    if (response.success) {
-                        closeModal('checkOutModal');
-                        if (response.html) {
-                            if (response.html.recentAttendance) $('#recentAttendanceContainer').html(response.html.recentAttendance);
-                            if (response.html.statsCards) $('#statsCardsContainer').html(response.html.statsCards);
-                            if (response.html.checkInCard) $('#checkInCardContainer').html(response.html.checkInCard);
-                            if (response.html.checkOutCard) $('#checkOutCardContainer').html(response.html.checkOutCard);
-                        }
-                        if (typeof lucide !== 'undefined') lucide.createIcons();
-                        Swal.fire({ icon: 'success', title: '{{ __('messages.success') }}', text: response.message, timer: 1500, showConfirmButton: false });
-                    }
-                },
-                error: function(xhr) {
-                    button.prop('disabled', false).html('<i data-lucide="check-circle" class="inline-block size-5 mr-2"></i> {{ __('messages.confirm_check_out') }}');
-                    if (typeof lucide !== 'undefined') lucide.createIcons();
-                    Swal.fire({ icon: 'error', title: '{{ __('messages.error') }}', text: xhr.responseJSON?.message || 'Check-out failed!' });
-                }
-            });
-        });
-
-        function openModal(modalId) { $('#' + modalId).removeClass('hidden').css('display', 'flex'); $('body').css('overflow', 'hidden'); }
-        function closeModal(modalId) { $('#' + modalId).addClass('hidden').css('display', 'none'); $('#' + modalId + ' textarea').val(''); $('body').css('overflow', ''); }
-        $(document).on('click', function(e) { if ($(e.target).is('[id$="Modal"]')) closeModal($(e.target).attr('id')); });
-        $(document).on('keydown', function(e) { if (e.key === 'Escape') $('[id$="Modal"]:visible').each(function() { closeModal($(this).attr('id')); }); });
-        $('[data-modal-close]').on('click', function() { closeModal($(this).closest('[id$="Modal"]').attr('id')); });
-    </script>
-    @endsection
+@section('script')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => { if(window.lucide) window.lucide.createIcons(); });
+</script>
 @endsection

@@ -92,19 +92,34 @@
                                         <tr>
                                             <td class="px-3.5 py-2 text-slate-500 dark:text-zink-200">{{ __('messages.total_hours') }}</td>
                                             <td class="px-3.5 py-2 font-semibold">
-                                                {{ number_format($stats['total_hours'] ?? 0, 1) }} {{ __('messages.hrs') }}
+                                                @php
+                                                    $th = abs($stats['total_hours'] ?? 0);
+                                                    $th_h = floor($th);
+                                                    $th_m = round(($th - $th_h) * 60);
+                                                @endphp
+                                                {{ sprintf('%02d:%02d', $th_h, $th_m) }}
                                             </td>
                                         </tr>
                                         <tr>
                                             <td class="px-3.5 py-2 text-slate-500 dark:text-zink-200">{{ __('messages.regular_hours') }}</td>
                                             <td class="px-3.5 py-2 font-semibold">
-                                                {{ number_format($stats['regular_hours'] ?? 0, 1) }} {{ __('messages.hrs') }}
+                                                @php
+                                                    $rh = abs($stats['regular_hours'] ?? 0);
+                                                    $rh_h = floor($rh);
+                                                    $rh_m = round(($rh - $rh_h) * 60);
+                                                @endphp
+                                                {{ sprintf('%02d:%02d', $rh_h, $rh_m) }}
                                             </td>
                                         </tr>
                                         <tr>
                                             <td class="px-3.5 py-2 text-slate-500 dark:text-zink-200">{{ __('messages.overtime') }}</td>
                                             <td class="px-3.5 py-2 font-semibold">
-                                                {{ number_format($stats['overtime_hours'] ?? 0, 1) }} {{ __('messages.hrs') }}
+                                                @php
+                                                    $oh = abs($stats['overtime_hours'] ?? 0);
+                                                    $oh_h = floor($oh);
+                                                    $oh_m = round(($oh - $oh_h) * 60);
+                                                @endphp
+                                                {{ sprintf('%02d:%02d', $oh_h, $oh_m) }}
                                             </td>
                                         </tr>
                                     </tbody>
@@ -128,7 +143,12 @@
                         </div>
                         <div class="grow">
                             <h5 class="mb-1 text-16">
-                                <span class="counter-value" data-target="{{ number_format($stats['approved_hours'] ?? 0, 1) }}">0</span>
+                                @php
+                                    $ah = abs($stats['approved_hours'] ?? 0);
+                                    $ah_h = floor($ah);
+                                    $ah_m = round(($ah - $ah_h) * 60);
+                                @endphp
+                                <span>{{ sprintf('%02d:%02d', $ah_h, $ah_m) }}</span>
                             </h5>
                             <p class="text-slate-500 dark:text-zink-200">{{ __('messages.approved_hours') }}</p>
                         </div>
@@ -143,7 +163,12 @@
                         </div>
                         <div class="grow">
                             <h5 class="mb-1 text-16">
-                                <span class="counter-value" data-target="{{ number_format($stats['rejected_hours'] ?? 0, 1) }}">0</span>
+                                @php
+                                    $rjh = abs($stats['rejected_hours'] ?? 0);
+                                    $rjh_h = floor($rjh);
+                                    $rjh_m = round(($rjh - $rjh_h) * 60);
+                                @endphp
+                                <span>{{ sprintf('%02d:%02d', $rjh_h, $rjh_m) }}</span>
                             </h5>
                             <p class="text-slate-500 dark:text-zink-200">{{ __('messages.rejected_hours') }}</p>
                         </div>
@@ -158,7 +183,12 @@
                         </div>
                         <div class="grow">
                             <h5 class="mb-1 text-16">
-                                <span class="counter-value" data-target="{{ number_format($stats['pending_hours'] ?? 0, 1) }}">0</span>
+                                @php
+                                    $ph = abs($stats['pending_hours'] ?? 0);
+                                    $ph_h = floor($ph);
+                                    $ph_m = round(($ph - $ph_h) * 60);
+                                @endphp
+                                <span>{{ sprintf('%02d:%02d', $ph_h, $ph_m) }}</span>
                             </h5>
                             <p class="text-slate-500 dark:text-zink-200">{{ __('messages.pending_hours') }}</p>
                         </div>
@@ -274,10 +304,20 @@
                                                 </span>
                                             </td> -->
                                             <td class="px-3.5 py-2.5 border-y border-slate-200 dark:border-zink-500">
-                                                {{ number_format($attendance->working_hours, 2) }} {{ __('messages.hrs') }}
+                                                @php
+                                                    $wh_row = abs($attendance->working_hours);
+                                                    $wh_row_h = floor($wh_row);
+                                                    $wh_row_m = round(($wh_row - $wh_row_h) * 60);
+                                                @endphp
+                                                {{ sprintf('%02d:%02d', $wh_row_h, $wh_row_m) }}
                                             </td>
                                             <td class="px-3.5 py-2.5 border-y border-slate-200 dark:border-zink-500">
-                                                {{ number_format($attendance->overtime_hours, 2) }} {{ __('messages.hrs') }}
+                                                @php
+                                                    $oh_row = abs($attendance->overtime_hours);
+                                                    $oh_row_h = floor($oh_row);
+                                                    $oh_row_m = round(($oh_row - $oh_row_h) * 60);
+                                                @endphp
+                                                {{ sprintf('%02d:%02d', $oh_row_h, $oh_row_m) }}
                                             </td>
                                             <!-- <td class="px-3.5 py-2.5 border-y border-slate-200 dark:border-zink-500">
                                                 @if ($attendance->late_minutes > 0)

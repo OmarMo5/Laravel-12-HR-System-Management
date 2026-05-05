@@ -18,29 +18,22 @@
                                     }
                                 @endphp
                             @endif
-                            <div
-                                class="relative inline-block rounded-full shadow-md size-20 bg-slate-100 profile-user xl:size-28">
-                                @if ($profileDetail && !empty($profileDetail->avatar))
-                                    <img src="{{ URL::to('assets/images/user/' . $profileDetail->avatar) }}" alt=""
-                                        class="object-cover border-0 rounded-full img-thumbnail user-profile-image">
-                                @elseif($profileDetail && $profileDetail->avatar === null)
-                                    <div
-                                        class="flex items-center justify-center font-medium rounded-full size-10 shrink-0 bg-slate-200 text-slate-800 dark:text-zink-50 dark:bg-zink-600">
-                                        {{ $initials }}
-                                    </div>
+                            <div class="relative inline-block rounded-full shadow-lg size-20 bg-slate-100 profile-user xl:size-28 border-4 border-white dark:border-zink-500 overflow-hidden group">
+                                @if ($profileDetail && !empty($profileDetail->avatar) && file_exists(public_path('assets/images/user/' . $profileDetail->avatar)))
+                                    <img id="user-profile-img" src="{{ asset('assets/images/user/' . $profileDetail->avatar) }}" alt=""
+                                        class="size-full object-cover rounded-full user-profile-image">
                                 @else
-                                    <img src="{{ URL::to('assets/images/user/' . Session::get('avatar')) }}" alt=""
-                                        class="object-cover border-0 rounded-full img-thumbnail user-profile-image">
+                                    <div id="user-profile-placeholder" class="flex items-center justify-center font-bold text-2xl rounded-full size-full bg-custom-100 text-custom-500 dark:bg-custom-500/20 uppercase">
+                                        {{ $initials ?? '?' }}
+                                    </div>
+                                    <img id="user-profile-img" src="" alt="" class="size-full object-cover rounded-full user-profile-image hidden">
                                 @endif
-                                <div
-                                    class="absolute bottom-0 flex items-center justify-center rounded-full size-8 ltr:right-0 rtl:left-0 profile-photo-edit">
-                                    <input id="profile-img-file-input" type="file" class="hidden profile-img-file-input">
-                                    <label for="profile-img-file-input"
-                                        class="flex items-center justify-center bg-white rounded-full shadow-lg cursor-pointer size-8 dark:bg-zink-600 profile-photo-edit">
-                                        <i data-lucide="image-plus"
-                                            class="size-4 text-slate-500 dark:text-zink-200 fill-slate-100 dark:fill-zink-500"></i>
+                                <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                    <label for="profile-img-file-input" class="cursor-pointer">
+                                        <i data-lucide="camera" class="size-6 text-white"></i>
                                     </label>
                                 </div>
+                                <input id="profile-img-file-input" type="file" class="hidden profile-img-file-input" accept="image/*">
                             </div>
                         </div>
                         <!--end col-->
@@ -91,56 +84,37 @@
                             <ul
                                 class="flex flex-wrap gap-3 mt-4 text-center divide-x divide-slate-200 dark:divide-zink-500 rtl:divide-x-reverse">
                                 <li class="px-5">
-                                    <h5>1542</h5>
-                                    <p class="text-slate-500 dark:text-zink-200">Following</p>
+                                    <h5 class="text-15">{{ $profileDetail->jobInfo->department->department ?? $profileDetail->department ?? 'N/A' }}</h5>
+                                    <p class="text-slate-500 dark:text-zink-200">{{ __('messages.department') }}</p>
                                 </li>
                                 <li class="px-5">
-                                    <h5>10.65k</h5>
-                                    <p class="text-slate-500 dark:text-zink-200">Followers</p>
+                                    <h5 class="text-15">{{ $profileDetail->jobInfo->jobTitle->position ?? $profileDetail->designation ?? 'N/A' }}</h5>
+                                    <p class="text-slate-500 dark:text-zink-200">{{ __('messages.designation') }}</p>
                                 </li>
                                 <li class="px-5">
-                                    <h5>115+</h5>
-                                    <p class="text-slate-500 dark:text-zink-200">Products</p>
+                                    <h5 class="text-15">{{ $profileDetail->user_id }}</h5>
+                                    <p class="text-slate-500 dark:text-zink-200">{{ __('messages.employee_id') }}</p>
                                 </li>
                             </ul>
                             <p class="mt-4 text-slate-500 dark:text-zink-200">
-                                {{ $profileDetail->bio ?? __('messages.no_bio_available') }}
+                                @if($profileDetail->documents && $profileDetail->documents->cv_file_path)
+                                    <span class="flex items-center gap-2 text-custom-500 font-bold bg-custom-50 dark:bg-custom-500/10 px-3 py-1 rounded-lg w-fit">
+                                        <i data-lucide="file-check" class="size-4"></i>
+                                        {{ __('messages.yes_cv_available') }}
+                                    </span>
+                                @else
+                                    {{ $profileDetail->bio ?? __('messages.no_bio_available') }}
+                                @endif
                             </p>
-                            <div class="flex gap-2 mt-4">
-                                <a href="#!"
-                                    class="flex items-center justify-center transition-all duration-200 ease-linear rounded size-9 text-sky-500 bg-sky-100 hover:bg-sky-200 dark:bg-sky-500/20 dark:hover:bg-sky-500/30">
-                                    <i data-lucide="facebook" class="size-4"></i>
-                                </a>
-                                <a href="#!"
-                                    class="flex items-center justify-center text-pink-500 transition-all duration-200 ease-linear bg-pink-100 rounded size-9 hover:bg-pink-200 dark:bg-pink-500/20 dark:hover:bg-pink-500/30">
-                                    <i data-lucide="instagram" class="size-4"></i>
-                                </a>
-                                <a href="#!"
-                                    class="flex items-center justify-center text-red-500 transition-all duration-200 ease-linear bg-red-100 rounded size-9 hover:bg-red-200 dark:bg-red-500/20 dark:hover:bg-red-500/30">
-                                    <i data-lucide="globe" class="size-4"></i>
-                                </a>
-                                <a href="#!"
-                                    class="flex items-center justify-center transition-all duration-200 ease-linear rounded text-custom-500 bg-custom-100 size-9 hover:bg-custom-200 dark:bg-custom-500/20 dark:hover:bg-custom-500/30">
-                                    <i data-lucide="linkedin" class="size-4"></i>
-                                </a>
-                                <a href="#!"
-                                    class="flex items-center justify-center text-pink-500 transition-all duration-200 ease-linear bg-pink-100 rounded size-9 hover:bg-pink-200 dark:bg-pink-500/20 dark:hover:bg-pink-500/30">
-                                    <i data-lucide="dribbble" class="size-4"></i>
-                                </a>
-                                <a href="#!"
-                                    class="flex items-center justify-center transition-all duration-200 ease-linear rounded size-9 text-slate-500 bg-slate-100 hover:bg-slate-200 dark:bg-zink-600 dark:hover:bg-zink-500">
-                                    <i data-lucide="github" class="size-4"></i>
-                                </a>
-                            </div>
+                            {{-- Social links removed for internal HR system --}}
                         </div>
                         <div class="lg:col-span-12 2xl:col-span-2">
                             <div class="flex gap-2 2xl:justify-end">
-                                <a href="mailto:StarCode Kh@gmail.com"
-                                    class="flex items-center justify-center size-[37.5px] p-0 text-slate-500 btn bg-slate-100 hover:text-white hover:bg-slate-600 focus:text-white focus:bg-slate-600 focus:ring focus:ring-slate-100 active:text-white active:bg-slate-600 active:ring active:ring-slate-100 dark:bg-slate-500/20 dark:text-slate-400 dark:hover:bg-slate-500 dark:hover:text-white dark:focus:bg-slate-500 dark:focus:text-white dark:active:bg-slate-500 dark:active:text-white dark:ring-slate-400/20"><i
-                                        data-lucide="mail" class="size-4"></i></a>
-                                <button type="button"
-                                    class="text-white transition-all duration-200 ease-linear btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">Hire
-                                    Us</button>
+                                <a href="mailto:{{ $profileDetail->email }}"
+                                    class="flex items-center justify-center size-[37.5px] p-0 text-slate-500 btn bg-slate-100 hover:text-white hover:bg-slate-600 focus:text-white focus:bg-slate-600 focus:ring focus:ring-slate-100 active:text-white active:bg-slate-600 active:ring active:ring-slate-100 dark:bg-slate-500/20 dark:text-slate-400 dark:hover:bg-slate-500 dark:hover:text-white dark:focus:bg-slate-500 dark:focus:text-white dark:active:bg-slate-500 dark:active:text-white dark:ring-slate-400/20"
+                                    title="{{ __('messages.send_email') }}">
+                                    <i data-lucide="mail" class="size-4"></i>
+                                </a>
 
                                 <div class="relative dropdown">
                                     <button
@@ -234,18 +208,12 @@
                             <!--end grid-->
                             <div class="card">
                                 <div class="card-body">
-                                    <h6 class="mb-3 text-15">Overview</h6>
-                                    <p class="mb-2 text-slate-500 dark:text-zink-200">A Web Developer creates and designs
-                                        different websites for clients. They are responsible for their aesthetic as well as
-                                        their function. Professionals in this field may also need to be able to ensure sites
-                                        are compatible with multiple types of media. Web Developers need to have a firm
-                                        understanding of programming and graphical design. Having a strong resume that
-                                        emphasizes these attributes makes it significantly easier to get hired as a Web
-                                        Developer.</p>
-                                    <p class="text-slate-500 dark:text-zink-200">As a web designer, my objective is to make
-                                        a positive impact on clients, co-workers, and the Internet using my skills and
-                                        experience to design compelling and attractive websites. Solving code problems.
-                                        Editing & Design with designing team in the company to build perfect web designs.
+                                    <h6 class="mb-3 text-15">{{ __('messages.overview') }}</h6>
+                                    <p class="mb-2 text-slate-500 dark:text-zink-200">
+                                        {{ __('messages.profile_welcome', ['name' => $profileDetail->name]) }}
+                                    </p>
+                                    <p class="text-slate-500 dark:text-zink-200">
+                                        {{ __('messages.track_attendance_records') }}
                                     </p>
                                 </div>
                             </div>
@@ -259,19 +227,27 @@
                                         <table class="w-full ltr:text-left rtl:ext-right">
                                             <tbody>
                                                 <tr>
+                                                    <th class="py-2 font-semibold ps-0" scope="row">{{ __('messages.employee_id') }}</th>
+                                                    <td class="py-2 text-right text-slate-500 dark:text-zink-200">
+                                                        {{ $profileDetail->user_id }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
                                                     <th class="py-2 font-semibold ps-0" scope="row">{{ __('messages.designation') }}</th>
                                                     <td class="py-2 text-right text-slate-500 dark:text-zink-200">
-                                                        @php
-                                                            $pos = $profileDetail->designation ?? $profileDetail->position;
-                                                        @endphp
-                                                        @switch($pos)
-                                                            @case('Full-Time Onsite') {{ __('messages.full_time') }} @break
-                                                            @case('Part-Time') {{ __('messages.part_time') }} @break
-                                                            @case('Remote') {{ __('messages.remote') }} @break
-                                                            @case('Hybrid Work') {{ __('messages.hybrid') }} @break
-                                                            @case('Contractor') {{ __('messages.contractor') }} @break
-                                                            @default {{ $pos ?? 'N/A' }}
-                                                        @endswitch
+                                                        {{ $profileDetail->jobInfo->jobTitle->position ?? $profileDetail->designation ?? 'N/A' }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="py-2 font-semibold ps-0" scope="row">{{ __('messages.department') }}</th>
+                                                    <td class="py-2 text-right text-slate-500 dark:text-zink-200">
+                                                        {{ $profileDetail->jobInfo->department->department ?? $profileDetail->department ?? 'N/A' }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="py-2 font-semibold ps-0" scope="row">{{ __('messages.role') }}</th>
+                                                    <td class="py-2 text-right text-slate-500 dark:text-zink-200">
+                                                        {{ $profileDetail->role_name ?? 'N/A' }}
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -281,27 +257,77 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="py-2 font-semibold ps-0" scope="row">{{ __('messages.birth_date') }}</th>
-                                                    <td class="py-2 text-right text-slate-500 dark:text-zink-200">
-                                                        {{ $profileDetail->birth_date ?? 'N/A' }}
-                                                    </td>
-                                                </tr>
-                                                <tr>
                                                     <th class="py-2 font-semibold ps-0" scope="row">{{ __('messages.email') }}</th>
                                                     <td class="py-2 text-right text-slate-500 dark:text-zink-200">
                                                         {{ $profileDetail->email ?? 'N/A' }}
                                                     </td>
                                                 </tr>
                                                 <tr>
+                                                    <th class="py-2 font-semibold ps-0" scope="row">{{ __('messages.gender') }}</th>
+                                                    <td class="py-2 text-right">
+                                                        @php
+                                                            $gender = $profileDetail->profile->gender ?? $profileDetail->status;
+                                                        @endphp
+                                                        @if ($gender === 'Male')
+                                                            <span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400">{{ __('messages.male') }}</span>
+                                                        @elseif ($gender === 'Female')
+                                                            <span class="px-2 py-1 text-xs font-medium rounded-full bg-pink-100 text-pink-600 dark:bg-pink-500/20 dark:text-pink-400">{{ __('messages.female') }}</span>
+                                                        @else
+                                                            <span class="text-slate-500 dark:text-zink-200">{{ $gender ?? 'N/A' }}</span>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="py-2 font-semibold ps-0" scope="row">{{ __('messages.employment_type') }}</th>
+                                                    <td class="py-2 text-right text-slate-500 dark:text-zink-200">
+                                                        @php
+                                                            $workType = $profileDetail->jobInfo->work_type ?? $profileDetail->position;
+                                                        @endphp
+                                                        @switch($workType)
+                                                            @case('Full-Time Onsite') {{ __('messages.full_time') }} @break
+                                                            @case('Part-Time') {{ __('messages.part_time') }} @break
+                                                            @case('Remote') {{ __('messages.remote') }} @break
+                                                            @case('Hybrid Work') {{ __('messages.hybrid') }} @break
+                                                            @case('Contractor') {{ __('messages.contractor') }} @break
+                                                            @default {{ $workType ?? 'N/A' }}
+                                                        @endswitch
+                                                    </td>
+                                                </tr>
+                                                <tr>
                                                     <th class="py-2 font-semibold ps-0" scope="row">{{ __('messages.location') }}</th>
                                                     <td class="py-2 text-right text-slate-500 dark:text-zink-200">
-                                                        {{ $profileDetail->location ?? 'N/A' }}
+                                                        {{ $profileDetail->profile->location ?? $profileDetail->location ?? 'N/A' }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="py-2 font-semibold ps-0" scope="row">{{ __('messages.cv_status') }}</th>
+                                                    <td class="py-2 text-right">
+                                                        @if($profileDetail->documents && $profileDetail->documents->cv_file_path)
+                                                            <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-600 dark:bg-green-500/20 dark:text-green-400">
+                                                                <i data-lucide="check-circle" class="inline-block size-3 ltr:mr-1 rtl:ml-1"></i>
+                                                                {{ __('messages.yes_cv_available') }}
+                                                            </span>
+                                                        @else
+                                                            <span class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400">
+                                                                <i data-lucide="x-circle" class="inline-block size-3 ltr:mr-1 rtl:ml-1"></i>
+                                                                {{ __('messages.not_uploaded') }}
+                                                            </span>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="py-2 font-semibold ps-0" scope="row">{{ __('messages.experience') }}</th>
+                                                    <td class="py-2 text-right text-slate-500 dark:text-zink-200">
+                                                        {{ $profileDetail->profile->experience_years ?? $profileDetail->experience ?? '0' }} {{ __('messages.years') }}
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <th class="pt-2 font-semibold ps-0" scope="row">{{ __('messages.joining_date') }}</th>
                                                     <td class="pt-2 text-right text-slate-500 dark:text-zink-200">
-                                                        {{ !empty($profileDetail->join_date) ? \Carbon\Carbon::parse($profileDetail->join_date)->format('d/m/Y') : 'N/A' }}
+                                                        @php
+                                                            $joinDate = $profileDetail->hiringInfo->join_date ?? $profileDetail->join_date;
+                                                        @endphp
+                                                        {{ !empty($joinDate) ? \Carbon\Carbon::parse($joinDate)->format('d/m/Y') : 'N/A' }}
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -315,263 +341,39 @@
                     <!--end grid-->
                 </div>
                 
-                <!--end tab pane Documents-->
-                <!-- <div class="hidden tab-pane" id="documentsTabs">
+                <!-- Tab pane Documents -->
+                <div class="hidden tab-pane" id="documentsTabs">
                     <div class="flex items-center gap-3 mb-4">
-                        <h5 class="underline grow">Documents</h5>
-                        <div class="shrink-0">
-                            <button data-modal-target="addDocuments" type="button"
-                                class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">Add
-                                Document</button>
+                        <h5 class="underline grow">{{ __('messages.documents') }}</h5>
+                    </div>
+                    <div class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+                        @if($profileDetail->documents && $profileDetail->documents->cv_file_path)
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex items-center justify-center size-12 rounded-lg bg-custom-100 text-custom-500 dark:bg-custom-500/20">
+                                        <i data-lucide="file-text" class="size-6"></i>
+                                    </div>
+                                    <div class="grow">
+                                        <h6 class="mb-1 text-15">{{ __('messages.cv_document') }}</h6>
+                                        <p class="text-slate-500 dark:text-zink-200 text-xs">{{ basename($profileDetail->documents->cv_file_path) }}</p>
+                                    </div>
+                                    <div class="shrink-0">
+                                        <a href="{{ url('hr/employee/download-cv/' . $profileDetail->id) }}" class="flex items-center justify-center transition-all duration-150 ease-linear rounded-md size-8 bg-slate-100 hover:bg-slate-200 dark:bg-zink-600 dark:hover:bg-zink-500" title="{{ __('messages.download') }}">
+                                            <i data-lucide="download" class="size-4"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full align-middle border-separate whitespace-nowrap border-spacing-y-1">
-                            <thead class="text-left bg-white dark:bg-zink-700">
-                                <tr>
-                                    <th class="px-3.5 py-2.5 font-semibold border-b border-transparent">
-                                        <div class="flex items-center h-full">
-                                            <input id="Checkbox1"
-                                                class="size-4 bg-white border border-slate-200 checked:bg-none dark:bg-zink-700 dark:border-zink-500 rounded-sm appearance-none arrow-none relative after:absolute after:content-['\eb7b'] after:top-0 after:left-0 after:font-remix after:leading-none after:opacity-0 checked:after:opacity-100 after:text-custom-500 checked:border-custom-500 dark:after:text-custom-500 dark:checked:border-custom-800"
-                                                type="checkbox" value="">
-                                        </div>
-                                    </th>
-                                    <th class="px-3.5 py-2.5 font-semibold border-b border-transparent">Documents Type</th>
-                                    <th class="px-3.5 py-2.5 font-semibold border-b border-transparent">Documents Name</th>
-                                    <th class="px-3.5 py-2.5 font-semibold border-b border-transparent">File Size</th>
-                                    <th class="px-3.5 py-2.5 font-semibold border-b border-transparent">Modify Date</th>
-                                    <th class="px-3.5 py-2.5 font-semibold border-b border-transparent">Uploaded</th>
-                                    <th class="px-3.5 py-2.5 font-semibold border-b border-transparent">Status</th>
-                                    <th class="px-3.5 py-2.5 font-semibold border-b border-transparent text-right">Action
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="bg-white dark:bg-zink-700">
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">
-                                        <div class="flex items-center h-full">
-                                            <input id="Checkbox2"
-                                                class="size-4 bg-white border border-slate-200 checked:bg-none dark:bg-zink-700 dark:border-zink-500 rounded-sm appearance-none arrow-none relative after:absolute after:content-['\eb7b'] after:top-0 after:left-0 after:font-remix after:leading-none after:opacity-0 checked:after:opacity-100 after:text-custom-500 checked:border-custom-500 dark:after:text-custom-500 dark:checked:border-custom-800"
-                                                type="checkbox" value="">
-                                        </div>
-                                    </td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">
-                                        <span
-                                            class="px-2.5 py-0.5 inline-block text-xs font-medium rounded border bg-slate-100 border-transparent text-slate-500 dark:bg-slate-500/20 dark:text-zink-200 dark:border-transparent">Docs</span>
-                                    </td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">starcode Docs File</td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">2.5MB</td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">15 Feb, 2023</td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">Admin</td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent"><span
-                                            class="ppx-2.5 py-0.5 inline-block text-xs font-medium rounded border bg-green-100 border-transparent text-green-500 dark:bg-green-500/20 dark:border-transparent">Successful</span>
-                                    </td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">
-                                        <div class="flex items-center justify-end gap-2">
-                                            <a href="#!"
-                                                class="flex items-center justify-center transition-all duration-150 ease-linear rounded-md size-8 bg-slate-100 hover:bg-slate-200 dark:bg-zink-600 dark:hover:bg-zink-500"><i
-                                                    data-lucide="eye" class="size-3"></i></a>
-                                            <a href="#!"
-                                                class="flex items-center justify-center transition-all duration-150 ease-linear rounded-md size-8 bg-slate-100 hover:bg-slate-200 dark:bg-zink-600 dark:hover:bg-zink-500"><i
-                                                    data-lucide="file-edit" class="size-3"></i></a>
-                                            <a href="#!"
-                                                class="flex items-center justify-center transition-all duration-150 ease-linear rounded-md size-8 bg-slate-100 hover:bg-slate-200 dark:bg-zink-600 dark:hover:bg-zink-500"><i
-                                                    data-lucide="arrow-down-to-line" class="size-3"></i></a>
-                                            <a href="#!"
-                                                class="flex items-center justify-center transition-all duration-150 ease-linear rounded-md size-8 bg-slate-100 hover:bg-slate-200 dark:bg-zink-600 dark:hover:bg-zink-500"><i
-                                                    data-lucide="trash-2" class="size-3"></i></a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="bg-white dark:bg-zink-700">
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">
-                                        <div class="flex items-center h-full">
-                                            <input id="Checkbox2"
-                                                class="size-4 bg-white border border-slate-200 checked:bg-none dark:bg-zink-700 dark:border-zink-500 rounded-sm appearance-none arrow-none relative after:absolute after:content-['\eb7b'] after:top-0 after:left-0 after:font-remix after:leading-none after:opacity-0 checked:after:opacity-100 after:text-custom-500 checked:border-custom-500 dark:after:text-custom-500 dark:checked:border-custom-800"
-                                                type="checkbox" value="">
-                                        </div>
-                                    </td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">
-                                        <span
-                                            class="px-2.5 py-0.5 inline-block text-xs font-medium rounded border bg-slate-100 border-transparent text-slate-500 dark:bg-slate-500/20 dark:text-zink-200 dark:border-transparent">PSD</span>
-                                    </td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">starcode Design Kit.psd</td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">234.87 MB</td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">29 Jan, 2023</td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">StarCode Kh</td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent"><span
-                                            class="ppx-2.5 py-0.5 inline-block text-xs font-medium rounded border bg-green-100 border-transparent text-green-500 dark:bg-green-500/20 dark:border-transparent">Successful</span>
-                                    </td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">
-                                        <div class="flex items-center justify-end gap-2">
-                                            <a href="#!"
-                                                class="flex items-center justify-center transition-all duration-150 ease-linear rounded-md size-8 bg-slate-100 hover:bg-slate-200 dark:bg-zink-600 dark:hover:bg-zink-500"><i
-                                                    data-lucide="eye" class="size-3"></i></a>
-                                            <a href="#!"
-                                                class="flex items-center justify-center transition-all duration-150 ease-linear rounded-md size-8 bg-slate-100 hover:bg-slate-200 dark:bg-zink-600 dark:hover:bg-zink-500"><i
-                                                    data-lucide="file-edit" class="size-3"></i></a>
-                                            <a href="#!"
-                                                class="flex items-center justify-center transition-all duration-150 ease-linear rounded-md size-8 bg-slate-100 hover:bg-slate-200 dark:bg-zink-600 dark:hover:bg-zink-500"><i
-                                                    data-lucide="arrow-down-to-line" class="size-3"></i></a>
-                                            <a href="#!"
-                                                class="flex items-center justify-center transition-all duration-150 ease-linear rounded-md size-8 bg-slate-100 hover:bg-slate-200 dark:bg-zink-600 dark:hover:bg-zink-500"><i
-                                                    data-lucide="trash-2" class="size-3"></i></a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="bg-white dark:bg-zink-700">
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">
-                                        <div class="flex items-center h-full">
-                                            <input id="Checkbox2"
-                                                class="size-4 bg-white border border-slate-200 checked:bg-none dark:bg-zink-700 dark:border-zink-500 rounded-sm appearance-none arrow-none relative after:absolute after:content-['\eb7b'] after:top-0 after:left-0 after:font-remix after:leading-none after:opacity-0 checked:after:opacity-100 after:text-custom-500 checked:border-custom-500 dark:after:text-custom-500 dark:checked:border-custom-800"
-                                                type="checkbox" value="">
-                                        </div>
-                                    </td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">
-                                        <span
-                                            class="px-2.5 py-0.5 inline-block text-xs font-medium rounded border bg-slate-100 border-transparent text-slate-500 dark:bg-slate-500/20 dark:text-zink-200 dark:border-transparent">SVG</span>
-                                    </td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">home Pattern Wave.svg</td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">3.87 MB</td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">24 Sept, 2023</td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">Admin</td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent"><span
-                                            class="px-2.5 py-0.5 inline-block text-xs font-medium rounded border bg-red-100 border-transparent text-red-500 dark:bg-red-500/20 dark:border-transparent">Error</span>
-                                    </td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">
-                                        <div class="flex items-center justify-end gap-2">
-                                            <a href="#!"
-                                                class="flex items-center justify-center transition-all duration-150 ease-linear rounded-md size-8 bg-slate-100 hover:bg-slate-200 dark:bg-zink-600 dark:hover:bg-zink-500"><i
-                                                    data-lucide="eye" class="size-3"></i></a>
-                                            <a href="#!"
-                                                class="flex items-center justify-center transition-all duration-150 ease-linear rounded-md size-8 bg-slate-100 hover:bg-slate-200 dark:bg-zink-600 dark:hover:bg-zink-500"><i
-                                                    data-lucide="file-edit" class="size-3"></i></a>
-                                            <a href="#!"
-                                                class="flex items-center justify-center transition-all duration-150 ease-linear rounded-md size-8 bg-slate-100 hover:bg-slate-200 dark:bg-zink-600 dark:hover:bg-zink-500"><i
-                                                    data-lucide="arrow-down-to-line" class="size-3"></i></a>
-                                            <a href="#!"
-                                                class="flex items-center justify-center transition-all duration-150 ease-linear rounded-md size-8 bg-slate-100 hover:bg-slate-200 dark:bg-zink-600 dark:hover:bg-zink-500"><i
-                                                    data-lucide="trash-2" class="size-3"></i></a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="bg-white dark:bg-zink-700">
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">
-                                        <div class="flex items-center h-full">
-                                            <input id="Checkbox2"
-                                                class="size-4 bg-white border border-slate-200 checked:bg-none dark:bg-zink-700 dark:border-zink-500 rounded-sm appearance-none arrow-none relative after:absolute after:content-['\eb7b'] after:top-0 after:left-0 after:font-remix after:leading-none after:opacity-0 checked:after:opacity-100 after:text-custom-500 checked:border-custom-500 dark:after:text-custom-500 dark:checked:border-custom-800"
-                                                type="checkbox" value="">
-                                        </div>
-                                    </td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">
-                                        <span
-                                            class="px-2.5 py-0.5 inline-block text-xs font-medium rounded border bg-slate-100 border-transparent text-slate-500 dark:bg-slate-500/20 dark:text-zink-200 dark:border-transparent">SCSS</span>
-                                    </td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">tailwind.scss</td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">0.100 KB</td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">03 April, 2023</td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">Paula</td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent"><span
-                                            class="ppx-2.5 py-0.5 inline-block text-xs font-medium rounded border bg-green-100 border-transparent text-green-500 dark:bg-green-500/20 dark:border-transparent">Successful</span>
-                                    </td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">
-                                        <div class="flex items-center justify-end gap-2">
-                                            <a href="#!"
-                                                class="flex items-center justify-center transition-all duration-150 ease-linear rounded-md size-8 bg-slate-100 hover:bg-slate-200 dark:bg-zink-600 dark:hover:bg-zink-500"><i
-                                                    data-lucide="eye" class="size-3"></i></a>
-                                            <a href="#!"
-                                                class="flex items-center justify-center transition-all duration-150 ease-linear rounded-md size-8 bg-slate-100 hover:bg-slate-200 dark:bg-zink-600 dark:hover:bg-zink-500"><i
-                                                    data-lucide="file-edit" class="size-3"></i></a>
-                                            <a href="#!"
-                                                class="flex items-center justify-center transition-all duration-150 ease-linear rounded-md size-8 bg-slate-100 hover:bg-slate-200 dark:bg-zink-600 dark:hover:bg-zink-500"><i
-                                                    data-lucide="arrow-down-to-line" class="size-3"></i></a>
-                                            <a href="#!"
-                                                class="flex items-center justify-center transition-all duration-150 ease-linear rounded-md size-8 bg-slate-100 hover:bg-slate-200 dark:bg-zink-600 dark:hover:bg-zink-500"><i
-                                                    data-lucide="trash-2" class="size-3"></i></a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="bg-white dark:bg-zink-700">
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">
-                                        <div class="flex items-center h-full">
-                                            <input id="Checkbox2"
-                                                class="size-4 bg-white border border-slate-200 checked:bg-none dark:bg-zink-700 dark:border-zink-500 rounded-sm appearance-none arrow-none relative after:absolute after:content-['\eb7b'] after:top-0 after:left-0 after:font-remix after:leading-none after:opacity-0 checked:after:opacity-100 after:text-custom-500 checked:border-custom-500 dark:after:text-custom-500 dark:checked:border-custom-800"
-                                                type="checkbox" value="">
-                                        </div>
-                                    </td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">
-                                        <span
-                                            class="px-2.5 py-0.5 inline-block text-xs font-medium rounded border bg-slate-100 border-transparent text-slate-500 dark:bg-slate-500/20 dark:text-zink-200 dark:border-transparent">MP4</span>
-                                    </td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">starcode Guide Video.mp4</td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">149.33 MB</td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">12 Nov, 2023</td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">StarCode Kh</td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent"><span
-                                            class="px-2.5 py-0.5 inline-block text-xs font-medium rounded border bg-yellow-100 border-transparent text-yellow-500 dark:bg-yellow-500/20 dark:border-transparent">Pending</span>
-                                    </td>
-                                    <td class="px-3.5 py-2.5 border-y border-transparent">
-                                        <div class="flex items-center justify-end gap-2">
-                                            <a href="#!"
-                                                class="flex items-center justify-center transition-all duration-150 ease-linear rounded-md size-8 bg-slate-100 hover:bg-slate-200 dark:bg-zink-600 dark:hover:bg-zink-500"><i
-                                                    data-lucide="eye" class="size-3"></i></a>
-                                            <a href="#!"
-                                                class="flex items-center justify-center transition-all duration-150 ease-linear rounded-md size-8 bg-slate-100 hover:bg-slate-200 dark:bg-zink-600 dark:hover:bg-zink-500"><i
-                                                    data-lucide="file-edit" class="size-3"></i></a>
-                                            <a href="#!"
-                                                class="flex items-center justify-center transition-all duration-150 ease-linear rounded-md size-8 bg-slate-100 hover:bg-slate-200 dark:bg-zink-600 dark:hover:bg-zink-500"><i
-                                                    data-lucide="arrow-down-to-line" class="size-3"></i></a>
-                                            <a href="#!"
-                                                class="flex items-center justify-center transition-all duration-150 ease-linear rounded-md size-8 bg-slate-100 hover:bg-slate-200 dark:bg-zink-600 dark:hover:bg-zink-500"><i
-                                                    data-lucide="trash-2" class="size-3"></i></a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="flex flex-col items-center gap-4 mt-4 mb-4 md:flex-row">
-                        <div class="grow">
-                            <p class="text-slate-500 dark:text-zink-200">Showing <b>6</b> of <b>18</b> Results</p>
+                        @else
+                        <div class="col-span-full py-10 text-center">
+                            <i data-lucide="folder-open" class="size-12 mx-auto text-slate-300 mb-3"></i>
+                            <p class="text-slate-500 dark:text-zink-200">{{ __('messages.no_documents_found') }}</p>
                         </div>
-                        <ul class="flex flex-wrap items-center gap-2 shrink-0">
-                            <li>
-                                <a href="#!"
-                                    class="inline-flex items-center justify-center bg-white dark:bg-zink-700 size-8 transition-all duration-150 ease-linear border border-slate-200 dark:border-zink-500 rounded text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-50 dark:hover:bg-custom-500/10 focus:bg-custom-50 dark:focus:bg-custom-500/10 focus:text-custom-500 dark:focus:text-custom-500 [&.active]:text-custom-50 dark:[&.active]:text-custom-50 [&.active]:bg-custom-500 dark:[&.active]:bg-custom-500 [&.active]:border-custom-500 dark:[&.active]:border-custom-500 [&.disabled]:text-slate-400 dark:[&.disabled]:text-zink-300 [&.disabled]:cursor-auto"><i
-                                        class="size-4 rtl:rotate-180" data-lucide="chevron-left"></i></a>
-                            </li>
-                            <li>
-                                <a href="#!"
-                                    class="inline-flex items-center justify-center bg-white dark:bg-zink-700 size-8 transition-all duration-150 ease-linear border border-slate-200 dark:border-zink-500 rounded text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-50 dark:hover:bg-custom-500/10 focus:bg-custom-50 dark:focus:bg-custom-500/10 focus:text-custom-500 dark:focus:text-custom-500 [&.active]:text-custom-50 dark:[&.active]:text-custom-50 [&.active]:bg-custom-500 dark:[&.active]:bg-custom-500 [&.active]:border-custom-500 dark:[&.active]:border-custom-500 [&.disabled]:text-slate-400 dark:[&.disabled]:text-zink-300 [&.disabled]:cursor-auto">1</a>
-                            </li>
-                            <li>
-                                <a href="#!"
-                                    class="inline-flex items-center justify-center bg-white dark:bg-zink-700 size-8 transition-all duration-150 ease-linear border border-slate-200 dark:border-zink-500 rounded text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-50 dark:hover:bg-custom-500/10 focus:bg-custom-50 dark:focus:bg-custom-500/10 focus:text-custom-500 dark:focus:text-custom-500 [&.active]:text-custom-50 dark:[&.active]:text-custom-50 [&.active]:bg-custom-500 dark:[&.active]:bg-custom-500 [&.active]:border-custom-500 dark:[&.active]:border-custom-500 [&.disabled]:text-slate-400 dark:[&.disabled]:text-zink-300 [&.disabled]:cursor-auto">2</a>
-                            </li>
-                            <li>
-                                <a href="#!"
-                                    class="inline-flex items-center justify-center bg-white dark:bg-zink-700 size-8 transition-all duration-150 ease-linear border border-slate-200 dark:border-zink-500 rounded text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-50 dark:hover:bg-custom-500/10 focus:bg-custom-50 dark:focus:bg-custom-500/10 focus:text-custom-500 dark:focus:text-custom-500 [&.active]:text-custom-50 dark:[&.active]:text-custom-50 [&.active]:bg-custom-500 dark:[&.active]:bg-custom-500 [&.active]:border-custom-500 dark:[&.active]:border-custom-500 [&.disabled]:text-slate-400 dark:[&.disabled]:text-zink-300 [&.disabled]:cursor-auto active">3</a>
-                            </li>
-                            <li>
-                                <a href="#!"
-                                    class="inline-flex items-center justify-center bg-white dark:bg-zink-700 size-8 transition-all duration-150 ease-linear border border-slate-200 dark:border-zink-500 rounded text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-50 dark:hover:bg-custom-500/10 focus:bg-custom-50 dark:focus:bg-custom-500/10 focus:text-custom-500 dark:focus:text-custom-500 [&.active]:text-custom-50 dark:[&.active]:text-custom-50 [&.active]:bg-custom-500 dark:[&.active]:bg-custom-500 [&.active]:border-custom-500 dark:[&.active]:border-custom-500 [&.disabled]:text-slate-400 dark:[&.disabled]:text-zink-300 [&.disabled]:cursor-auto">4</a>
-                            </li>
-                            <li>
-                                <a href="#!"
-                                    class="inline-flex items-center justify-center bg-white dark:bg-zink-700 size-8 transition-all duration-150 ease-linear border border-slate-200 dark:border-zink-500 rounded text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-50 dark:hover:bg-custom-500/10 focus:bg-custom-50 dark:focus:bg-custom-500/10 focus:text-custom-500 dark:focus:text-custom-500 [&.active]:text-custom-50 dark:[&.active]:text-custom-50 [&.active]:bg-custom-500 dark:[&.active]:bg-custom-500 [&.active]:border-custom-500 dark:[&.active]:border-custom-500 [&.disabled]:text-slate-400 dark:[&.disabled]:text-zink-300 [&.disabled]:cursor-auto">5</a>
-                            </li>
-                            <li>
-                                <a href="#!"
-                                    class="inline-flex items-center justify-center bg-white dark:bg-zink-700 size-8 transition-all duration-150 ease-linear border border-slate-200 dark:border-zink-500 rounded text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-50 dark:hover:bg-custom-500/10 focus:bg-custom-50 dark:focus:bg-custom-500/10 focus:text-custom-500 dark:focus:text-custom-500 [&.active]:text-custom-50 dark:[&.active]:text-custom-50 [&.active]:bg-custom-500 dark:[&.active]:bg-custom-500 [&.active]:border-custom-500 dark:[&.active]:border-custom-500 [&.disabled]:text-slate-400 dark:[&.disabled]:text-zink-300 [&.disabled]:cursor-auto">6</a>
-                            </li>
-                            <li>
-                                <a href="#!"
-                                    class="inline-flex items-center justify-center bg-white dark:bg-zink-700 size-8 transition-all duration-150 ease-linear border border-slate-200 dark:border-zink-500 rounded text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-50 dark:hover:bg-custom-500/10 focus:bg-custom-50 dark:focus:bg-custom-500/10 focus:text-custom-500 dark:focus:text-custom-500 [&.active]:text-custom-50 dark:[&.active]:text-custom-50 [&.active]:bg-custom-500 dark:[&.active]:bg-custom-500 [&.active]:border-custom-500 dark:[&.active]:border-custom-500 [&.disabled]:text-slate-400 dark:[&.disabled]:text-zink-300 [&.disabled]:cursor-auto"><i
-                                        class="size-4 rtl:rotate-180" data-lucide="chevron-right"></i></a>
-                            </li>
-                        </ul>
+                        @endif
                     </div>
-                </div> -->
+                </div>
 
                 <!--end tab pane Projects-->
                 <!-- <div class="hidden tab-pane" id="projectsTabs">
@@ -1393,5 +1195,57 @@
 @section('script')
     <!-- pages-account init js-->
     <script src="{{ URL::to('assets/js/pages/pages-account.init.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            $('#profile-img-file-input').on('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const formData = new FormData();
+                formData.append('avatar', file);
+                formData.append('user_id', '{{ $profileDetail->user_id }}');
+                formData.append('_token', '{{ csrf_token() }}');
+
+                $.ajax({
+                    url: '{{ route("profile/update-avatar") }}',
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success) {
+                            $('#user-profile-img').attr('src', response.avatar_url).removeClass('hidden');
+                            $('#user-profile-placeholder').addClass('hidden');
+                            
+                            if ('{{ auth()->user()->user_id }}' === '{{ $profileDetail->user_id }}') {
+                                $('.user-profile-image').attr('src', response.avatar_url);
+                            }
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: '{{ __("messages.success") }}',
+                                text: response.message,
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: '{{ __("messages.error") }}',
+                                text: response.message
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '{{ __("messages.error") }}',
+                            text: xhr.responseJSON?.message || 'Something went wrong!'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
 @endsection
 @endsection

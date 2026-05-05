@@ -6,63 +6,130 @@ use Session;
 use Illuminate\Http\Request;
 use App\Models\Attendance;
 use App\Models\User;
+use App\Models\Holiday;
+use App\Models\Leave;
 use Carbon\Carbon;
 
 class AttendendanceController extends Controller
 {
     /** Employee Attendance Dashboard */
-    public function employeeAttendanceDashboard()
+    public function employeeAttendanceDashboard(Request $request)
     {
         $userId = Session::get('user_id');
         $user = User::where('user_id', $userId)->first();
         
         $now = Carbon::now('Africa/Cairo');
-        $today = $now->toDateString();
-        $year = $now->year;
+        $month = (int)$request->get('month', $now->month);
+        $year = (int)$request->get('year', $now->year);
+        
+        $selectedDate = Carbon::create($year, $month, 1, 0, 0, 0, 'Africa/Cairo');
+        $monthStart = $selectedDate->copy()->startOfMonth();
+        $monthEnd = $selectedDate->copy()->endOfMonth();
+        $daysInMonth = $monthEnd->day;
 
-        $todayAttendance = Attendance::where('user_id', $userId)
-            ->whereDate('date', $today)
-            ->first();
-
-        $currentTime = $now;
-        $checkedIn = $todayAttendance && $todayAttendance->check_in ? true : false;
-        $checkedOut = $todayAttendance && $todayAttendance->check_out ? true : false;
-
-        $recentAttendance = Attendance::where('user_id', $userId)
-            ->orderBy('date', 'desc')
-            ->limit(7)
+        // Fetch attendance for the month
+        $attendances = Attendance::where('user_id', $userId)
+            ->whereBetween('date', [$monthStart->toDateString(), $monthEnd->toDateString()])
             ->get()
-            ->map(function($item) {
-                if ($item->check_in) {
-                    $item->check_in_display = Carbon::parse($item->check_in)->format('h:i A');
-                }
-                if ($item->check_out) {
-                    $item->check_out_display = Carbon::parse($item->check_out)->format('h:i A');
-                }
-                return $item;
+            ->keyBy(function($item) {
+                return Carbon::parse($item->date)->toDateString();
             });
 
-        $monthStart = Carbon::now('Africa/Cairo')->startOfMonth();
-        $monthEnd = Carbon::now('Africa/Cairo')->endOfMonth();
+        // Fetch holidays for the month
+        $holidays = Holiday::where(function($query) use ($monthStart, $monthEnd) {
+            $query->whereBetween('start_date', [$monthStart, $monthEnd])
+                  ->orWhereBetween('end_date', [$monthStart, $monthEnd]);
+        })->get();
+
+        // Fetch approved leaves for the month
+        $leaves = Leave::where('staff_id', $userId)
+            ->where('status', 'Approved')
+            ->where(function($query) use ($monthStart, $monthEnd) {
+                $query->whereBetween('date_from', [$monthStart, $monthEnd])
+                      ->orWhereBetween('date_to', [$monthStart, $monthEnd]);
+            })->get();
+
+        $calendarData = [];
+        $totalWorkedMinutes = 0;
+        $totalExpectedMinutes = 0;
+        $totalLeaveMinutes = 0;
+        
+        for ($day = 1; $day <= $daysInMonth; $day++) {
+            $date = $selectedDate->copy()->day($day);
+            $dateString = $date->toDateString();
+            
+            $isWeekend = Attendance::isWeekend($date);
+            $holiday = $holidays->first(function($h) use ($date) {
+                return $date->between($h->start_date, $h->end_date);
+            });
+            
+            $leave = $leaves->first(function($l) use ($date) {
+                $from = Carbon::parse($l->date_from);
+                $to = Carbon::parse($l->date_to);
+                return $date->between($from, $to);
+            });
+
+            $attendance = $attendances->get($dateString);
+            
+            $status = 'future';
+            if ($attendance) {
+                $status = $attendance->status;
+                $totalWorkedMinutes += abs($attendance->working_hours) * 60;
+            }
+
+            if ($date->lte($now->copy()->endOfDay())) {
+                if (!$attendance) {
+                    if ($isWeekend) {
+                        $status = 'weekend';
+                    } elseif ($holiday) {
+                        $status = 'holiday';
+                    } elseif ($leave) {
+                        $status = 'leave';
+                        $totalLeaveMinutes += 8.5 * 60; 
+                    } else {
+                        $status = 'absent';
+                    }
+                }
+            }
+
+            if (!$isWeekend && !$holiday) {
+                $totalExpectedMinutes += 8.5 * 60;
+            }
+
+            $calendarData[] = [
+                'date' => $date,
+                'date_string' => $dateString,
+                'day_name' => $date->format('D'),
+                'day_num' => $day,
+                'is_weekend' => $isWeekend,
+                'holiday' => $holiday,
+                'leave' => $leave,
+                'attendance' => $attendance,
+                'status' => $status,
+                'is_today' => $date->isToday(),
+            ];
+        }
 
         $monthlyStats = [
-            'present' => Attendance::where('user_id', $userId)
-                ->whereBetween('date', [$monthStart, $monthEnd])
-                ->whereIn('status', ['present', 'late', 'early_departure', 'late_early'])
-                ->count(),
-            'late' => Attendance::where('user_id', $userId)
-                ->whereBetween('date', [$monthStart, $monthEnd])
-                ->where('status', 'late')
-                ->count(),
-            'absent' => $this->calculateAbsentDays($userId, $monthStart, $monthEnd),
-            'total_hours' => round(Attendance::where('user_id', $userId)
-                ->whereBetween('date', [$monthStart, $monthEnd])
-                ->sum('working_hours'), 1),
+            'expected_hours' => round($totalExpectedMinutes / 60, 1),
+            'worked_hours' => round($totalWorkedMinutes / 60, 1),
+            'break_hours' => 0, 
+            'leave_hours' => round($totalLeaveMinutes / 60, 1),
+            'remaining_hours' => round(($totalExpectedMinutes - $totalWorkedMinutes - $totalLeaveMinutes) / 60, 1),
         ];
 
+        $todayAttendance = Attendance::where('user_id', $userId)->whereDate('date', $now->toDateString())->first();
+        $checkedIn = $todayAttendance && $todayAttendance->check_in ? true : false;
+        $checkedOut = $todayAttendance && $todayAttendance->check_out ? true : false;
+        $currentTime = $now;
+
+        $listData = array_reverse(array_filter($calendarData, function($day) use ($now) {
+            return $day['date']->lte($now->copy()->endOfDay());
+        }));
+
         return view('HR.EmployeeAttendance.employee-dashboard', compact(
-            'user', 'todayAttendance', 'currentTime', 'checkedIn', 'checkedOut',
-            'recentAttendance', 'monthlyStats', 'year'
+            'user', 'calendarData', 'listData', 'monthlyStats', 'month', 'year', 'selectedDate',
+            'todayAttendance', 'checkedIn', 'checkedOut', 'currentTime'
         ));
     }
 
@@ -219,7 +286,7 @@ class AttendendanceController extends Controller
             $checkOut = $now;
             $workingHours = round($checkOut->diffInMinutes($checkIn) / 60, 2);
 
-            $requiredHours = 8;
+            $requiredHours = 8.5;
             $earlyMinutes = 0;
             $status = $attendance->status;
 

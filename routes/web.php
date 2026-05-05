@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AttendendanceController;
@@ -58,6 +59,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
 
     Route::controller(AccountController::class)->group(function () {
         Route::get('page/account/{user_id}', 'profileDetail')->middleware('auth')->name('page/account');
+        Route::post('profile/update-avatar', 'updateAvatar')->middleware('auth')->name('profile/update-avatar');
     });
 
     Route::middleware('auth')->prefix('hr/')->group(function () {
@@ -76,6 +78,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
             Route::post('employee/delete', 'employeeDeleteRecord')->name('hr/employee/delete');
             Route::get('employee/export', 'exportEmployees')->name('hr/employee/export');
             Route::get('employee/import-template', 'downloadImportTemplate')->name('hr/employee/import-template');
+            Route::get('employee/download-cv/{id}', 'downloadCV')->name('hr/employee/download-cv');
             Route::post('employee/import', 'importEmployees')->name('hr/employee/import');
 
             // Holiday routes
@@ -125,6 +128,14 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
 
             Route::post('department/save', 'saveRecordDepartment')->name('hr/department/save');
             Route::post('department/delete', 'deleteRecordDepartment')->name('hr/department/delete');
+        });
+
+        // Permission routes
+        Route::controller(PermissionController::class)->group(function () {
+            Route::get('permissions/all', 'index')->name('permissions.index');
+            Route::get('permissions/my', 'myPermissions')->name('permissions.my');
+            Route::post('permissions/store', 'store')->name('permissions.store');
+            Route::post('permissions/update-status/{id}', 'updateStatus')->name('permissions.update-status');
         });
     });
 });

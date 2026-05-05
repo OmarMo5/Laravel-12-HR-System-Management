@@ -32,13 +32,25 @@
                         </tr>
                         <tr>
                             <td class="px-3 py-2 font-semibold">{{ __('messages.working_hours') }}:</td>
-                            <td class="px-3 py-2">{{ number_format($attendance->working_hours, 2) }}
-                                {{ __('messages.hours') }}</td>
+                            <td class="px-3 py-2">
+                                @php
+                                    $wh_modal = abs($attendance->working_hours);
+                                    $wh_modal_h = floor($wh_modal);
+                                    $wh_modal_m = round(($wh_modal - $wh_modal_h) * 60);
+                                @endphp
+                                {{ sprintf('%02d:%02d', $wh_modal_h, $wh_modal_m) }}
+                            </td>
                         </tr>
                         <tr>
                             <td class="px-3 py-2 font-semibold">{{ __('messages.overtime') }}:</td>
-                            <td class="px-3 py-2">{{ number_format($attendance->overtime_hours, 2) }}
-                                {{ __('messages.hours') }}</td>
+                            <td class="px-3 py-2">
+                                @php
+                                    $oh_modal = abs($attendance->overtime_hours);
+                                    $oh_modal_h = floor($oh_modal);
+                                    $oh_modal_m = round(($oh_modal - $oh_modal_h) * 60);
+                                @endphp
+                                {{ sprintf('%02d:%02d', $oh_modal_h, $oh_modal_m) }}
+                            </td>
                         </tr>
                         @if ($attendance->late_minutes > 0)
                             <tr>
