@@ -13,7 +13,7 @@ class AccountController extends Controller
     /** page account profile */
     public function profileDetail($user_id)
     {
-        $profileDetail = User::with(['profile', 'jobInfo.jobTitle', 'jobInfo.department', 'hiringInfo', 'salary', 'insurance', 'documents', 'evaluations'])
+        $profileDetail = User::with(['profile', 'jobInfo.jobTitle', 'jobInfo.department', 'hiringInfo', 'salary', 'insurance', 'documents'])
             ->where('user_id', $user_id)->first();
         return view('pages.account-profile', compact('profileDetail'));
     }

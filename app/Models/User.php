@@ -11,7 +11,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'user_id', 'name', 'email', 'phone_number', 'password',
+        'user_id', 'name', 'email', 'company_email', 'phone_number', 'password',
         'role_name', 'role_id', 'status', 'avatar'
     ];
 
@@ -66,10 +66,6 @@ public function insurance()
         return $this->hasOne(EmployeeDocument::class);
     }
 
-    public function evaluations()
-    {
-        return $this->hasMany(ManagerEvaluation::class);
-    }
 
     public function hasAnyRole($roles)
     {

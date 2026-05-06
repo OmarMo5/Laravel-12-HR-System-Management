@@ -33,15 +33,16 @@ class EmployeeRequest extends FormRequest
             'name' => 'required|string|max:255',
             'phone_number' => 'required|string|max:20',
             'email' => 'required|email|unique:users,email,' . $userId,
-            'national_id' => 'nullable|string|max:50',
-            'address' => 'nullable|string',
+            'company_email' => 'required|email|unique:users,company_email,' . $userId,
+            'national_id' => 'required|string|max:50',
+            'address' => 'required|string',
 
             // 2. Job Information
             'job_title_id' => 'required|exists:position_types,id',
             'department_id' => 'required|exists:departments,id',
             'manager_id' => 'nullable|exists:users,id',
             'work_type' => 'required|string',
-            'work_location_job' => 'nullable|string',
+            'work_location_job' => 'required|string',
 
             // 3. Hiring Information
             'join_date' => 'required|date',
@@ -69,8 +70,6 @@ class EmployeeRequest extends FormRequest
             'experience_years' => 'nullable|numeric|min:0',
             'gender' => 'nullable|in:Male,Female',
 
-            // 8. Manager Evaluation
-            'manager_rating' => 'nullable|numeric|min:1|max:10',
 
             // 9. Documents
             'cv_file' => 'nullable|file|mimes:pdf,doc,docx|max:2048',

@@ -83,7 +83,7 @@ class HRController extends Controller
             $query->where('department', $department);
         }
 
-        $employeeList = $query->with(['profile', 'jobInfo', 'hiringInfo', 'salary', 'insurance', 'documents', 'evaluations'])
+        $employeeList = $query->with(['profile', 'jobInfo', 'hiringInfo', 'salary', 'insurance', 'documents'])
         ->when($search, function ($q, $search) {
             return $q->where(function ($inner) use ($search) {
                 $inner->where('name',       'like', '%' . $search . '%')
@@ -147,7 +147,7 @@ class HRController extends Controller
             $authUser  = Auth::user();
             $isManager = in_array($authUser->role_name, ['Manager', 'manager']);
 
-            $query = User::query()->with(['profile', 'jobInfo.department', 'jobInfo.jobTitle', 'jobInfo.manager', 'hiringInfo', 'salary', 'insurance', 'evaluations']);
+            $query = User::query()->with(['profile', 'jobInfo.department', 'jobInfo.jobTitle', 'jobInfo.manager', 'hiringInfo', 'salary', 'insurance']);
             
             if ($isManager) {
                 $query->whereHas('jobInfo', function($q) use ($authUser) {
@@ -178,13 +178,12 @@ class HRController extends Controller
                 fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF)); // UTF-8 BOM
 
                 fputcsv($handle, [
-                    'Employee ID', 'Name', 'Email', 'Phone', 'Role', 'Gender', 
+                    'Employee ID', 'Name', 'Email', 'Company Email', 'Phone', 'Role', 'Gender', 
                     'National ID', 'Address', 'Experience Years', 'Location',
                     'Job Title', 'Department', 'Manager', 'Work Type', 'Work Location',
                     'Join Date', 'Contract Type',
                     'Base Salary', 'Allowances', 'Overtime', 'Deductions', 'Advances', 'Payment Type',
-                    'Insurance Number', 'Insurance Start Date', 'Insurance Status',
-                    'Manager Rating'
+                    'Insurance Number', 'Insurance Start Date', 'Insurance Status'
                 ]);
 
                 foreach ($employees as $employee) {
@@ -192,6 +191,7 @@ class HRController extends Controller
                         $employee->user_id,
                         $employee->name,
                         $employee->email,
+                        $employee->company_email,
                         $employee->phone_number,
                         $employee->role_name,
                         $employee->profile->gender ?? $employee->status,
@@ -214,8 +214,7 @@ class HRController extends Controller
                         $employee->salary->payment_type ?? '',
                         $employee->insurance->insurance_number ?? '',
                         $employee->insurance->insurance_start_date ?? '',
-                        $employee->insurance->insurance_status ?? '',
-                        $employee->evaluations->first()->rating ?? ''
+                        $employee->insurance->insurance_status ?? ''
                     ]);
                 }
 
@@ -264,7 +263,7 @@ class HRController extends Controller
             
             // Map headers to indices
             $expected = [
-                'name' => 'Name', 'email' => 'Email', 'phone' => 'Phone', 'password' => 'Password', 
+                'name' => 'Name', 'email' => 'Email', 'company_email' => 'Company Email', 'phone' => 'Phone', 'password' => 'Password', 
                 'role' => 'Role', 'gender' => 'Gender', 'national_id' => 'National ID', 'address' => 'Address', 
                 'experience_years' => 'Experience Years', 'location' => 'Location', 'job_title' => 'Job Title', 
                 'department' => 'Department', 'manager_name' => 'Manager Name', 'work_type' => 'Work Type', 
@@ -272,7 +271,7 @@ class HRController extends Controller
                 'base_salary' => 'Base Salary', 'allowances' => 'Allowances', 'overtime' => 'Overtime', 
                 'deductions' => 'Deductions', 'advances' => 'Advances', 'payment_type' => 'Payment Type', 
                 'insurance_number' => 'Insurance Number', 'insurance_start_date' => 'Insurance Start Date', 
-                'insurance_status' => 'Insurance Status', 'manager_rating' => 'Manager Rating'
+                'insurance_status' => 'Insurance Status'
             ];
             
             $indices = [];
@@ -328,6 +327,7 @@ class HRController extends Controller
                         'user_id' => $newId,
                         'name' => $data['name'],
                         'email' => $data['email'],
+                        'company_email' => $data['company_email'],
                         'phone_number' => $data['phone'],
                         'password' => Hash::make($data['password'] ?? 'password123'),
                         'role_id' => $roleId,
@@ -384,13 +384,6 @@ class HRController extends Controller
                         'insurance_status' => $data['insurance_status'] ?? 'Not Insured',
                     ]);
 
-                    if (!empty($data['manager_rating'])) {
-                        ManagerEvaluation::create([
-                            'user_id' => $user->id,
-                            'manager_id' => auth()->id(),
-                            'rating' => $data['manager_rating'],
-                        ]);
-                    }
 
                     DB::commit();
                     $successCount++;
@@ -434,24 +427,22 @@ class HRController extends Controller
             
             // Headers (Must match import logic mapping)
             fputcsv($handle, [
-                'Name', 'Email', 'Phone', 'Password', 'Role', 'Gender', 
+                'Name', 'Email', 'Company Email', 'Phone', 'Password', 'Role', 'Gender', 
                 'National ID', 'Address', 'Experience Years', 'Location',
                 'Job Title', 'Department', 'Manager Name', 'Work Type', 'Work Location',
                 'Join Date', 'Contract Type',
                 'Base Salary', 'Allowances', 'Overtime', 'Deductions', 'Advances', 'Payment Type',
-                'Insurance Number', 'Insurance Start Date', 'Insurance Status',
-                'Manager Rating'
+                'Insurance Number', 'Insurance Start Date', 'Insurance Status'
             ]);
             
             // Example row
             fputcsv($handle, [
-                'John Doe', 'john@example.com', '1234567890', 'password123', 'Employee', 'Male',
+                'John Doe', 'john@example.com', 'john.doe@company.com', '1234567890', 'password123', 'Employee', 'Male',
                 '12345678901234', '123 Street, Cairo', '5', 'Cairo',
                 'Software Engineer', 'IT', 'Manager Name', 'Full-Time Onsite', 'Office',
                 '2024-01-15', 'Permanent',
                 '10000', '1000', '500', '200', '0', 'Bank Transfer',
-                'INS123456', '2024-01-15', 'Insured',
-                '8'
+                'INS123456', '2024-01-15', 'Insured'
             ]);
             
             fclose($handle);
@@ -674,6 +665,7 @@ class HRController extends Controller
             $user->user_id = $newEmployeeId;
             $user->name = $request->name;
             $user->email = $request->email;
+            $user->company_email = $request->company_email;
             $user->phone_number = $request->phone_number;
             $user->password = Hash::make($request->password);
             $user->role_id = $request->role_id;
@@ -741,14 +733,6 @@ class HRController extends Controller
                 ]);
             }
 
-            // 8. Manager Evaluation
-            if ($request->filled('manager_rating') && in_array(auth()->user()->role_name, ['Admin', 'HR', 'Manager'])) {
-                ManagerEvaluation::create([
-                    'user_id' => $user->id,
-                    'manager_id' => auth()->id(),
-                    'rating' => $request->manager_rating,
-                ]);
-            }
 
             DB::commit();
             
@@ -790,6 +774,7 @@ class HRController extends Controller
             // Update user basic info
             $user->name = $request->name;
             $user->email = $request->email;
+            $user->company_email = $request->company_email;
             $user->phone_number = $request->phone_number;
             $user->role_id = $request->role_id;
             $user->role_name = DB::table('role_type_users')->where('id', $request->role_id)->value('role_type');

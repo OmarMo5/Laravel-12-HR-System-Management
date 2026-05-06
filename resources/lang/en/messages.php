@@ -828,6 +828,8 @@ return [
     'permission_reason' => 'Permission Reason',
     'personal_reason_details' => 'Personal Reason Details',
     'enter_personal_reason' => 'Enter the specific reason for your personal permission',
+    'company_email' => 'Company Email',
+    'enter_company_email' => 'Enter company email address (e.g., name@company.com)',
     'limit_reached' => 'You have reached the maximum permission limit for this month (2).',
     'remaining_permissions' => 'Remaining permissions for you this month',
     'permission_submitted' => 'Permission request submitted successfully.',

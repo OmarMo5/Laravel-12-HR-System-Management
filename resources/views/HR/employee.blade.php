@@ -170,6 +170,7 @@
                                                         'user_id' => $employee->user_id,
                                                         'name' => $employee->name,
                                                         'email' => $employee->email,
+                                                        'company_email' => $employee->company_email,
                                                         'phone_number' => $employee->phone_number,
                                                         'role_name' => $employee->role_name,
                                                         'department' => $employee->jobInfo?->department?->department ?? $employee->department,
@@ -183,7 +184,6 @@
                                                         'salary' => $employee->salary,
                                                         'insurance' => $employee->insurance,
                                                         'documents' => $employee->documents,
-                                                        'evaluations' => $employee->evaluations->first(),
                                                    ]) }}">
                                                     <i data-lucide="eye" class="size-3.5"></i>
                                                 </button>
@@ -194,6 +194,7 @@
                                                         'user_id' => $employee->user_id,
                                                         'name' => $employee->name,
                                                         'email' => $employee->email,
+                                                        'company_email' => $employee->company_email,
                                                         'phone_number' => $employee->phone_number,
                                                         'role_id' => $employee->role_id,
                                                         'avatar' => $employee->avatar,
@@ -203,7 +204,6 @@
                                                         'salary' => $employee->salary,
                                                         'insurance' => $employee->insurance,
                                                         'documents' => $employee->documents,
-                                                        'evaluations' => $employee->evaluations->first(),
                                                         'designation' => $employee->jobInfo?->jobTitle?->position ?? $employee->designation,
                                                     ]) }}">
                                                     <i data-lucide="pencil" class="size-3.5"></i>
@@ -269,7 +269,7 @@
                 {{-- Stepper Progress Bar --}}
                 <div class="p-4 bg-slate-50 dark:bg-zink-700 border-b dark:border-zink-500 shrink-0">
                     <div class="flex justify-between mb-2">
-                        @for ($i = 1; $i <= 9; $i++)
+                        @for ($i = 1; $i <= 8; $i++)
                             <div class="flex flex-col items-center flex-1 step-header-add cursor-pointer transition-all hover:opacity-80" data-step="{{ $i }}">
                                 <div class="size-8 rounded-full flex items-center justify-center border-2 mb-1 step-circle-add {{ $i == 1 ? 'border-custom-500 bg-custom-500 text-white' : 'border-slate-300 text-slate-500 dark:text-zink-200' }}">
                                     {{ $i }}
@@ -283,15 +283,14 @@
                                         @case(5) {{ __('messages.salary') }} @break
                                         @case(6) {{ __('messages.insurance') }} @break
                                         @case(7) {{ __('messages.additional_info') }} @break
-                                        @case(8) {{ __('messages.manager_eval') }} @break
-                                        @case(9) {{ __('messages.documents') }} @break
+                                        @case(8) {{ __('messages.documents') }} @break
                                     @endswitch
                                 </span>
                             </div>
                         @endfor
                     </div>
                     <div class="w-full bg-slate-200 dark:bg-zink-600 rounded-full h-1">
-                        <div id="add-stepper-progress" class="bg-custom-500 h-1 rounded-full transition-all duration-500" style="width: 11.11%"></div>
+                        <div id="add-stepper-progress" class="bg-custom-500 h-1 rounded-full transition-all duration-500" style="width: 12.5%"></div>
                     </div>
                 </div>
 
@@ -335,14 +334,20 @@
                                     @error('email') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
                                 </div>
                                 <div>
-                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.national_id') }}</label>
+                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.company_email') }} <span class="text-red-500">*</span></label>
+                                    <input type="email" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 @error('company_email') border-red-500 @enderror" 
+                                           name="company_email" value="{{ old('company_email') }}" placeholder="{{ __('messages.enter_company_email') }}" required>
+                                    @error('company_email') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
+                                </div>
+                                <div>
+                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.national_id') }} <span class="text-red-500">*</span></label>
                                     <input type="text" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" 
-                                           name="national_id" value="{{ old('national_id') }}" placeholder="{{ __('messages.enter_national_id') }}">
+                                           name="national_id" value="{{ old('national_id') }}" placeholder="{{ __('messages.enter_national_id') }}" required>
                                 </div>
                                 <div class="md:col-span-2">
-                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.address') }}</label>
+                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.address') }} <span class="text-red-500">*</span></label>
                                     <input type="text" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" 
-                                           name="address" value="{{ old('address') }}" placeholder="{{ __('messages.enter_address') }}">
+                                           name="address" value="{{ old('address') }}" placeholder="{{ __('messages.enter_address') }}" required>
                                 </div>
                             </div>
                         </div>
@@ -371,8 +376,8 @@
                                     @error('department_id') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
                                 </div>
                                 <div>
-                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.manager') }}</label>
-                                    <select class="form-select border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" name="manager_id">
+                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.manager') }} <span class="text-red-500">*</span></label>
+                                    <select class="form-select border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" name="manager_id" required>
                                         <option value="">{{ __('messages.select_manager') }}</option>
                                         @foreach ($managers as $mgr)
                                             <option value="{{ $mgr->id }}" {{ old('manager_id') == $mgr->id ? 'selected' : '' }}>{{ $mgr->name }}</option>
@@ -391,9 +396,9 @@
                                     @error('work_type') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
                                 </div>
                                 <div class="md:col-span-2">
-                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.work_location') }}</label>
+                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.work_location') }} <span class="text-red-500">*</span></label>
                                     <input type="text" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" 
-                                           name="work_location_job" value="{{ old('work_location_job') }}" placeholder="{{ __('messages.enter_work_location') }}">
+                                           name="work_location_job" value="{{ old('work_location_job') }}" placeholder="{{ __('messages.enter_work_location') }}" required>
                                 </div>
                             </div>
                         </div>
@@ -556,24 +561,8 @@
                             </div>
                         </div>
 
-                        {{-- Step 8: Manager Evaluation --}}
+                        {{-- Step 8: Documents --}}
                         <div class="step-content-add hidden" data-step="8">
-                            @if (in_array(Auth::user()->role_name, ['Admin', 'Manager', 'HR']))
-                                <div>
-                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.manager_rating') }} (1-10)</label>
-                                    <input type="number" min="1" max="10" step="1" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" 
-                                           name="manager_rating" value="{{ old('manager_rating') }}">
-                                    <p class="mt-1 text-xs text-slate-400">{{ __('messages.manager_rating_hint') }}</p>
-                                </div>
-                            @else
-                                <div class="p-4 bg-slate-100 dark:bg-zink-700 rounded text-center">
-                                    <p class="text-slate-500 dark:text-zink-200">{{ __('messages.restricted_manager_rating') }}</p>
-                                </div>
-                            @endif
-                        </div>
-
-                        {{-- Step 9: Documents --}}
-                        <div class="step-content-add hidden" data-step="9">
                             <div class="grid grid-cols-1 gap-4">
                                 <div>
                                     <label class="inline-block mb-2 text-base font-medium">{{ __('messages.cv_file') }}</label>
@@ -624,7 +613,7 @@
                 {{-- Stepper Progress Bar --}}
                 <div class="p-4 bg-slate-50 dark:bg-zink-700 border-b dark:border-zink-500 shrink-0">
                     <div class="flex justify-between mb-2">
-                        @for ($i = 1; $i <= 9; $i++)
+                        @for ($i = 1; $i <= 8; $i++)
                             <div class="flex flex-col items-center flex-1 step-header-edit cursor-pointer transition-all hover:opacity-80" data-step="{{ $i }}">
                                 <div class="size-8 rounded-full flex items-center justify-center border-2 mb-1 step-circle-edit {{ $i == 1 ? 'border-custom-500 bg-custom-500 text-white' : 'border-slate-300 text-slate-500 dark:text-zink-200' }}">
                                     {{ $i }}
@@ -638,15 +627,14 @@
                                         @case(5) {{ __('messages.salary') }} @break
                                         @case(6) {{ __('messages.insurance') }} @break
                                         @case(7) {{ __('messages.additional_info') }} @break
-                                        @case(8) {{ __('messages.manager_eval') }} @break
-                                        @case(9) {{ __('messages.documents') }} @break
+                                        @case(8) {{ __('messages.documents') }} @break
                                     @endswitch
                                 </span>
                             </div>
                         @endfor
                     </div>
                     <div class="w-full bg-slate-200 dark:bg-zink-600 rounded-full h-1">
-                        <div id="edit-stepper-progress" class="bg-custom-500 h-1 rounded-full transition-all duration-500" style="width: 11.11%"></div>
+                        <div id="edit-stepper-progress" class="bg-custom-500 h-1 rounded-full transition-all duration-500" style="width: 12.5%"></div>
                     </div>
                 </div>
 
@@ -689,6 +677,11 @@
                                            name="email" required>
                                 </div>
                                 <div>
+                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.company_email') }} <span class="text-red-500">*</span></label>
+                                    <input type="email" id="e_company_email" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" 
+                                           name="company_email" required>
+                                </div>
+                                <div>
                                     <label class="inline-block mb-2 text-base font-medium">{{ __('messages.national_id') }}</label>
                                     <input type="text" id="e_national_id" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" 
                                            name="national_id">
@@ -723,8 +716,8 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.manager') }}</label>
-                                    <select id="e_manager_id" class="form-select border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" name="manager_id">
+                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.manager') }} <span class="text-red-500">*</span></label>
+                                    <select id="e_manager_id" class="form-select border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" name="manager_id" required>
                                         <option value="">{{ __('messages.select_manager') }}</option>
                                         @foreach ($managers as $mgr)
                                             <option value="{{ $mgr->id }}">{{ $mgr->name }}</option>
@@ -742,9 +735,9 @@
                                     </select>
                                 </div>
                                 <div class="md:col-span-2">
-                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.work_location') }}</label>
+                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.work_location') }} <span class="text-red-500">*</span></label>
                                     <input type="text" id="e_work_location_job" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" 
-                                           name="work_location_job">
+                                           name="work_location_job" required>
                                 </div>
                             </div>
                         </div>
@@ -903,23 +896,8 @@
                             </div>
                         </div>
 
-                        {{-- Step 8: Manager Evaluation --}}
+                        {{-- Step 8: Documents --}}
                         <div class="step-content-edit hidden" data-step="8">
-                            @if (in_array(Auth::user()->role_name, ['Admin', 'Manager', 'HR']))
-                                <div>
-                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.manager_rating') }} (1-10)</label>
-                                    <input type="number" min="1" max="10" step="1" id="e_manager_rating" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" 
-                                           name="manager_rating">
-                                </div>
-                            @else
-                                <div class="p-4 bg-slate-100 dark:bg-zink-700 rounded text-center">
-                                    <p class="text-slate-500 dark:text-zink-200">{{ __('messages.restricted_manager_rating') }}</p>
-                                </div>
-                            @endif
-                        </div>
-
-                        {{-- Step 9: Documents --}}
-                        <div class="step-content-edit hidden" data-step="9">
                             <div class="grid grid-cols-1 gap-4">
                                 <div id="e_current_cv" class="hidden mb-4 p-3 bg-slate-50 dark:bg-zink-700 rounded flex justify-between items-center">
                                     <span class="text-sm font-medium text-slate-600 dark:text-zink-200">{{ __('messages.current_cv') }}</span>
@@ -1052,6 +1030,10 @@
                                         <div class="overflow-hidden"><p class="text-[10px] text-slate-400 uppercase font-bold">{{ __('messages.email') }}</p><p id="v_email" class="text-sm font-medium text-slate-700 dark:text-zink-100 truncate">---</p></div>
                                     </div>
                                     <div class="flex items-start gap-4">
+                                        <div class="p-2 bg-white dark:bg-zink-600 rounded-xl shadow-sm"><i data-lucide="mail" class="size-4 text-custom-500"></i></div>
+                                        <div class="overflow-hidden"><p class="text-[10px] text-slate-400 uppercase font-bold">{{ __('messages.company_email') }}</p><p id="v_company_email" class="text-sm font-medium text-slate-700 dark:text-zink-100 truncate">---</p></div>
+                                    </div>
+                                    <div class="flex items-start gap-4">
                                         <div class="p-2 bg-white dark:bg-zink-600 rounded-xl shadow-sm"><i data-lucide="phone" class="size-4 text-green-500"></i></div>
                                         <div><p class="text-[10px] text-slate-400 uppercase font-bold">{{ __('messages.phone') }}</p><p id="v_phone" class="text-sm font-medium text-slate-700 dark:text-zink-100">---</p></div>
                                     </div>
@@ -1119,24 +1101,6 @@
 
                     <!-- Right Column: Documents & Evaluation -->
                     <div class="lg:col-span-4 space-y-8">
-                        <!-- Rating Section -->
-                        <div class="bg-white dark:bg-zink-700 p-6 rounded-3xl border border-slate-200 dark:border-zink-500 shadow-sm relative overflow-hidden">
-                            <div class="flex items-center justify-between mb-6">
-                                <h4 class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ __('messages.manager_rating') }}</h4>
-                                <div class="p-2 bg-yellow-50 dark:bg-yellow-500/10 rounded-lg">
-                                    <i data-lucide="star" class="size-5 text-yellow-500 fill-yellow-500"></i>
-                                </div>
-                            </div>
-                            <div class="text-center py-4 relative z-10">
-                                <div id="v_rating" class="text-7xl font-black mb-2 text-slate-800 dark:text-zink-50">---</div>
-                                <div class="text-xs text-slate-400 font-bold uppercase tracking-widest">Out of 10 Points</div>
-                            </div>
-                            <div class="mt-6 pt-6 border-t border-slate-100 dark:border-zink-500 flex items-center justify-between">
-                                <span class="text-xs text-slate-400 font-bold uppercase">Performance Level</span>
-                                <span id="v_performance_level" class="text-[10px] font-black uppercase px-2 py-1 bg-custom-50 text-custom-600 dark:bg-custom-500/10 dark:text-custom-400 rounded-md">Standard</span>
-                            </div>
-                        </div>
-
                         <!-- Documents Section -->
                         <div class="bg-white dark:bg-zink-700 p-6 rounded-3xl border border-slate-200 dark:border-zink-500">
                             <h4 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-5">{{ __('messages.documents_insurance') }}</h4>
@@ -1256,7 +1220,7 @@
         // ========== STEPPER FUNCTION ==========
         function initStepper(modalId, stepContentClass, stepHeaderClass, progressId, nextBtnId, prevBtnId, submitBtnId) {
             let currentStep = 1;
-            const totalSteps = 9;
+            const totalSteps = 8;
 
             function updateStepper() {
                 $(`#${modalId} .${stepContentClass}`).addClass('hidden').removeClass('block');
@@ -1529,6 +1493,7 @@
             
             // Contact
             $('#v_email').text(emp.email || '---');
+            $('#v_company_email').text(emp.company_email || '---');
             $('#v_phone').text(emp.phone_number || '---');
             $('#v_address').text(emp.profile?.address || '---');
             
@@ -1540,34 +1505,6 @@
             // System/Personal
             $('#v_gender').text(emp.profile?.gender || '---');
             $('#v_national_id').text(emp.profile?.national_id || '---');
-            
-            // Evaluation (Get latest rating from array)
-            let latestRating = '---';
-            if (emp.evaluations && Array.isArray(emp.evaluations) && emp.evaluations.length > 0) {
-                // Assuming the last one is the latest
-                latestRating = emp.evaluations[emp.evaluations.length - 1].rating;
-            } else if (emp.evaluations && typeof emp.evaluations === 'object' && emp.evaluations.rating) {
-                latestRating = emp.evaluations.rating;
-            }
-            $('#v_rating').text(latestRating);
-            
-            // Performance Level Logic
-            let perfLevel = '---';
-            let perfClass = 'bg-slate-100 text-slate-600';
-            if (latestRating !== '---') {
-                let r = parseFloat(latestRating);
-                if (r >= 8) {
-                    perfLevel = '{{ __("messages.excellent") }}';
-                    perfClass = 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400';
-                } else if (r >= 5) {
-                    perfLevel = '{{ __("messages.good") }}';
-                    perfClass = 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400';
-                } else {
-                    perfLevel = '{{ __("messages.low") }}';
-                    perfClass = 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400';
-                }
-            }
-            $('#v_performance_level').text(perfLevel).attr('class', `text-[10px] font-black uppercase px-2 py-1 rounded-md ${perfClass}`);
             
             // Salary
             $('#v_base_salary').text(emp.salary?.base_salary ? parseFloat(emp.salary.base_salary).toLocaleString(undefined, {minimumFractionDigits: 2}) : '0.00');
@@ -1634,6 +1571,7 @@
             $('#e_employee_id').val(employee.user_id);
             $('#e_name').val(employee.name);
             $('#e_email').val(employee.email);
+            $('#e_company_email').val(employee.company_email);
             $('#e_phone_number').val(employee.phone_number);
             
             if(employee.profile) {
@@ -1682,12 +1620,7 @@
                 setSelectValue('#e_insurance_status', employee.insurance.insurance_status);
             }
 
-            // Step 8: Rating
-            if (employee.evaluations && employee.evaluations.rating) {
-                $('#e_manager_rating').val(employee.evaluations.rating);
-            }
-
-            // Step 9: Documents
+            // Step 8: Documents
             if(employee.documents && employee.documents.cv_file_path) {
                 $('#e_current_cv').removeClass('hidden');
                 $('#e_cv_link').attr('href', `{{ asset('storage') }}/${employee.documents.cv_file_path}`);

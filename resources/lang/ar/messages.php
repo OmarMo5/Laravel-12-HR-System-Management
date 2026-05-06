@@ -826,6 +826,8 @@ return [
     'permission_reason' => 'سبب الاستئذان',
     'personal_reason_details' => 'تفاصيل السبب الشخصي',
     'enter_personal_reason' => 'أدخل السبب المحدد لطلب الإذن الشخصي',
+    'company_email' => 'البريد الإلكتروني للشركة',
+    'enter_company_email' => 'أدخل البريد الإلكتروني للشركة (مثال: name@company.com)',
     'limit_reached' => 'لقد وصلت إلى الحد الأقصى للأذونات هذا الشهر (2).',
     'remaining_permissions' => 'الأذونات المتبقية لك هذا الشهر',
     'permission_submitted' => 'تم تقديم طلب الإذن بنجاح.',

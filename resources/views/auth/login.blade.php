@@ -17,6 +17,47 @@
         body { font-family: 'Tajawal', sans-serif !important; }
         .custom-input { color: #0f172a !important; } /* Force dark text color */
         .bg-custom-500 { background-color: #2563eb; }
+        .login-label { color: #2e2d2dff !important; }
+        .dark .login-label { color: #ffffff !important; }
+        
+        /* أنيمشن الاختفاء */
+        .fade-out {
+            animation: fadeOut 0.6s ease forwards;
+        }
+        
+        /* أنيمشن الظهور */
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-15px); visibility: hidden; display: none; }
+        }
+        
+        /* تنسيق النقاط الجديدة - نفس تنسيق النص القديم بالضبط */
+        .feature-point {
+            margin-bottom: 20px;
+            padding-right: 25px;
+            position: relative;
+            line-height: 1.6;
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: #f1f5f9;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            border-right: 3px solid #3b82f6;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-point:before {
+            content: "●";
+            position: absolute;
+            right: 0;
+            color: #3b82f6;
+            font-size: 1rem;
+            top: 0;
+        }
+        
+        /* تحسين للشاشات الصغيرة */
+        @media (max-width: 1024px) {
+            .feature-point { font-size: 0.9rem; margin-bottom: 15px; }
+        }
     </style>
 </head>
 <body class="bg-white dark:bg-zink-950 overflow-x-hidden">
@@ -37,10 +78,23 @@
                     عالم من <span class="text-blue-500 underline decoration-8 underline-offset-8">الابتكار</span> <br>والتميز المعرفي
                 </h1>
                 
-                <div class="p-10 rounded-[2.5rem] bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">
-                    <p class="text-xl leading-relaxed text-slate-100 font-medium">
+                <!-- نفس الصندوق - نفس المكان -->
+                <div class="p-10 rounded-[2.5rem] bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl min-h-[300px]">
+                    
+                    <!-- النص الطويل (اللي هيختفي بسرعة) -->
+                    <div id="initialText" class="text-xl leading-relaxed text-slate-100 font-medium">
                         ننشئ وننظم وندير معارض ومتاحف محلية ودولية لكل المجالات الفكرية والدينية والإنسانية، وننظم الفعاليات والمؤتمرات في كل المجالات وفي أي بقعة جغرافية وفق أعلى معايير الجودة المبنية على البحث العلمي، وأدوات العرض التقنية والتكنولوجية التفاعلية، والمعتمدة على الذكاء الاصطناعي والواقع الافتراضي الذي يحاكي الحقيقة بدقة كبيرة، ويوفر للزائرين متعة سمعية وبصرية تفاعلية فريدة.
-                    </p>
+                    </div>
+                    
+                    <!-- القائمة الجديدة (مخفية في البداية) -->
+                    <div id="pointsList" style="display: none;">
+                        <div class="feature-point">منصة موحدة لإدارة الموارد البشرية</div>
+                        <div class="feature-point">تنظيم العمليات اليومية بكفاءة عالية</div>
+                        <div class="feature-point">تقليل الأخطاء وزيادة الإنتاجية</div>
+                        <div class="feature-point">دعم كامل لقرارات الإدارة</div>
+                        <div class="feature-point">حماية وأمان للبيانات</div>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -65,7 +119,7 @@
                 @endif
 
                 <div class="space-y-2">
-                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">البريد الإلكتروني / اسم المستخدم</label>
+                    <label class="block text-sm font-black tracking-wide login-label">البريد الإلكتروني / اسم المستخدم</label>
                     <div class="relative group">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-500 transition-colors">
                             <i data-lucide="user" class="w-5 h-5"></i>
@@ -78,7 +132,7 @@
 
                 <div class="space-y-2">
                     <div class="flex items-center justify-between">
-                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">كلمة المرور</label>
+                        <label class="block text-sm font-black tracking-wide login-label">كلمة المرور</label>
                         <a href="#" class="text-xs font-bold text-blue-500 hover:underline">نسيت كلمة المرور؟</a>
                     </div>
                     <div class="relative group">
@@ -129,9 +183,44 @@
 
 <script src="{{ asset('assets/libs/lucide/umd/lucide.js') }}"></script>
 <script>
-    if (window.lucide) {
-        lucide.createIcons();
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+        
+        const initialTextDiv = document.getElementById('initialText');
+        const pointsListDiv = document.getElementById('pointsList');
+        
+        // بعد 1.5 ثانية بس - النص الطويل يختفي بسرعة
+        setTimeout(function() {
+            if (initialTextDiv) {
+                initialTextDiv.classList.add('fade-out');
+            }
+            
+            // بعد ما يختفي، نظهر النقط في نفس المكان
+            setTimeout(function() {
+                if (initialTextDiv) {
+                    initialTextDiv.style.display = 'none';
+                }
+                if (pointsListDiv) {
+                    pointsListDiv.style.display = 'block';
+                    
+                    // نجعل كل نقطة تظهر واحدة ورا التانية بشكل احترافي
+                    const points = pointsListDiv.querySelectorAll('.feature-point');
+                    points.forEach((point, index) => {
+                        point.style.opacity = '0';
+                        point.style.transform = 'translateX(20px)';
+                        point.style.transition = `all 0.4s ease ${index * 0.12}s`;
+                        
+                        setTimeout(() => {
+                            point.style.opacity = '1';
+                            point.style.transform = 'translateX(0)';
+                        }, 100);
+                    });
+                }
+            }, 600); // نفس مدة الأنيمشن
+        }, 2000); // 1.5 ثانية بس - أسرع زي ما طلبت
+    });
 </script>
 </body>
 </html>
