@@ -44,7 +44,7 @@
             </div>
         </div>
         
-        <div class="max-h-[400px] overflow-y-auto custom-scrollbar" data-simplebar>
+        <div class="max-h-[250px] overflow-y-auto custom-scrollbar" style="max-height: 250px !important;">
             @forelse($notifications as $notification)
                 <a href="{{ route('notifications.show', $notification->id) }}" 
                    class="flex items-start gap-3 p-3 transition-colors duration-200 border-b border-slate-100 hover:bg-slate-50 dark:border-zink-600 dark:hover:bg-zink-600 {{ !$notification->is_read ? 'bg-blue-50 dark:bg-zink-600/50' : '' }}">

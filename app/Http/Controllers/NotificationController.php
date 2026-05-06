@@ -26,6 +26,12 @@ class NotificationController extends Controller
         $notification->is_read = true;
         $notification->save();
         
+        // Handle different notification types for redirection
+        if (str_starts_with($notification->type, 'permission_')) {
+            // Redirect to permissions index with search or filter
+            return redirect()->route('permissions.index', ['search' => $notification->leave_id]);
+        }
+        
         return redirect()->route('hr/view/detail/leave', $notification->leave_id);
     }
 

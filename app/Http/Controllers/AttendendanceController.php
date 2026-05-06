@@ -383,7 +383,7 @@ class AttendendanceController extends Controller
         $firstDayOfWeek = Carbon::create($year, $month, 1, 0, 0, 0, 'Africa/Cairo')->dayOfWeek;
         $firstDayOfWeek = $firstDayOfWeek == 0 ? 6 : $firstDayOfWeek - 1;
 
-        $employees = User::where('status', 'Active')->orderBy('name')->get();
+        $employees = User::orderBy('name')->get();
         $selectedEmployee = $request->get('employee_id', $userId);
         
         $userRole = Session::get('role_name');

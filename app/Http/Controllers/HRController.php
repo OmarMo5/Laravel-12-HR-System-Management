@@ -679,7 +679,7 @@ class HRController extends Controller
             $user->role_id = $request->role_id;
             $user->role_name = DB::table('role_type_users')->where('id', $request->role_id)->value('role_type');
             $user->avatar = $avatarName;
-            $user->status = $request->gender ?? 'Male';
+            $user->status = 'Active';
             $user->save();
 
             // 2. Employee Profile
@@ -793,7 +793,7 @@ class HRController extends Controller
             $user->phone_number = $request->phone_number;
             $user->role_id = $request->role_id;
             $user->role_name = DB::table('role_type_users')->where('id', $request->role_id)->value('role_type');
-            $user->status = $request->gender ?? $user->status;
+            $user->status = 'Active';
             
             if ($request->filled('password')) {
                 $user->password = Hash::make($request->password);
@@ -1022,7 +1022,6 @@ class HRController extends Controller
                     'start_date'   => $dates['start'],
                     'end_date'     => $dates['end'],
                 ]);
-                $this->sendHolidayNotificationToEmployees($holiday);
             } else {
                 $holiday = Holiday::findOrFail($request->idUpdate);
                 $holiday->update([
@@ -1032,6 +1031,9 @@ class HRController extends Controller
                     'end_date'     => $dates['end'],
                 ]);
             }
+
+            // Trigger notification for both new and updated holidays
+            $this->sendHolidayNotificationToEmployees($holiday);
 
             flash()->success($isNewRecord ? 'Holiday added successfully :)' : 'Holiday updated successfully :)');
             return redirect()->back();
@@ -1065,14 +1067,15 @@ class HRController extends Controller
     private function sendHolidayNotificationToEmployees($holiday)
     {
         try {
-            $employees = User::where('role_name', 'Employee')->where('status', 'Active')->get();
+            // Get all active users with a valid email to notify them of the holiday
+        $employees = User::where('status', 'Active')->whereNotNull('email')->get();
             if ($employees->isEmpty()) return;
 
             foreach ($employees as $employee) {
                 if ($employee->email && filter_var($employee->email, FILTER_VALIDATE_EMAIL)) {
                     try {
-                        Mail::to($employee->email)->send(new HolidayNotificationMail($holiday));
-                        //Mail::to($employee->email)->queue(new HolidayNotificationMail($holiday));
+                        //Mail::to($employee->email)->send(new HolidayNotificationMail($holiday));
+                        Mail::to($employee->email)->queue(new HolidayNotificationMail($holiday));
                     } catch (\Exception $e) {
                         Log::error('Failed to send email to: ' . $employee->email . ' - ' . $e->getMessage());
                     }

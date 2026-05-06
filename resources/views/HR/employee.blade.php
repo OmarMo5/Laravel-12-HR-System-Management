@@ -151,7 +151,7 @@
                                         </td>
                                         <td class="px-4 py-3">
                                             @php
-                                                $gender = $employee->profile->gender ?? $employee->status;
+                                                $gender = $employee->profile->gender ?? 'Male';
                                             @endphp
                                             @if ($gender === 'Male')
                                                 <span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400">{{ __('messages.male') }}</span>

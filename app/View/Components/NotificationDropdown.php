@@ -18,7 +18,7 @@ class NotificationDropdown extends Component
             $userId = Auth::user()->user_id;
             $this->notifications = Notification::where('user_id', $userId)
                 ->orderBy('created_at', 'desc')
-                ->limit(10)
+                ->limit(20)
                 ->get();
             $this->unreadCount = Notification::where('user_id', $userId)
                 ->where('is_read', false)

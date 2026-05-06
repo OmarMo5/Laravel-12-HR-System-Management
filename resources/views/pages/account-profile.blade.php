@@ -1,8 +1,37 @@
 @extends('layouts.master')
 @section('content')
     <!-- Page-content -->
-    <div
+    <div x-data="{ 
+        showEditModal: false,
+        profileData: @js([
+            'name' => $profileDetail->name,
+            'phone_number' => $profileDetail->phone_number,
+            'address' => $profileDetail->profile->address ?? '',
+            'gender' => $profileDetail->profile->gender ?? '',
+            'experience_years' => $profileDetail->profile->experience_years ?? 0,
+            'location' => $profileDetail->profile->location ?? '',
+        ])
+    }"
         class="group-data-[sidebar-size=lg]:ltr:md:ml-vertical-menu group-data-[sidebar-size=lg]:rtl:md:mr-vertical-menu group-data-[sidebar-size=md]:ltr:ml-vertical-menu-md group-data-[sidebar-size=md]:rtl:mr-vertical-menu-md group-data-[sidebar-size=sm]:ltr:ml-vertical-menu-sm group-data-[sidebar-size=sm]:rtl:mr-vertical-menu-sm pt-[calc(theme('spacing.header')_*_1)] pb-[calc(theme('spacing.header')_*_0.8)] px-4 group-data-[navbar=bordered]:pt-[calc(theme('spacing.header')_*_1.3)] group-data-[navbar=hidden]:pt-0 group-data-[layout=horizontal]:mx-auto group-data-[layout=horizontal]:max-w-screen-2xl group-data-[layout=horizontal]:px-0 group-data-[layout=horizontal]:group-data-[sidebar-size=lg]:ltr:md:ml-auto group-data-[layout=horizontal]:group-data-[sidebar-size=lg]:rtl:md:mr-auto group-data-[layout=horizontal]:md:pt-[calc(theme('spacing.header')_*_1.6)] group-data-[layout=horizontal]:px-3 group-data-[layout=horizontal]:group-data-[navbar=hidden]:pt-[calc(theme('spacing.header')_*_0.9)]">
+        
+        <!-- Success/Error Alerts -->
+        @if(session('success'))
+            <div class="fixed top-20 right-4 z-[9999] bg-green-500 text-white px-6 py-3 rounded-lg shadow-xl animate-bounce">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="check-circle" class="size-5"></i>
+                    <span>{{ session('success') }}</span>
+                </div>
+            </div>
+        @endif
+        @if(session('error'))
+            <div class="fixed top-20 right-4 z-[9999] bg-red-500 text-white px-6 py-3 rounded-lg shadow-xl animate-shake">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="alert-circle" class="size-5"></i>
+                    <span>{{ session('error') }}</span>
+                </div>
+            </div>
+        @endif
+
         <div class="container-fluid group-data-[content=boxed]:max-w-boxed mx-auto">
             <div class="mt-1 -ml-3 -mr-3 rounded-none card">
                 <div class="card-body !px-2.5">
@@ -115,6 +144,13 @@
                                     title="{{ __('messages.send_email') }}">
                                     <i data-lucide="mail" class="size-4"></i>
                                 </a>
+
+                                @if(auth()->user()->id == $profileDetail->id || auth()->user()->hasAnyRole(['Admin', 'HR']))
+                                    <button @click="showEditModal = true" class="flex items-center justify-center gap-2 px-4 py-2 text-white btn bg-custom-500 border-custom-500 hover:bg-custom-600 focus:bg-custom-600 transition-all shadow-lg shadow-custom-500/20">
+                                        <i data-lucide="edit-3" class="size-4"></i>
+                                        <span class="hidden sm:inline">{{ __('messages.edit_profile') }}</span>
+                                    </button>
+                                @endif
 
                                 <div class="relative dropdown">
                                     <button
@@ -1189,12 +1225,145 @@
             <!--end tab content-->
         </div>
         <!-- container-fluid -->
-    </div>
-    <!-- End Page-content -->
+        
+        <!-- Edit Profile Modal -->
+        <div x-show="showEditModal" 
+             class="fixed inset-0 z-[9999] flex items-center justify-center" 
+             style="position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; margin: 0 !important; z-index: 99999 !important;"
+             x-cloak>
+            <!-- Backdrop -->
+            <div x-show="showEditModal" 
+                 x-transition:enter="ease-out duration-300" 
+                 x-transition:enter-start="opacity-0" 
+                 x-transition:enter-end="opacity-100" 
+                 x-transition:leave="ease-in duration-200" 
+                 x-transition:leave-start="opacity-100" 
+                 x-transition:leave-end="opacity-0"
+                 @click="showEditModal = false" 
+                 class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"
+                 style="position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; margin: 0 !important;"></div>
+
+            <!-- Modal Content -->
+            <div x-show="showEditModal" 
+                 x-transition:enter="ease-out duration-300" 
+                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+                 x-transition:leave="ease-in duration-200" 
+                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                 class="relative p-0 overflow-hidden transition-all transform bg-white rounded-xl shadow-2xl dark:bg-zink-700 ltr:text-left rtl:text-right"
+                 style="width: 500px !important; max-width: 95vw !important; margin: auto !important;">
+                
+                <!-- Header -->
+                <div class="flex items-center justify-between p-5 border-b border-slate-200 dark:border-zink-600 bg-slate-50/50 dark:bg-zink-800/50">
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center justify-center rounded-lg size-10 bg-custom-100 text-custom-500 dark:bg-custom-500/10">
+                            <i data-lucide="user-cog" class="size-5"></i>
+                        </div>
+                        <h5 class="text-16 font-bold text-slate-800 dark:text-zink-50">{{ __('messages.edit_profile') }}</h5>
+                    </div>
+                    <button @click="showEditModal = false" class="transition-all duration-200 text-slate-400 hover:text-red-500 dark:hover:text-red-400">
+                        <i data-lucide="x" class="size-5"></i>
+                    </button>
+                </div>
+
+                <!-- Form -->
+                <form action="{{ route('profile/update') }}" method="POST" class="p-6">
+                    @csrf
+                    <input type="hidden" name="user_id" value="{{ $profileDetail->user_id }}">
+                    
+                    <div class="space-y-4">
+                        <!-- Name -->
+                        <div>
+                            <label class="block mb-2 text-sm font-semibold text-slate-700 dark:text-zink-200">{{ __('messages.full_name') }}</label>
+                            <input type="text" name="name" x-model="profileData.name" class="form-input w-full border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 rounded-md py-2.5" required>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- Phone -->
+                            <div>
+                                <label class="block mb-2 text-sm font-semibold text-slate-700 dark:text-zink-200">{{ __('messages.phone_number') }}</label>
+                                <input type="text" name="phone_number" x-model="profileData.phone_number" class="form-input w-full border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 rounded-md py-2.5">
+                            </div>
+
+                            <!-- Gender -->
+                            <div>
+                                <label class="block mb-2 text-sm font-semibold text-slate-700 dark:text-zink-200">{{ __('messages.gender') }}</label>
+                                <select name="gender" x-model="profileData.gender" class="form-select w-full border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 rounded-md py-2.5">
+                                    <option value="">{{ __('messages.select_gender') }}</option>
+                                    <option value="Male">{{ __('messages.male') }}</option>
+                                    <option value="Female">{{ __('messages.female') }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- Experience -->
+                            <div>
+                                <label class="block mb-2 text-sm font-semibold text-slate-700 dark:text-zink-200">{{ __('messages.experience_years') }}</label>
+                                <input type="number" name="experience_years" x-model="profileData.experience_years" class="form-input w-full border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 rounded-md py-2.5">
+                            </div>
+
+                            <!-- Location -->
+                            <div>
+                                <label class="block mb-2 text-sm font-semibold text-slate-700 dark:text-zink-200">{{ __('messages.location') }}</label>
+                                <input type="text" name="location" x-model="profileData.location" class="form-input w-full border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 rounded-md py-2.5">
+                            </div>
+                        </div>
+
+                        <!-- Address -->
+                        <div>
+                            <label class="block mb-2 text-sm font-semibold text-slate-700 dark:text-zink-200">{{ __('messages.address') }}</label>
+                            <textarea name="address" x-model="profileData.address" rows="2" class="form-input w-full border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 rounded-md py-2.5"></textarea>
+                        </div>
+
+                        <hr class="border-slate-200 dark:border-zink-600 my-2">
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- Password -->
+                            <div>
+                                <label class="block mb-2 text-sm font-semibold text-slate-700 dark:text-zink-200">{{ __('messages.new_password') }}</label>
+                                <input type="password" name="password" class="form-input w-full border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 rounded-md py-2.5" placeholder="********">
+                            </div>
+
+                            <!-- Confirm Password -->
+                            <div>
+                                <label class="block mb-2 text-sm font-semibold text-slate-700 dark:text-zink-200">{{ __('messages.confirm_password') }}</label>
+                                <input type="password" name="password_confirmation" class="form-input w-full border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 rounded-md py-2.5" placeholder="********">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer Buttons -->
+                    <div class="flex items-center justify-end gap-3 mt-8">
+                        <button type="button" @click="showEditModal = false" class="px-6 py-2.5 text-slate-500 bg-slate-100 hover:bg-slate-200 dark:bg-zink-600 dark:text-zink-200 dark:hover:bg-zink-500 rounded-md transition-all font-medium">
+                            {{ __('messages.cancel') }}
+                        </button>
+                        <button type="submit" class="px-6 py-2.5 text-white bg-custom-500 border border-custom-500 hover:bg-custom-600 rounded-md transition-all font-medium shadow-lg shadow-custom-500/20">
+                            {{ __('messages.save_changes') }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div> <!-- Close Alpine Wrapper -->
+
+    <style>
+        [x-cloak] { display: none !important; }
+        .animate-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+    </style>
+@endsection
 
 @section('script')
     <!-- pages-account init js-->
     <script src="{{ URL::to('assets/js/pages/pages-account.init.js') }}"></script>
+
     <script>
         $(document).ready(function() {
             $('#profile-img-file-input').on('change', function(e) {
@@ -1247,5 +1416,4 @@
             });
         });
     </script>
-@endsection
 @endsection

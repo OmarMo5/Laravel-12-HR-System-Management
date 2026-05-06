@@ -60,6 +60,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
     Route::controller(AccountController::class)->group(function () {
         Route::get('page/account/{user_id}', 'profileDetail')->middleware('auth')->name('page/account');
         Route::post('profile/update-avatar', 'updateAvatar')->middleware('auth')->name('profile/update-avatar');
+        Route::post('profile/update', 'updateProfile')->middleware('auth')->name('profile/update');
     });
 
     Route::middleware('auth')->prefix('hr/')->group(function () {
@@ -136,6 +137,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
             Route::get('permissions/my', 'myPermissions')->name('permissions.my');
             Route::post('permissions/store', 'store')->name('permissions.store');
             Route::post('permissions/update-status/{id}', 'updateStatus')->name('permissions.update-status');
+            Route::post('permissions/update/{id}', 'update')->name('permissions.update');
+            Route::post('permissions/delete/{id}', 'destroy')->name('permissions.destroy');
         });
     });
 });
