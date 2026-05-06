@@ -653,6 +653,11 @@ return [
     'additional_info' => 'معلومات إضافية',
     'manager_eval' => 'تقييم المدير',
     'documents' => 'المستندات',
+    'financial_transactions' => 'المعاملات المالية',
+    'financial_details' => 'التفاصيل المالية',
+    'salary_details' => 'تفاصيل الراتب',
+    'insurance_details' => 'تفاصيل التأمين',
+    'projects' => 'المشاريع',
     
     /* Field Labels */
     'full_name' => 'الاسم الكامل',

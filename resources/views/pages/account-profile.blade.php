@@ -189,19 +189,23 @@
                     <ul class="flex flex-wrap w-full text-sm font-medium text-center nav-tabs">
                         <li class="group active">
                             <a href="javascript:void(0);" data-tab-toggle="" data-target="overviewTabs"
-                                class="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 dark:group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 dark:group-[.active]:border-b-custom-500 hover:text-custom-500 dark:hover:text-custom-500 active:text-custom-500 dark:active:text-custom-500 -mb-[1px]">Overview</a>
+                                class="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 dark:group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 dark:group-[.active]:border-b-custom-500 hover:text-custom-500 dark:hover:text-custom-500 active:text-custom-500 dark:active:text-custom-500 -mb-[1px]">{{ __('messages.overview') }}</a>
                         </li>
                         <li class="group">
                             <a href="javascript:void(0);" data-tab-toggle="" data-target="documentsTabs"
-                                class="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 dark:group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 dark:group-[.active]:border-b-custom-500 hover:text-custom-500 dark:hover:text-custom-500 active:text-custom-500 dark:active:text-custom-500 -mb-[1px]">Documents</a>
+                                class="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 dark:group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 dark:group-[.active]:border-b-custom-500 hover:text-custom-500 dark:hover:text-custom-500 active:text-custom-500 dark:active:text-custom-500 -mb-[1px]">{{ __('messages.documents') }}</a>
                         </li>
                         <li class="group">
                             <a href="javascript:void(0);" data-tab-toggle="" data-target="projectsTabs"
-                                class="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 dark:group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 dark:group-[.active]:border-b-custom-500 hover:text-custom-500 dark:hover:text-custom-500 active:text-custom-500 dark:active:text-custom-500 -mb-[1px]">Projects</a>
+                                class="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 dark:group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 dark:group-[.active]:border-b-custom-500 hover:text-custom-500 dark:hover:text-custom-500 active:text-custom-500 dark:active:text-custom-500 -mb-[1px]">{{ __('messages.projects') }}</a>
                         </li>
                         <li class="group">
                             <a href="javascript:void(0);" data-tab-toggle="" data-target="followersTabs"
-                                class="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 dark:group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 dark:group-[.active]:border-b-custom-500 hover:text-custom-500 dark:hover:text-custom-500 active:text-custom-500 dark:active:text-custom-500 -mb-[1px]">Followers</a>
+                                class="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 dark:group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 dark:group-[.active]:border-b-custom-500 hover:text-custom-500 dark:hover:text-custom-500 active:text-custom-500 dark:active:text-custom-500 -mb-[1px]">{{ __('messages.followers') }}</a>
+                        </li>
+                        <li class="group">
+                            <a href="javascript:void(0);" data-tab-toggle="" data-target="financialTabs"
+                                class="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 dark:group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 dark:group-[.active]:border-b-custom-500 hover:text-custom-500 dark:hover:text-custom-500 active:text-custom-500 dark:active:text-custom-500 -mb-[1px]">{{ __('messages.financial_transactions') }}</a>
                         </li>
                     </ul>
                 </div>
@@ -408,6 +412,107 @@
                             <p class="text-slate-500 dark:text-zink-200">{{ __('messages.no_documents_found') }}</p>
                         </div>
                         @endif
+                    </div>
+                </div>
+
+                <!-- Financial Transactions Tab -->
+                <div class="hidden tab-pane" id="financialTabs">
+                    <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+                        <!-- Salary Details Card -->
+                        <div class="card shadow-md border-none bg-white dark:bg-zink-700">
+                            <div class="card-body p-5">
+                                <div class="flex items-center gap-3 mb-5">
+                                    <div class="flex items-center justify-center size-10 rounded-lg bg-green-100 text-green-600 dark:bg-green-500/20 dark:text-green-400">
+                                        <i data-lucide="banknote" class="size-5"></i>
+                                    </div>
+                                    <h6 class="text-16 font-bold">{{ __('messages.salary_details') }}</h6>
+                                </div>
+                                <div class="space-y-4">
+                                    <div class="flex justify-between items-center py-2 border-b border-slate-100 dark:border-zink-600">
+                                        <span class="text-slate-500 dark:text-zink-200 font-medium">{{ __('messages.base_salary') }}</span>
+                                        <span class="font-bold text-slate-800 dark:text-zink-50">{{ number_format($profileDetail->salary->base_salary ?? 0, 2) }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-2 border-b border-slate-100 dark:border-zink-600">
+                                        <span class="text-slate-500 dark:text-zink-200 font-medium">{{ __('messages.allowances') }}</span>
+                                        <span class="font-bold text-slate-800 dark:text-zink-50">{{ number_format($profileDetail->salary->allowances ?? 0, 2) }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-2 border-b border-slate-100 dark:border-zink-600">
+                                        <span class="text-slate-500 dark:text-zink-200 font-medium">{{ __('messages.overtime') }}</span>
+                                        <span class="font-bold text-green-600">{{ number_format($profileDetail->salary->overtime ?? 0, 2) }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-2 border-b border-slate-100 dark:border-zink-600">
+                                        <span class="text-slate-500 dark:text-zink-200 font-medium">{{ __('messages.deductions') }}</span>
+                                        <span class="font-bold text-red-600">{{ number_format($profileDetail->salary->deductions ?? 0, 2) }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-2 border-b border-slate-100 dark:border-zink-600">
+                                        <span class="text-slate-500 dark:text-zink-200 font-medium">{{ __('messages.advances') }}</span>
+                                        <span class="font-bold text-orange-600">{{ number_format($profileDetail->salary->advances ?? 0, 2) }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-3 bg-slate-50 dark:bg-zink-800 px-3 rounded-lg mt-4">
+                                        <span class="text-slate-800 dark:text-zink-50 font-bold text-15">{{ __('messages.total_salary') }}</span>
+                                        <span class="font-black text-custom-500 text-lg">{{ number_format($profileDetail->salary->total_salary ?? 0, 2) }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center pt-3">
+                                        <span class="text-slate-500 dark:text-zink-200 font-medium">{{ __('messages.payment_type') }}</span>
+                                        <span class="px-3 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-600 dark:bg-zink-600 dark:text-zink-200">
+                                            @if(($profileDetail->salary->payment_type ?? '') == 'Cash')
+                                                {{ __('messages.cash') }}
+                                            @elseif(($profileDetail->salary->payment_type ?? '') == 'Bank Transfer')
+                                                {{ __('messages.bank_transfer') }}
+                                            @else
+                                                {{ $profileDetail->salary->payment_type ?? 'N/A' }}
+                                            @endif
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Insurance Details Card -->
+                        <div class="card shadow-md border-none bg-white dark:bg-zink-700">
+                            <div class="card-body p-5">
+                                <div class="flex items-center gap-3 mb-5">
+                                    <div class="flex items-center justify-center size-10 rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400">
+                                        <i data-lucide="shield-check" class="size-5"></i>
+                                    </div>
+                                    <h6 class="text-16 font-bold">{{ __('messages.insurance_details') }}</h6>
+                                </div>
+                                <div class="space-y-4">
+                                    <div class="flex justify-between items-center py-2 border-b border-slate-100 dark:border-zink-600">
+                                        <span class="text-slate-500 dark:text-zink-200 font-medium">{{ __('messages.insurance_number') }}</span>
+                                        <span class="font-bold text-slate-800 dark:text-zink-50">{{ $profileDetail->insurance->insurance_number ?? 'N/A' }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-2 border-b border-slate-100 dark:border-zink-600">
+                                        <span class="text-slate-500 dark:text-zink-200 font-medium">{{ __('messages.insurance_start_date') }}</span>
+                                        <span class="font-bold text-slate-800 dark:text-zink-50">
+                                            {{ isset($profileDetail->insurance->insurance_start_date) ? \Carbon\Carbon::parse($profileDetail->insurance->insurance_start_date)->format('d/m/Y') : 'N/A' }}
+                                        </span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-2">
+                                        <span class="text-slate-500 dark:text-zink-200 font-medium">{{ __('messages.insurance_status') }}</span>
+                                        @php
+                                            $status = $profileDetail->insurance->insurance_status ?? '';
+                                            $statusClass = 'bg-slate-100 text-slate-600';
+                                            $statusLabel = $status ?: 'N/A';
+                                            
+                                            if($status == 'Insured') {
+                                                $statusClass = 'bg-green-100 text-green-600 dark:bg-green-500/20 dark:text-green-400';
+                                                $statusLabel = __('messages.insured');
+                                            } elseif($status == 'Not Insured') {
+                                                $statusClass = 'bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400';
+                                                $statusLabel = __('messages.not_insured');
+                                            } elseif($status == 'Willing') {
+                                                $statusClass = 'bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400';
+                                                $statusLabel = __('messages.willing');
+                                            }
+                                        @endphp
+                                        <span class="px-3 py-1 text-xs font-semibold rounded-full {{ $statusClass }}">
+                                            {{ $statusLabel }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

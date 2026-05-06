@@ -655,6 +655,11 @@ return [
     'additional_info' => 'Additional Information',
     'manager_eval' => 'Manager Evaluation',
     'documents' => 'Documents',
+    'financial_transactions' => 'Financial Transactions',
+    'financial_details' => 'Financial Details',
+    'salary_details' => 'Salary Details',
+    'insurance_details' => 'Insurance Details',
+    'projects' => 'Projects',
     
     /* Field Labels */
     'full_name' => 'Full Name',
