@@ -10,6 +10,7 @@ class Permission extends Model
         'user_id',
         'type',
         'reason',
+        'personal_reason',
         'from_time',
         'to_time',
         'date',

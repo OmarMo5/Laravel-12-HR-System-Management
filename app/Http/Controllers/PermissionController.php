@@ -75,6 +75,7 @@ class PermissionController extends Controller
         $request->validate([
             'type' => 'required|in:early_departure,late_arrival,mid_day_outing',
             'reason' => 'required|in:personal,work,both',
+            'personal_reason' => 'required_if:reason,personal,both|nullable|string',
             'from_time' => 'required',
             'to_time' => 'required',
             'date' => 'required|date',
@@ -95,6 +96,7 @@ class PermissionController extends Controller
             'user_id' => Auth::id(),
             'type' => $request->type,
             'reason' => $request->reason,
+            'personal_reason' => $request->personal_reason,
             'from_time' => $request->from_time,
             'to_time' => $request->to_time,
             'date' => $request->date,
@@ -237,6 +239,7 @@ class PermissionController extends Controller
         $permission->update([
             'type' => $request->type,
             'reason' => $request->reason,
+            'personal_reason' => $request->personal_reason,
             'from_time' => $request->from_time,
             'to_time' => $request->to_time,
             'date' => $request->date,

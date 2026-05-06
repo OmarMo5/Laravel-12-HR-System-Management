@@ -8,6 +8,9 @@
         showPermissionModal: false, 
         showEditModal: false, 
         showDeleteModal: false,
+        showReasonModal: false,
+        currentReason: '',
+        permissionReason: '',
         editPermission: {},
         deleteRoute: ''
     }">
@@ -70,12 +73,18 @@
                         <!-- Reason -->
                         <div>
                             <label for="reason" class="block mb-2 text-sm font-semibold text-slate-700 dark:text-zink-200">{{ __('messages.permission_reason') }}</label>
-                            <select name="reason" id="reason" class="form-select w-full border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 rounded-md py-2.5" required>
+                            <select name="reason" id="reason" x-model="permissionReason" class="form-select w-full border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 rounded-md py-2.5" required>
                                 <option value="">{{ __('messages.select_status') }}</option>
                                 <option value="personal">{{ __('messages.personal_reason') }}</option>
                                 <option value="work">{{ __('messages.work_reason') }}</option>
                                 <option value="both">{{ __('messages.both_reasons') }}</option>
                             </select>
+                        </div>
+
+                        <!-- Personal Reason Description (Conditional) -->
+                        <div x-show="permissionReason === 'personal' || permissionReason === 'both'" x-transition x-cloak>
+                            <label for="personal_reason" class="block mb-2 text-sm font-semibold text-slate-700 dark:text-zink-200">{{ __('messages.personal_reason_details') }}</label>
+                            <textarea name="personal_reason" id="personal_reason" rows="2" class="form-input w-full border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 rounded-md py-2.5" placeholder="{{ __('messages.enter_personal_reason') }}" :required="permissionReason === 'personal' || permissionReason === 'both'"></textarea>
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
@@ -181,6 +190,12 @@
                             </select>
                         </div>
 
+                        <!-- Personal Reason Description (Conditional) -->
+                        <div x-show="editPermission.reason === 'personal' || editPermission.reason === 'both'" x-transition x-cloak>
+                            <label for="edit_personal_reason" class="block mb-2 text-sm font-semibold text-slate-700 dark:text-zink-200">{{ __('messages.personal_reason_details') }}</label>
+                            <textarea name="personal_reason" id="edit_personal_reason" x-model="editPermission.personal_reason" rows="2" class="form-input w-full border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 rounded-md py-2.5" placeholder="{{ __('messages.enter_personal_reason') }}" :required="editPermission.reason === 'personal' || editPermission.reason === 'both'"></textarea>
+                        </div>
+
                         <div class="grid grid-cols-2 gap-4">
                             <!-- From Time -->
                             <div>
@@ -265,6 +280,60 @@
             </div>
         </div>
 
+        <!-- Reason Detail Modal -->
+        <div x-show="showReasonModal" 
+             class="fixed inset-0 z-[9999] flex items-center justify-center" 
+             style="position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; margin: 0 !important; z-index: 99999 !important;"
+             x-cloak>
+            <!-- Backdrop -->
+            <div x-show="showReasonModal" 
+                 x-transition:enter="ease-out duration-300" 
+                 x-transition:enter-start="opacity-0" 
+                 x-transition:enter-end="opacity-100" 
+                 x-transition:leave="ease-in duration-200" 
+                 x-transition:leave-start="opacity-100" 
+                 x-transition:leave-end="opacity-0"
+                 @click="showReasonModal = false" 
+                 class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"
+                 style="position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; margin: 0 !important;"></div>
+
+            <!-- Modal Content -->
+            <div x-show="showReasonModal" 
+                 x-transition:enter="ease-out duration-300" 
+                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+                 x-transition:leave="ease-in duration-200" 
+                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                 class="relative p-0 overflow-hidden transition-all transform bg-white rounded-xl shadow-2xl dark:bg-zink-700 ltr:text-left rtl:text-right"
+                 style="width: 450px !important; max-width: 95vw !important; margin: auto !important;">
+                
+                <!-- Header -->
+                <div class="flex items-center justify-between p-5 border-b border-slate-200 dark:border-zink-600 bg-slate-50/50 dark:bg-zink-800/50">
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center justify-center rounded-lg size-10 bg-custom-100 text-custom-500 dark:bg-custom-500/10">
+                            <i data-lucide="info" class="size-5"></i>
+                        </div>
+                        <h5 class="text-16 font-bold text-slate-800 dark:text-zink-50">{{ __('messages.personal_reason_details') }}</h5>
+                    </div>
+                    <button @click="showReasonModal = false" class="transition-all duration-200 text-slate-400 hover:text-red-500 dark:hover:text-red-400">
+                        <i data-lucide="x" class="size-5"></i>
+                    </button>
+                </div>
+
+                <!-- Body -->
+                <div class="p-6 text-center">
+                    <p class="text-slate-600 dark:text-zink-200 leading-relaxed break-words" x-text="currentReason"></p>
+                    
+                    <div class="flex items-center justify-center mt-8">
+                        <button type="button" @click="showReasonModal = false" class="px-6 py-2.5 text-white bg-custom-500 border border-custom-500 hover:bg-custom-600 focus:bg-custom-600 rounded-md transition-all font-medium shadow-lg shadow-custom-500/20">
+                            {{ __('messages.ok') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Layout wrapper -->
 
         <div class="group-data-[sidebar-size=lg]:ltr:md:ml-vertical-menu group-data-[sidebar-size=lg]:rtl:md:mr-vertical-menu group-data-[sidebar-size=md]:ltr:ml-vertical-menu-md group-data-[sidebar-size=md]:rtl:mr-vertical-menu-md group-data-[sidebar-size=sm]:ltr:ml-vertical-menu-sm group-data-[sidebar-size=sm]:rtl:mr-vertical-menu-sm pt-[calc(theme('spacing.header')_*_1)] pb-[calc(theme('spacing.header')_*_0.8)] px-4 group-data-[navbar=bordered]:pt-[calc(theme('spacing.header')_*_1.3)] group-data-[navbar=hidden]:pt-0 group-data-[layout=horizontal]:mx-auto group-data-[layout=horizontal]:max-w-screen-2xl group-data-[layout=horizontal]:px-0 group-data-[layout=horizontal]:group-data-[sidebar-size=lg]:ltr:md:ml-auto group-data-[layout=horizontal]:group-data-[sidebar-size=lg]:rtl:md:mr-auto group-data-[layout=horizontal]:md:pt-[calc(theme('spacing.header')_*_1.6)] group-data-[layout=horizontal]:px-3 group-data-[layout=horizontal]:group-data-[navbar=hidden]:pt-[calc(theme('spacing.header')_*_0.9)]">
@@ -319,7 +388,16 @@
                                                     </td>
                                                     <td class="px-3.5 py-3.5 font-mono text-slate-500">{{ date('h:i A', strtotime($permission->from_time)) }}</td>
                                                     <td class="px-3.5 py-3.5 font-mono text-slate-500">{{ date('h:i A', strtotime($permission->to_time)) }}</td>
-                                                    <td class="px-3.5 py-3.5">{{ __('messages.' . $permission->reason . '_reason') }}</td>
+                                                    <td class="px-3.5 py-3.5">
+                                                        <div>{{ __('messages.' . $permission->reason . '_reason') }}</div>
+                                                        @if($permission->personal_reason)
+                                                            <div class="text-[11px] text-slate-400 mt-1 italic cursor-pointer hover:text-custom-500 transition-colors" 
+                                                                 @click="currentReason = @js($permission->personal_reason); showReasonModal = true"
+                                                                 title="{{ __('messages.view_details') ?? 'Click to view full reason' }}">
+                                                                {{ \Illuminate\Support\Str::limit($permission->personal_reason, 40) }}
+                                                            </div>
+                                                        @endif
+                                                    </td>
                                                     <td class="px-3.5 py-3.5">
                                                         @php
                                                             $statusClass = [

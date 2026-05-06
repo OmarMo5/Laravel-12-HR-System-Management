@@ -824,6 +824,8 @@ return [
     'to_time' => 'إلى الساعة',
     'permission_type' => 'نوع الاستئذان',
     'permission_reason' => 'سبب الاستئذان',
+    'personal_reason_details' => 'تفاصيل السبب الشخصي',
+    'enter_personal_reason' => 'أدخل السبب المحدد لطلب الإذن الشخصي',
     'limit_reached' => 'لقد وصلت إلى الحد الأقصى للأذونات هذا الشهر (2).',
     'remaining_permissions' => 'الأذونات المتبقية لك هذا الشهر',
     'permission_submitted' => 'تم تقديم طلب الإذن بنجاح.',
