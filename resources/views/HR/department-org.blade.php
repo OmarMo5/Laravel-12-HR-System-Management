@@ -391,7 +391,7 @@
         </div>
 
         <!-- Add Department Button -->
-        <div class="flex flex-wrap items-center justify-end gap-3 mb-6">
+        <!-- <div class="flex flex-wrap items-center justify-end gap-3 mb-6">
             <button data-modal-target="addDepartmentModal" type="button"
                 class="text-white btn bg-custom-500 border-custom-500 hover:bg-custom-600">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block size-4">
@@ -400,7 +400,7 @@
                 </svg>
                 <span class="align-middle">{{ __('messages.add_department') }}</span>
             </button>
-        </div>
+        </div> -->
 
         <!-- Org Chart -->
         <div class="card">

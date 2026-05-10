@@ -596,6 +596,49 @@
     </div>
 
     {{-- ================================================================
+         IMPORT EMPLOYEE MODAL
+    ================================================================ --}}
+    <div id="importEmployeeModal" modal-center=""
+        class="fixed flex flex-col hidden transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4 show">
+        <div class="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600 flex flex-col">
+            <div class="flex items-center justify-between p-4 border-b dark:border-zink-500 shrink-0">
+                <h5 class="text-16 font-bold text-slate-700 dark:text-zink-100">{{ __('messages.import_employees') }}</h5>
+                <button data-modal-close="importEmployeeModal"
+                    class="transition-all duration-200 ease-linear text-slate-400 hover:text-red-500">
+                    <i data-lucide="x" class="size-5"></i>
+                </button>
+            </div>
+            <div class="p-4">
+                <form action="{{ route('hr/employee/import') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="mb-4">
+                        <p class="text-sm text-slate-500 dark:text-zink-200 mb-2 font-medium">
+                            {{ __('messages.import_instructions') }}
+                        </p>
+                        <ul class="text-xs text-slate-500 dark:text-zink-200 mb-4 list-disc list-inside">
+                            <li>{{ __('messages.import_format_csv') }}</li>
+                            <li>{{ __('messages.import_required_fields') }}</li>
+                            <li>{{ __('messages.import_download_template') }}</li>
+                        </ul>
+                        <a href="{{ route('hr/employee/import-template') }}" class="text-custom-500 hover:underline text-sm flex items-center gap-1 mb-4">
+                            <i data-lucide="download" class="size-4"></i> {{ __('messages.download_template') }}
+                        </a>
+                        
+                        <label for="import_file" class="inline-block mb-2 text-base font-medium">{{ __('messages.import_file') }} <span class="text-red-500">*</span></label>
+                        <input type="file" name="import_file" id="import_file" required accept=".csv, .xlsx, .xls"
+                            class="w-full cursor-pointer rounded-md border border-slate-200 dark:border-zink-500 bg-white dark:bg-zink-700 px-3 py-2 text-sm focus:border-custom-500 focus:outline-none focus:ring-1 focus:ring-custom-500">
+                        <p class="mt-1 text-xs text-slate-400">{{ __('messages.import_file_hint') }}</p>
+                    </div>
+                    <div class="flex justify-end gap-2 mt-4">
+                        <button type="button" data-modal-close="importEmployeeModal" class="text-slate-500 btn bg-slate-100 border-slate-100 hover:text-slate-600 hover:bg-slate-200">{{ __('messages.cancel') }}</button>
+                        <button type="submit" class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600">{{ __('messages.import') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- ================================================================
          EDIT EMPLOYEE MODAL WITH STEPPER (9 STEPS)
     ================================================================ --}}
     <div id="editEmployeeModal" modal-center=""

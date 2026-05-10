@@ -187,35 +187,49 @@ class HRController extends Controller
                 ]);
 
                 foreach ($employees as $employee) {
-                    fputcsv($handle, [
-                        $employee->user_id,
-                        $employee->name,
-                        $employee->email,
-                        $employee->company_email,
-                        $employee->phone_number,
-                        $employee->role_name,
-                        $employee->profile->gender ?? $employee->status,
-                        $employee->profile->national_id ?? '',
-                        $employee->profile->address ?? '',
-                        $employee->profile->experience_years ?? '',
-                        $employee->profile->location ?? '',
-                        $employee->jobInfo->jobTitle->position ?? '',
-                        $employee->jobInfo->department->department ?? '',
-                        $employee->jobInfo->manager->name ?? '',
-                        $employee->jobInfo->work_type ?? '',
-                        $employee->jobInfo->work_location ?? '',
-                        $employee->hiringInfo->join_date ?? '',
-                        $employee->hiringInfo->contract_type ?? '',
-                        $employee->salary->base_salary ?? 0,
-                        $employee->salary->allowances ?? 0,
-                        $employee->salary->overtime ?? 0,
-                        $employee->salary->deductions ?? 0,
-                        $employee->salary->advances ?? 0,
-                        $employee->salary->payment_type ?? '',
-                        $employee->insurance->insurance_number ?? '',
-                        $employee->insurance->insurance_start_date ?? '',
-                        $employee->insurance->insurance_status ?? ''
-                    ]);
+                    try {
+                        $joinDate = '';
+                        if ($employee->hiringInfo?->join_date) {
+                            try { $joinDate = Carbon::parse($employee->hiringInfo->join_date)->format('Y-m-d'); } catch (\Exception $e) { $joinDate = $employee->hiringInfo->join_date; }
+                        }
+                        $insDate = '';
+                        if ($employee->insurance?->insurance_start_date) {
+                            try { $insDate = Carbon::parse($employee->insurance->insurance_start_date)->format('Y-m-d'); } catch (\Exception $e) { $insDate = $employee->insurance->insurance_start_date; }
+                        }
+
+                        fputcsv($handle, [
+                            $employee->user_id ?? '',
+                            $employee->name ?? '',
+                            $employee->email ?? '',
+                            $employee->company_email ?? '',
+                            $employee->phone_number ?? '',
+                            $employee->role_name ?? '',
+                            $employee->profile?->gender ?? '',
+                            $employee->profile?->national_id ?? '',
+                            $employee->profile?->address ?? '',
+                            $employee->profile?->experience_years ?? '',
+                            $employee->profile?->location ?? '',
+                            $employee->jobInfo?->jobTitle?->position ?? '',
+                            $employee->jobInfo?->department?->department ?? '',
+                            $employee->jobInfo?->manager?->name ?? '',
+                            $employee->jobInfo?->work_type ?? '',
+                            $employee->jobInfo?->work_location ?? '',
+                            $joinDate,
+                            $employee->hiringInfo?->contract_type ?? '',
+                            $employee->salary?->base_salary ?? 0,
+                            $employee->salary?->allowances ?? 0,
+                            $employee->salary?->overtime ?? 0,
+                            $employee->salary?->deductions ?? 0,
+                            $employee->salary?->advances ?? 0,
+                            $employee->salary?->payment_type ?? '',
+                            $employee->insurance?->insurance_number ?? '',
+                            $insDate,
+                            $employee->insurance?->insurance_status ?? ''
+                        ]);
+                    } catch (\Exception $e) {
+                        // Skip problematic rows silently to avoid breaking the stream
+                        continue;
+                    }
                 }
 
                 fclose($handle);
@@ -261,26 +275,56 @@ class HRController extends Controller
                 return redirect()->back();
             }
             
-            // Map headers to indices
-            $expected = [
-                'name' => 'Name', 'email' => 'Email', 'company_email' => 'Company Email', 'phone' => 'Phone', 'password' => 'Password', 
-                'role' => 'Role', 'gender' => 'Gender', 'national_id' => 'National ID', 'address' => 'Address', 
-                'experience_years' => 'Experience Years', 'location' => 'Location', 'job_title' => 'Job Title', 
-                'department' => 'Department', 'manager_name' => 'Manager Name', 'work_type' => 'Work Type', 
-                'work_location' => 'Work Location', 'join_date' => 'Join Date', 'contract_type' => 'Contract Type', 
-                'base_salary' => 'Base Salary', 'allowances' => 'Allowances', 'overtime' => 'Overtime', 
-                'deductions' => 'Deductions', 'advances' => 'Advances', 'payment_type' => 'Payment Type', 
-                'insurance_number' => 'Insurance Number', 'insurance_start_date' => 'Insurance Start Date', 
-                'insurance_status' => 'Insurance Status'
+            // Normalize headers - trim whitespace and lowercase for matching
+            $normalizedHeaders = array_map(function($h) {
+                return strtolower(trim($h));
+            }, $headers);
+            
+            // Map headers to indices - support both Export and Template formats
+            $headerAliases = [
+                'name'                => ['name'],
+                'email'               => ['email'],
+                'company_email'       => ['company email'],
+                'phone'               => ['phone'],
+                'password'            => ['password'],
+                'role'                => ['role'],
+                'gender'              => ['gender'],
+                'national_id'         => ['national id'],
+                'address'             => ['address'],
+                'experience_years'    => ['experience years'],
+                'location'            => ['location'],
+                'job_title'           => ['job title'],
+                'department'          => ['department'],
+                'manager_name'        => ['manager name', 'manager'],  // Support both Export & Template
+                'work_type'           => ['work type'],
+                'work_location'       => ['work location'],
+                'join_date'           => ['join date'],
+                'contract_type'       => ['contract type'],
+                'base_salary'         => ['base salary'],
+                'allowances'          => ['allowances'],
+                'overtime'            => ['overtime'],
+                'deductions'          => ['deductions'],
+                'advances'            => ['advances'],
+                'payment_type'        => ['payment type'],
+                'insurance_number'    => ['insurance number'],
+                'insurance_start_date'=> ['insurance start date'],
+                'insurance_status'    => ['insurance status'],
             ];
             
             $indices = [];
-            foreach ($expected as $key => $label) {
-                $idx = array_search(strtolower($label), array_map('strtolower', $headers));
-                $indices[$key] = ($idx !== false) ? $idx : null;
+            foreach ($headerAliases as $key => $aliases) {
+                $indices[$key] = null;
+                foreach ($aliases as $alias) {
+                    $idx = array_search($alias, $normalizedHeaders);
+                    if ($idx !== false) {
+                        $indices[$key] = $idx;
+                        break;
+                    }
+                }
             }
             
             $successCount = 0;
+            $skippedCount = 0;
             $errorCount = 0;
             $errors = [];
             $rowNumber = 1;
@@ -291,7 +335,7 @@ class HRController extends Controller
                 
                 $data = [];
                 foreach ($indices as $key => $idx) {
-                    $data[$key] = ($idx !== null) ? trim($row[$idx] ?? '') : null;
+                    $data[$key] = ($idx !== null && isset($row[$idx])) ? trim($row[$idx]) : null;
                 }
                 
                 // Basic Validation
@@ -301,19 +345,19 @@ class HRController extends Controller
                     continue;
                 }
                 
+                // Skip existing employees silently (not an error)
                 if (User::where('email', $data['email'])->exists()) {
-                    $errorCount++;
-                    $errors[] = "Row {$rowNumber}: Email '{$data['email']}' already exists.";
+                    $skippedCount++;
                     continue;
                 }
                 
                 DB::beginTransaction();
                 try {
                     // 1. Resolve IDs
-                    $roleId = DB::table('role_type_users')->where('role_type', $data['role'])->value('id') ?? 3; // Default to Employee
+                    $roleId = DB::table('role_type_users')->where('role_type', $data['role'])->value('id') ?? 3;
                     $deptId = DB::table('departments')->where('department', $data['department'])->value('id');
                     $jobId  = DB::table('position_types')->where('position', $data['job_title'])->value('id');
-                    $mgrId  = User::where('name', $data['manager_name'])->value('id');
+                    $mgrId  = !empty($data['manager_name']) ? User::where('name', $data['manager_name'])->value('id') : null;
 
                     // 2. Generate Employee ID
                     $newId = $this->generateEmployeeId();
@@ -322,44 +366,51 @@ class HRController extends Controller
                         $newId = 'ASC_' . str_pad($num, 3, '0', STR_PAD_LEFT);
                     }
 
-                    // 3. Create User
-                    $user = User::create([
-                        'user_id' => $newId,
-                        'name' => $data['name'],
-                        'email' => $data['email'],
-                        'company_email' => $data['company_email'],
-                        'phone_number' => $data['phone'],
-                        'password' => Hash::make($data['password'] ?? 'password123'),
-                        'role_id' => $roleId,
-                        'role_name' => $data['role'] ?? 'Employee',
-                        'status' => $data['gender'] ?? 'Male',
-                    ]);
+                    // 3. Create User (set user_id after create to override boot())
+                    $user = new User();
+                    $user->user_id      = $newId;
+                    $user->name         = $data['name'];
+                    $user->email        = $data['email'];
+                    $user->company_email = $data['company_email'];
+                    $user->phone_number = $data['phone'];
+                    $user->password     = Hash::make($data['password'] ?? 'password123');
+                    $user->role_id      = $roleId;
+                    $user->role_name    = $data['role'] ?? 'Employee';
+                    $user->status       = 'Active';
+                    $user->save();
+                    
+                    // Force correct user_id (override boot K- format)
+                    DB::table('users')->where('id', $user->id)->update(['user_id' => $newId]);
 
-                    // 4. Related Data
+                    // 4. Employee Profile
                     EmployeeProfile::create([
-                        'user_id' => $user->id,
-                        'national_id' => $data['national_id'],
-                        'address' => $data['address'],
-                        'gender' => $data['gender'] ?? 'Male',
+                        'user_id'          => $user->id,
+                        'national_id'      => $data['national_id'],
+                        'address'          => $data['address'],
+                        'gender'           => $data['gender'] ?? 'Male',
                         'experience_years' => $data['experience_years'] ?? 0,
-                        'location' => $data['location'],
+                        'location'         => $data['location'],
                     ]);
 
+                    // 5. Job Information
                     JobInformation::create([
-                        'user_id' => $user->id,
-                        'job_title_id' => $jobId,
+                        'user_id'       => $user->id,
+                        'job_title_id'  => $jobId,
                         'department_id' => $deptId,
-                        'manager_id' => $mgrId,
-                        'work_type' => $data['work_type'] ?? 'Full-Time Onsite',
+                        'manager_id'    => $mgrId,
+                        'work_type'     => $data['work_type'] ?? 'Full-Time Onsite',
                         'work_location' => $data['work_location'],
                     ]);
 
+                    // 6. Hiring Information - Parse date flexibly
+                    $joinDate = $this->parseFlexibleDate($data['join_date']);
                     HiringInformation::create([
-                        'user_id' => $user->id,
-                        'join_date' => $data['join_date'] ?: Carbon::now()->format('Y-m-d'),
+                        'user_id'       => $user->id,
+                        'join_date'     => $joinDate,
                         'contract_type' => $data['contract_type'] ?? 'Permanent',
                     ]);
 
+                    // 7. Salary
                     $base = (float)($data['base_salary'] ?? 0);
                     $allw = (float)($data['allowances'] ?? 0);
                     $over = (float)($data['overtime'] ?? 0);
@@ -367,43 +418,101 @@ class HRController extends Controller
                     $adv  = (float)($data['advances'] ?? 0);
                     
                     Salary::create([
-                        'user_id' => $user->id,
-                        'base_salary' => $base,
-                        'allowances' => $allw,
-                        'overtime' => $over,
-                        'deductions' => $dedu,
-                        'advances' => $adv,
+                        'user_id'      => $user->id,
+                        'base_salary'  => $base,
+                        'allowances'   => $allw,
+                        'overtime'     => $over,
+                        'deductions'   => $dedu,
+                        'advances'     => $adv,
                         'total_salary' => ($base + $allw + $over) - ($dedu + $adv),
                         'payment_type' => $data['payment_type'] ?? 'Cash',
                     ]);
 
+                    // 8. Insurance
+                    $insDate = $this->parseFlexibleDate($data['insurance_start_date']);
                     Insurance::create([
-                        'user_id' => $user->id,
-                        'insurance_number' => $data['insurance_number'],
-                        'insurance_start_date' => $data['insurance_start_date'],
-                        'insurance_status' => $data['insurance_status'] ?? 'Not Insured',
+                        'user_id'              => $user->id,
+                        'insurance_number'     => $data['insurance_number'],
+                        'insurance_start_date' => $insDate,
+                        'insurance_status'     => $data['insurance_status'] ?? 'Not Insured',
                     ]);
-
 
                     DB::commit();
                     $successCount++;
                 } catch (\Exception $e) {
                     DB::rollBack();
                     $errorCount++;
-                    $errors[] = "Row {$rowNumber}: Error - " . $e->getMessage();
+                    $errors[] = "Row {$rowNumber}: " . $e->getMessage();
+                    Log::error("Import Row {$rowNumber}: " . $e->getMessage());
                 }
             }
             
             fclose($handle);
             
-            $msg = "Import Results: {$successCount} Success, {$errorCount} Failed.";
-            if ($errorCount > 0) flash()->warning($msg . " Check logs for errors.");
-            else flash()->success($msg);
+            // Build user-friendly message
+            $msgParts = [];
+            if ($successCount > 0) $msgParts[] = "{$successCount} added successfully";
+            if ($skippedCount > 0) $msgParts[] = "{$skippedCount} already exist (skipped)";
+            if ($errorCount > 0)   $msgParts[] = "{$errorCount} failed";
+            $msg = "Import Results: " . implode(', ', $msgParts) . ".";
+
+            if ($errorCount > 0) {
+                Log::warning('Import Errors: ', $errors);
+                flash()->warning($msg);
+            } else {
+                flash()->success($msg);
+            }
             
         } catch (\Exception $e) {
             flash()->error('Import failed: ' . $e->getMessage());
         }
         return redirect()->route('hr/employee/list');
+    }
+
+    /**
+     * Parse date from various formats (Excel, manual input, etc.)
+     */
+    private function parseFlexibleDate($dateStr)
+    {
+        if (empty($dateStr)) {
+            return Carbon::now()->format('Y-m-d');
+        }
+        
+        $dateStr = trim($dateStr);
+
+        // Already Y-m-d
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateStr)) {
+            return $dateStr;
+        }
+
+        // Try common formats
+        $formats = [
+            'd M, Y',     // 10 May, 2026
+            'd M Y',      // 10 May 2026
+            'd/m/Y',      // 10/05/2026
+            'm/d/Y',      // 05/10/2026
+            'd-m-Y',      // 10-05-2026
+            'Y/m/d',      // 2026/05/10
+            'd.m.Y',      // 10.05.2026
+            'M d, Y',     // May 10, 2026
+            'F d, Y',     // May 10, 2026
+        ];
+
+        foreach ($formats as $fmt) {
+            try {
+                $parsed = Carbon::createFromFormat($fmt, $dateStr);
+                if ($parsed) return $parsed->format('Y-m-d');
+            } catch (\Exception $e) {
+                continue;
+            }
+        }
+
+        // Last resort: let Carbon try to parse it
+        try {
+            return Carbon::parse($dateStr)->format('Y-m-d');
+        } catch (\Exception $e) {
+            return Carbon::now()->format('Y-m-d');
+        }
     }
 
     /**
