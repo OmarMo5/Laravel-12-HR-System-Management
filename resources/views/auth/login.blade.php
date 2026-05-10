@@ -15,7 +15,7 @@
     
     <style>
         body { font-family: 'Tajawal', sans-serif !important; }
-        .custom-input { color: #0f172a !important; } /* Force dark text color */
+        .custom-input { color: #0f172a !important; }
         .bg-custom-500 { background-color: #2563eb; }
         .login-label { color: #2e2d2dff !important; }
         .dark .login-label { color: #ffffff !important; }
@@ -25,38 +25,101 @@
             animation: fadeOut 0.6s ease forwards;
         }
         
-        /* أنيمشن الظهور */
         @keyframes fadeOut {
             from { opacity: 1; transform: translateY(0); }
             to { opacity: 0; transform: translateY(-15px); visibility: hidden; display: none; }
         }
         
-        /* تنسيق النقاط الجديدة - نفس تنسيق النص القديم بالضبط */
+        /* تثبيت عرض الصندوق */
+        .fixed-width-box {
+            width: 100%;
+            min-width: 100%;
+        }
+        
+        /* تنسيق النقاط - في النص وعرضها كامل */
+        .points-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            width: 100%;
+        }
+        
         .feature-point {
-            margin-bottom: 20px;
-            padding-right: 25px;
-            position: relative;
-            line-height: 1.6;
+            width: 100%;
+            padding: 1rem 2rem 1rem 1rem;
+            text-align: center;
             font-size: 1.05rem;
-            font-weight: 500;
-            color: #f1f5f9;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-            border-right: 3px solid #3b82f6;
+            font-weight: 600;
+            color: #ffffff;
+            background: rgba(59, 130, 246, 0.15);
+            border-right: 4px solid #3b82f6;
+            border-radius: 16px;
+            backdrop-filter: blur(8px);
             transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
         .feature-point:before {
-            content: "●";
+            content: "★";
             position: absolute;
-            right: 0;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
             color: #3b82f6;
-            font-size: 1rem;
-            top: 0;
+            font-size: 1.1rem;
+            font-weight: bold;
         }
         
-        /* تحسين للشاشات الصغيرة */
+        /* تحسين العنوان الرئيسي */
+        .main-title {
+            color: #ffffff !important;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+            letter-spacing: -0.5px;
+        }
+        
+        .main-title span {
+            text-shadow: 0 0 10px rgba(59,130,246,0.5);
+        }
+        
+        /* تثبيت ارتفاع الصندوق ومنع أي تغيير */
+        .content-wrapper {
+            min-height: 380px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        /* تحسين النص الطويل */
+        .long-text {
+            line-height: 1.7;
+            text-align: center;
+            font-size: 1.05rem;
+        }
+        
         @media (max-width: 1024px) {
-            .feature-point { font-size: 0.9rem; margin-bottom: 15px; }
+            .feature-point {
+                font-size: 0.9rem;
+                padding: 0.8rem 1.8rem 0.8rem 0.8rem;
+            }
+            .content-wrapper {
+                min-height: 420px;
+            }
+        }
+        
+        /* أنيمشن ظهور النقط */
+        .feature-point {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        
+        .feature-point.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
@@ -67,34 +130,38 @@
     <!-- Right Side: Background Image & Description -->
     <div class="hidden lg:flex lg:w-[60%] relative overflow-hidden">
         <img src="{{ asset('assets/images/login-bg.png') }}" class="absolute inset-0 w-full h-full object-cover" alt="ASC Background">
-        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px]"></div>
+        <div class="absolute inset-0 bg-gradient-to-br from-slate-950/80 via-slate-900/70 to-slate-950/80 backdrop-blur-[1px]"></div>
         
         <div class="relative z-10 flex h-full flex-col justify-center px-16 text-white text-right w-full">
-            <div class="max-w-3xl mr-auto">
+            <div class="max-w-3xl mr-auto w-full">
                 <div class="mb-8 inline-block py-2 px-6 border-r-8 border-blue-500 bg-white/10 backdrop-blur-md">
-                     <span class="text-white font-black text-5xl tracking-tighter italic">ASC</span>
+                     <span class="text-white font-black text-5xl tracking-tighter italic drop-shadow-lg">ASC</span>
                 </div>
-                <h1 class="text-6xl font-black mb-8 leading-[1.2]">
-                    عالم من <span class="text-blue-500 underline decoration-8 underline-offset-8">الابتكار</span> <br>والتميز المعرفي
+                
+                <!-- العنوان بقى واضح جداً -->
+                <h1 class="text-6xl font-black mb-8 leading-[1.2] main-title">
+                    عالم من <span class="text-blue-500 underline decoration-8 underline-offset-8 decoration-blue-400">الابتكار</span> <br>والتميز المعرفي
                 </h1>
                 
-                <!-- نفس الصندوق - نفس المكان -->
-                <div class="p-10 rounded-[2.5rem] bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl min-h-[300px]">
-                    
-                    <!-- النص الطويل (اللي هيختفي بسرعة) -->
-                    <div id="initialText" class="text-xl leading-relaxed text-slate-100 font-medium">
-                        ننشئ وننظم وندير معارض ومتاحف محلية ودولية لكل المجالات الفكرية والدينية والإنسانية، وننظم الفعاليات والمؤتمرات في كل المجالات وفي أي بقعة جغرافية وفق أعلى معايير الجودة المبنية على البحث العلمي، وأدوات العرض التقنية والتكنولوجية التفاعلية، والمعتمدة على الذكاء الاصطناعي والواقع الافتراضي الذي يحاكي الحقيقة بدقة كبيرة، ويوفر للزائرين متعة سمعية وبصرية تفاعلية فريدة.
+                <!-- الصندوق ثابت العرض وما بيتحركش -->
+                <div class="w-full">
+                    <div class="p-8 rounded-[2rem] bg-black/30 backdrop-blur-xl border border-white/15 shadow-2xl content-wrapper">
+                        
+                        <!-- النص الطويل -->
+                        <div id="initialText" class="long-text text-slate-100 font-medium w-full">
+                            ننشئ وننظم وندير معارض ومتاحف محلية ودولية لكل المجالات الفكرية والدينية والإنسانية، وننظم الفعاليات والمؤتمرات في كل المجالات وفي أي بقعة جغرافية وفق أعلى معايير الجودة المبنية على البحث العلمي، وأدوات العرض التقنية والتكنولوجية التفاعلية، والمعتمدة على الذكاء الاصطناعي والواقع الافتراضي الذي يحاكي الحقيقة بدقة كبيرة، ويوفر للزائرين متعة سمعية وبصرية تفاعلية فريدة.
+                        </div>
+                        
+                        <!-- القائمة الجديدة -->
+                        <div id="pointsList" style="display: none;" class="points-container">
+                            <div class="feature-point">✨ منصة موحدة لإدارة الموارد البشرية</div>
+                            <div class="feature-point">📋 تنظيم العمليات اليومية بكفاءة عالية</div>
+                            <div class="feature-point">📉 تقليل الأخطاء وزيادة الإنتاجية</div>
+                            <div class="feature-point">🎯 دعم كامل لقرارات الإدارة</div>
+                            <div class="feature-point">🔒 حماية وأمان للبيانات</div>
+                        </div>
+                        
                     </div>
-                    
-                    <!-- القائمة الجديدة (مخفية في البداية) -->
-                    <div id="pointsList" style="display: none;">
-                        <div class="feature-point">منصة موحدة لإدارة الموارد البشرية</div>
-                        <div class="feature-point">تنظيم العمليات اليومية بكفاءة عالية</div>
-                        <div class="feature-point">تقليل الأخطاء وزيادة الإنتاجية</div>
-                        <div class="feature-point">دعم كامل لقرارات الإدارة</div>
-                        <div class="feature-point">حماية وأمان للبيانات</div>
-                    </div>
-                    
                 </div>
             </div>
         </div>
@@ -191,35 +258,30 @@
         const initialTextDiv = document.getElementById('initialText');
         const pointsListDiv = document.getElementById('pointsList');
         
-        // بعد 1.5 ثانية بس - النص الطويل يختفي بسرعة
+        // بعد 2 ثانية - النص الطويل يختفي
         setTimeout(function() {
             if (initialTextDiv) {
                 initialTextDiv.classList.add('fade-out');
             }
             
-            // بعد ما يختفي، نظهر النقط في نفس المكان
+            // بعد اختفاء النص، نظهر النقط
             setTimeout(function() {
                 if (initialTextDiv) {
                     initialTextDiv.style.display = 'none';
                 }
                 if (pointsListDiv) {
-                    pointsListDiv.style.display = 'block';
+                    pointsListDiv.style.display = 'flex';
                     
-                    // نجعل كل نقطة تظهر واحدة ورا التانية بشكل احترافي
+                    // ظهور تدريجي لكل نقطة
                     const points = pointsListDiv.querySelectorAll('.feature-point');
                     points.forEach((point, index) => {
-                        point.style.opacity = '0';
-                        point.style.transform = 'translateX(20px)';
-                        point.style.transition = `all 0.4s ease ${index * 0.12}s`;
-                        
                         setTimeout(() => {
-                            point.style.opacity = '1';
-                            point.style.transform = 'translateX(0)';
-                        }, 100);
+                            point.classList.add('visible');
+                        }, index * 120);
                     });
                 }
-            }, 600); // نفس مدة الأنيمشن
-        }, 2000); // 1.5 ثانية بس - أسرع زي ما طلبت
+            }, 1500);
+        }, 2000);
     });
 </script>
 </body>
