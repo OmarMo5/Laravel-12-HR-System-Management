@@ -249,7 +249,7 @@
                                                     <i data-lucide="eye" class="size-4"></i>
                                                 </a>
 
-                                                @if(Auth::user()->role_name == 'HR' || Auth::user()->role_name == 'Admin' || Auth::user()->role_name == 'Manager')
+                                                @if(Auth::user()->role_name == 'HR' || Auth::user()->role_name == 'Admin' || Auth::user()->role_name == 'Manager' || Auth::user()->role_name == 'CEO')
                                                     <a href="{{ route('hr/leave/edit', $leaveItem->id) }}"
                                                         class="flex items-center justify-center transition-all duration-200 ease-linear rounded-md size-8 text-custom-500 bg-custom-100 hover:text-white hover:bg-custom-500 dark:bg-custom-500/20 dark:hover:bg-custom-500"
                                                         title="{{ __('messages.edit') }}">
@@ -260,8 +260,12 @@
                                                         $showApproveButtons = false;
                                                         if (Auth::user()->role_name == 'Manager' && $leaveItem->manager_status == 'Pending') {
                                                             $showApproveButtons = true;
-                                                        } elseif ((Auth::user()->role_name == 'HR' || Auth::user()->role_name == 'Admin') && $leaveItem->manager_status == 'Approved' && $leaveItem->status == 'Pending') {
-                                                            $showApproveButtons = true;
+                                                        } elseif ((Auth::user()->role_name == 'HR' || Auth::user()->role_name == 'Admin' || Auth::user()->role_name == 'CEO') && $leaveItem->status == 'Pending') {
+                                                            // For HR employees, they don't have a manager, so they can be approved directly by Admin/HR/CEO
+                                                            $isHROwner = ($leaveItem->user && $leaveItem->user->role_name === 'HR');
+                                                            if ($isHROwner || $leaveItem->manager_status == 'Approved') {
+                                                                $showApproveButtons = true;
+                                                            }
                                                         }
                                                     @endphp
 

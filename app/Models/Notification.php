@@ -15,6 +15,7 @@ class Notification extends Model
         'title',
         'message',
         'leave_id',
+        'permission_id',
         'is_read',
     ];
 

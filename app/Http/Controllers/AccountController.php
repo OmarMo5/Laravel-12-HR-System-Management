@@ -76,7 +76,7 @@ class AccountController extends Controller
             $user = User::where('user_id', $request->user_id)->firstOrFail();
 
             // Security check: Only the user themselves or Admin/HR can update
-            if (Auth::user()->id !== $user->id && !Auth::user()->hasAnyRole(['Admin', 'HR'])) {
+            if (Auth::user()->id !== $user->id && !Auth::user()->hasAnyRole(['Admin', 'HR', 'CEO'])) {
                 return back()->with('error', 'Unauthorized action.');
             }
 

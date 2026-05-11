@@ -782,6 +782,9 @@ class HRController extends Controller
             $user->avatar = $avatarName;
             $user->status = 'Active';
             $user->save();
+            // Force correct user_id (safety net against any model observer override)
+            DB::table('users')->where('id', $user->id)->update(['user_id' => $newEmployeeId]);
+            $user->user_id = $newEmployeeId; // refresh in-memory value
 
             // 2. Employee Profile
             EmployeeProfile::create([
@@ -1714,8 +1717,11 @@ class HRController extends Controller
                 }
                 $leave->save();
 
-            } elseif ($user->role_name === 'HR' || $user->role_name === 'Admin') {
-                if ($leave->manager_status !== 'Approved' && $newStatus === 'Approved') {
+            } elseif ($user->role_name === 'HR' || $user->role_name === 'Admin' || $user->role_name === 'CEO') {
+                $employee = User::where('user_id', $leave->staff_id)->first();
+                $isHROwner = ($employee && $employee->role_name === 'HR');
+
+                if (!$isHROwner && $leave->manager_status !== 'Approved' && $newStatus === 'Approved') {
                     return response()->json(['response_code' => 400, 'status' => 'error', 'message' => 'Manager must approve this leave first.']);
                 }
                 $leave->status      = $newStatus;
@@ -1789,7 +1795,7 @@ class HRController extends Controller
                 ]);
             }
 
-            $hrAdmins = User::whereIn('role_name', ['HR', 'Admin'])->get();
+            $hrAdmins = User::whereIn('role_name', ['HR', 'Admin','CEO'])->get();
             foreach ($hrAdmins as $u) {
                 Notification::create([
                     'user_id'  => $u->user_id,
@@ -1813,7 +1819,7 @@ class HRController extends Controller
             $employee = User::where('user_id', $leave->staff_id)->first();
             if (!$employee) return;
 
-            $hrAdmins = User::whereIn('role_name', ['HR', 'Admin'])->get();
+            $hrAdmins = User::whereIn('role_name', ['HR', 'Admin','CEO'])->get();
             foreach ($hrAdmins as $u) {
                 Notification::create([
                     'user_id'  => $u->user_id,
@@ -1838,7 +1844,7 @@ class HRController extends Controller
             $employee = User::where('user_id', $leave->staff_id)->first();
             if (!$employee) return;
 
-            $hrAdmins = User::whereIn('role_name', ['HR', 'Admin'])->get();
+            $hrAdmins = User::whereIn('role_name', ['HR', 'Admin','CEO'])->get();
             foreach ($hrAdmins as $u) {
                 Notification::create([
                     'user_id'  => $u->user_id,
@@ -1876,7 +1882,7 @@ class HRController extends Controller
             $loggedInUserId = auth()->user()->user_id;
             $canDelete      = false;
 
-            if ($userRole === 'HR' || $userRole === 'Admin') {
+            if ($userRole === 'HR' || $userRole === 'Admin' || $userRole === 'CEO') {
                 $canDelete = true;
             } elseif ($leave->staff_id === $loggedInUserId && $leave->status === 'Pending') {
                 $canDelete = true;

@@ -22,17 +22,8 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    // Auto-generate user_id like K-0001
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model) {
-            $lastUser = self::orderBy('id', 'desc')->first();
-            $lastId = $lastUser ? (int) substr($lastUser->user_id, 2) : 0;
-            $model->user_id = 'K-' . str_pad($lastId + 1, 4, '0', STR_PAD_LEFT);
-        });
-    }
+    // user_id is managed by HRController::generateEmployeeId()
+    // No auto-generation here to avoid overriding the set value
 
     // ========== NEW RELATIONSHIPS ==========
     public function profile()

@@ -113,11 +113,11 @@
                             <ul
                                 class="flex flex-wrap gap-3 mt-4 text-center divide-x divide-slate-200 dark:divide-zink-500 rtl:divide-x-reverse">
                                 <li class="px-5">
-                                    <h5 class="text-15">{{ $profileDetail->jobInfo->department->department ?? $profileDetail->department ?? 'N/A' }}</h5>
+                                    <h5 class="text-15">{{ $profileDetail->jobInfo->department->department ?? 'N/A' }}</h5>
                                     <p class="text-slate-500 dark:text-zink-200">{{ __('messages.department') }}</p>
                                 </li>
                                 <li class="px-5">
-                                    <h5 class="text-15">{{ $profileDetail->jobInfo->jobTitle->position ?? $profileDetail->designation ?? 'N/A' }}</h5>
+                                    <h5 class="text-15">{{ $profileDetail->jobInfo->jobTitle->position ?? 'N/A' }}</h5>
                                     <p class="text-slate-500 dark:text-zink-200">{{ __('messages.designation') }}</p>
                                 </li>
                                 <li class="px-5">
@@ -275,13 +275,19 @@
                                                 <tr>
                                                     <th class="py-2 font-semibold ps-0" scope="row">{{ __('messages.designation') }}</th>
                                                     <td class="py-2 text-right text-slate-500 dark:text-zink-200">
-                                                        {{ $profileDetail->jobInfo->jobTitle->position ?? $profileDetail->designation ?? 'N/A' }}
+                                                        {{ $profileDetail->jobInfo->jobTitle->position ?? 'N/A' }}
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <th class="py-2 font-semibold ps-0" scope="row">{{ __('messages.department') }}</th>
                                                     <td class="py-2 text-right text-slate-500 dark:text-zink-200">
-                                                        {{ $profileDetail->jobInfo->department->department ?? $profileDetail->department ?? 'N/A' }}
+                                                        {{ $profileDetail->jobInfo->department->department ?? 'N/A' }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="py-2 font-semibold ps-0" scope="row">{{ __('messages.manager') }}</th>
+                                                    <td class="py-2 text-right text-slate-500 dark:text-zink-200">
+                                                        {{ $profileDetail->jobInfo->manager->name ?? 'N/A' }}
                                                     </td>
                                                 </tr>
                                                 <tr>

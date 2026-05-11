@@ -387,7 +387,7 @@ class AttendendanceController extends Controller
         $selectedEmployee = $request->get('employee_id', $userId);
         
         $userRole = Session::get('role_name');
-        $isHR = in_array($userRole, ['Admin', 'HR Manager', 'HR']);
+        $isHR = in_array($userRole, ['Admin', 'HR Manager', 'HR', 'CEO']);
         
         $attendanceQuery = Attendance::whereBetween('date', [$startDate, $endDate]);
         

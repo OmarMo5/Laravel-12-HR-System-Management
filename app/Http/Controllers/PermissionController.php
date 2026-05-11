@@ -15,8 +15,8 @@ class PermissionController extends Controller
      */
     public function index(Request $request)
     {
-        // Role check (HR, Admin, Manager)
-        if (!Auth::user()->hasAnyRole(['admin', 'hr', 'manager'])) {
+        // Role check (HR, Admin, Manager, CEO)
+        if (!Auth::user()->hasAnyRole(['admin', 'hr', 'manager', 'ceo'])) {
             return redirect()->route('permissions.my')->with('error', 'Unauthorized access.');
         }
 
@@ -105,16 +105,44 @@ class PermissionController extends Controller
         ]);
 
         // Notify Manager, HR, and Admin
-        $recipients = User::whereIn('role_name', ['Manager', 'HR', 'Admin'])->get();
+        $employee = Auth::user();
+        $isHRRequester = ($employee->role_name === 'HR');
+
+        // 1. Notify Manager (Skip if requester is HR)
+        if (!$isHRRequester) {
+            $manager = User::where('role_name', 'Manager')->where('department', $employee->department)->first();
+            if ($manager) {
+                \App\Models\Notification::create([
+                    'user_id' => $manager->user_id,
+                    'type' => 'permission_new',
+                    'title' => app()->getLocale() === 'ar' ? 'طلب إذن جديد' : 'New Permission Request',
+                    'message' => app()->getLocale() === 'ar' 
+                        ? "طلب إذن جديد من الموظف: " . $employee->name 
+                        : "New permission request from: " . $employee->name,
+                    'leave_id' => $permission->id,
+                    'is_read' => false,
+                ]);
+            }
+        }
+
+        // 2. Notify Admins and CEO (and HR if requester is not HR)
+        $targetRoles = ['Admin', 'CEO'];
+        if (!$isHRRequester) {
+            $targetRoles[] = 'HR';
+        }
+
+        $recipients = User::whereIn('role_name', $targetRoles)->get();
         foreach ($recipients as $recipient) {
+            if ($recipient->user_id === $employee->user_id) continue;
+
             \App\Models\Notification::create([
                 'user_id' => $recipient->user_id,
                 'type' => 'permission_new',
                 'title' => app()->getLocale() === 'ar' ? 'طلب إذن جديد' : 'New Permission Request',
                 'message' => app()->getLocale() === 'ar' 
-                    ? "طلب إذن جديد من الموظف: " . Auth::user()->name 
-                    : "New permission request from: " . Auth::user()->name,
-                'leave_id' => $permission->id, // Store permission ID here
+                    ? "طلب إذن جديد من الموظف: " . $employee->name 
+                    : "New permission request from: " . $employee->name,
+                'leave_id' => $permission->id,
                 'is_read' => false,
             ]);
         }
@@ -128,7 +156,7 @@ class PermissionController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $user = Auth::user();
-        if (!$user->hasAnyRole(['admin', 'hr', 'manager'])) {
+        if (!$user->hasAnyRole(['admin', 'hr', 'manager', 'ceo'])) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -142,7 +170,7 @@ class PermissionController extends Controller
             if ($newStatus === 'Rejected') {
                 $permission->status = 'rejected';
                 // Notify Employee, HR, and Admin about rejection
-                $recipients = User::whereIn('role_name', ['HR', 'Admin'])->get();
+                $recipients = User::whereIn('role_name', ['HR', 'Admin', 'CEO'])->get();
                 foreach ($recipients as $recipient) {
                     \App\Models\Notification::create([
                         'user_id' => $recipient->user_id,
@@ -168,7 +196,7 @@ class PermissionController extends Controller
                 ]);
             } else {
                 // Notify HR and Admin that it's now their turn
-                $recipients = User::whereIn('role_name', ['HR', 'Admin'])->get();
+                $recipients = User::whereIn('role_name', ['HR', 'Admin', 'CEO'])->get();
                 foreach ($recipients as $recipient) {
                     \App\Models\Notification::create([
                         'user_id' => $recipient->user_id,
@@ -184,8 +212,10 @@ class PermissionController extends Controller
             }
             $permission->save();
 
-        } elseif ($user->role_name === 'HR' || $user->role_name === 'Admin') {
-            if ($permission->manager_status !== 'Approved' && $newStatus === 'Approved') {
+        } elseif ($user->role_name === 'HR' || $user->role_name === 'Admin' || $user->role_name === 'CEO') {
+            $isHROwner = ($permission->user && $permission->user->role_name === 'HR');
+
+            if (!$isHROwner && $permission->manager_status !== 'Approved' && $newStatus === 'Approved') {
                 return redirect()->back()->with('error', 'Manager must approve this permission first.');
             }
 
@@ -218,13 +248,13 @@ class PermissionController extends Controller
     {
         $permission = Permission::findOrFail($id);
         
-        // Authorization: Owner or HR/Admin
-        if ($permission->user_id !== Auth::id() && !Auth::user()->hasAnyRole(['Admin', 'HR'])) {
+        // Authorization: Owner or HR/Admin/CEO
+        if ($permission->user_id !== Auth::id() && !Auth::user()->hasAnyRole(['Admin', 'HR', 'CEO'])) {
             return redirect()->back()->with('error', 'Unauthorized action.');
         }
 
         // Only allow editing if pending
-        if ($permission->status !== 'pending' && !Auth::user()->hasAnyRole(['Admin', 'HR'])) {
+        if ($permission->status !== 'pending' && !Auth::user()->hasAnyRole(['Admin', 'HR', 'CEO'])) {
             return redirect()->back()->with('error', 'Cannot edit a processed request.');
         }
 
@@ -255,8 +285,8 @@ class PermissionController extends Controller
     {
         $permission = Permission::findOrFail($id);
         
-        // Authorization: Owner or HR/Admin
-        if ($permission->user_id !== Auth::id() && !Auth::user()->hasAnyRole(['Admin', 'HR'])) {
+        // Authorization: Owner or HR/Admin/CEO
+        if ($permission->user_id !== Auth::id() && !Auth::user()->hasAnyRole(['Admin', 'HR', 'CEO'])) {
             return redirect()->back()->with('error', 'Unauthorized action.');
         }
 

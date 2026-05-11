@@ -218,8 +218,12 @@
                                                         $canApprove = false;
                                                         if ($userRole === 'Manager' && $permission->manager_status === 'Pending' && $permission->status === 'pending') {
                                                             $canApprove = true;
-                                                        } elseif (($userRole === 'HR' || $userRole === 'Admin') && $permission->manager_status === 'Approved' && $permission->status === 'pending') {
-                                                            $canApprove = true;
+                                                        } elseif (($userRole === 'HR' || $userRole === 'Admin' || $userRole === 'CEO') && $permission->status === 'pending') {
+                                                            // For HR employees, they don't have a manager, so they can be approved directly by Admin/HR/CEO
+                                                            $isHROwner = ($permission->user && $permission->user->role_name === 'HR');
+                                                            if ($isHROwner || $permission->manager_status === 'Approved') {
+                                                                $canApprove = true;
+                                                            }
                                                         }
                                                     @endphp
 
@@ -242,7 +246,7 @@
                                                         <span class="text-xs text-slate-400 italic">{{ __('messages.no_action_needed') }}</span>
                                                     @endif
                                                     
-                                                    @if(Auth::user()->hasAnyRole(['Admin', 'HR']))
+                                                    @if(Auth::user()->hasAnyRole(['Admin', 'HR', 'CEO']))
                                                         <button @click="deleteRoute = '{{ route('permissions.destroy', $permission->id) }}'; showDeleteModal = true" class="p-1.5 text-red-500 bg-red-100 hover:bg-red-200 rounded-md transition-all dark:bg-red-500/10 dark:hover:bg-red-500/20" title="{{ __('messages.delete') }}">
                                                             <i data-lucide="trash-2" class="size-4"></i>
                                                         </button>

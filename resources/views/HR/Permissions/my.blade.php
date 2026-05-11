@@ -77,7 +77,7 @@
                                 <option value="">{{ __('messages.select_status') }}</option>
                                 <option value="personal">{{ __('messages.personal_reason') }}</option>
                                 <option value="work">{{ __('messages.work_reason') }}</option>
-                                <option value="both">{{ __('messages.both_reasons') }}</option>
+                                <option value="both">{{ __('messages.both_reason') }}</option>
                             </select>
                         </div>
 
@@ -186,7 +186,7 @@
                             <select name="reason" id="edit_reason" x-model="editPermission.reason" class="form-select w-full border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 rounded-md py-2.5" required>
                                 <option value="personal">{{ __('messages.personal_reason') }}</option>
                                 <option value="work">{{ __('messages.work_reason') }}</option>
-                                <option value="both">{{ __('messages.both_reasons') }}</option>
+                                <option value="both">{{ __('messages.both_reason') }}</option>
                             </select>
                         </div>
 

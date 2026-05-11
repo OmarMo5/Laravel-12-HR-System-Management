@@ -318,13 +318,18 @@
                                 <div>
                                     <label class="inline-block mb-2 text-base font-medium">{{ __('messages.full_name') }} <span class="text-red-500">*</span></label>
                                     <input type="text" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 @error('name') border-red-500 @enderror" 
-                                           name="name" value="{{ old('name') }}" placeholder="{{ __('messages.enter_full_name') }}" required>
+                                           name="name" id="add_name" value="{{ old('name') }}" placeholder="{{ __('messages.enter_full_name') }}"
+                                           oninput="this.value=this.value.replace(/[0-9]/g,'')" 
+                                           pattern="[^0-9]+" required>
                                     @error('name') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
                                 </div>
                                 <div>
                                     <label class="inline-block mb-2 text-base font-medium">{{ __('messages.phone_number') }} <span class="text-red-500">*</span></label>
                                     <input type="text" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 @error('phone_number') border-red-500 @enderror" 
-                                           name="phone_number" value="{{ old('phone_number') }}" placeholder="{{ __('messages.enter_phone_number') }}" required>
+                                           name="phone_number" id="add_phone" value="{{ old('phone_number') }}" placeholder="{{ __('messages.enter_phone_number') }}"
+                                           inputmode="numeric" maxlength="11"
+                                           oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,11)"
+                                           pattern="[0-9]{11}" title="يجب أن يتكون رقم الهاتف من 11 رقماً" required>
                                     @error('phone_number') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
                                 </div>
                                 <div>
@@ -342,7 +347,10 @@
                                 <div>
                                     <label class="inline-block mb-2 text-base font-medium">{{ __('messages.national_id') }} <span class="text-red-500">*</span></label>
                                     <input type="text" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" 
-                                           name="national_id" value="{{ old('national_id') }}" placeholder="{{ __('messages.enter_national_id') }}" required>
+                                           name="national_id" id="add_national_id" value="{{ old('national_id') }}" placeholder="{{ __('messages.enter_national_id') }}"
+                                           inputmode="numeric" maxlength="14"
+                                           oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,14)"
+                                           pattern="[0-9]{14}" title="يجب أن يتكون الرقم القومي من 14 رقماً" required>
                                 </div>
                                 <div class="md:col-span-2">
                                     <label class="inline-block mb-2 text-base font-medium">{{ __('messages.address') }} <span class="text-red-500">*</span></label>
@@ -366,8 +374,8 @@
                                     @error('job_title_id') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
                                 </div>
                                 <div>
-                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.department') }} <span class="text-red-500">*</span></label>
-                                    <select class="form-select border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" name="department_id" required>
+                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.department') }}</label>
+                                    <select class="form-select border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" name="department_id">
                                         <option value="">{{ __('messages.select_department') }}</option>
                                         @foreach ($department as $dept)
                                             <option value="{{ $dept->id }}" {{ old('department_id') == $dept->id ? 'selected' : '' }}>{{ $dept->department }}</option>
@@ -376,8 +384,8 @@
                                     @error('department_id') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
                                 </div>
                                 <div>
-                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.manager') }} <span class="text-red-500">*</span></label>
-                                    <select class="form-select border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" name="manager_id" required>
+                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.manager') }}</label>
+                                    <select class="form-select border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" name="manager_id">
                                         <option value="">{{ __('messages.select_manager') }}</option>
                                         @foreach ($managers as $mgr)
                                             <option value="{{ $mgr->id }}" {{ old('manager_id') == $mgr->id ? 'selected' : '' }}>{{ $mgr->name }}</option>
@@ -517,12 +525,14 @@
                                 <div>
                                     <label class="inline-block mb-2 text-base font-medium">{{ __('messages.insurance_number') }}</label>
                                     <input type="text" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" 
-                                           name="insurance_number" value="{{ old('insurance_number') }}">
+                                           name="insurance_number" id="add_insurance_number" value="{{ old('insurance_number') }}"
+                                           inputmode="numeric"
+                                           oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                                 </div>
                                 <div>
                                     <label class="inline-block mb-2 text-base font-medium">{{ __('messages.insurance_start_date') }}</label>
                                     <input type="text" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 datepicker" 
-                                           name="insurance_start_date" value="{{ old('insurance_start_date') }}">
+                                           name="insurance_start_date" id="add_insurance_start_date" value="{{ old('insurance_start_date') }}" placeholder="{{ __('messages.select_date') }}" readonly>
                                 </div>
                                 <div>
                                     <label class="inline-block mb-2 text-base font-medium">{{ __('messages.insurance_status') }} <span class="text-red-500">*</span></label>
@@ -707,12 +717,14 @@
                                 <div>
                                     <label class="inline-block mb-2 text-base font-medium">{{ __('messages.full_name') }} <span class="text-red-500">*</span></label>
                                     <input type="text" id="e_name" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" 
-                                           name="name" required>
+                                           name="name" oninput="this.value=this.value.replace(/[0-9]/g,'')" pattern="[^0-9]+" required>
                                 </div>
                                 <div>
                                     <label class="inline-block mb-2 text-base font-medium">{{ __('messages.phone_number') }} <span class="text-red-500">*</span></label>
                                     <input type="text" id="e_phone_number" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" 
-                                           name="phone_number" required>
+                                           name="phone_number" inputmode="numeric" maxlength="11"
+                                           oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,11)"
+                                           pattern="[0-9]{11}" title="يجب أن يتكون رقم الهاتف من 11 رقماً" required>
                                 </div>
                                 <div>
                                     <label class="inline-block mb-2 text-base font-medium">{{ __('messages.email') }} <span class="text-red-500">*</span></label>
@@ -727,7 +739,9 @@
                                 <div>
                                     <label class="inline-block mb-2 text-base font-medium">{{ __('messages.national_id') }}</label>
                                     <input type="text" id="e_national_id" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" 
-                                           name="national_id">
+                                           name="national_id" inputmode="numeric" maxlength="14"
+                                           oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,14)"
+                                           pattern="[0-9]{14}" title="يجب أن يتكون الرقم القومي من 14 رقماً">
                                 </div>
                                 <div>
                                     <label class="inline-block mb-2 text-base font-medium">{{ __('messages.address') }}</label>
@@ -750,8 +764,8 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.department') }} <span class="text-red-500">*</span></label>
-                                    <select id="e_department_id" class="form-select border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" name="department_id" required>
+                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.department') }}</label>
+                                    <select id="e_department_id" class="form-select border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" name="department_id">
                                         <option value="">{{ __('messages.select_department') }}</option>
                                         @foreach ($department as $dept)
                                             <option value="{{ $dept->id }}">{{ $dept->department }}</option>
@@ -759,8 +773,8 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.manager') }} <span class="text-red-500">*</span></label>
-                                    <select id="e_manager_id" class="form-select border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" name="manager_id" required>
+                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.manager') }}</label>
+                                    <select id="e_manager_id" class="form-select border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" name="manager_id">
                                         <option value="">{{ __('messages.select_manager') }}</option>
                                         @foreach ($managers as $mgr)
                                             <option value="{{ $mgr->id }}">{{ $mgr->name }}</option>
@@ -896,12 +910,13 @@
                                 <div>
                                     <label class="inline-block mb-2 text-base font-medium">{{ __('messages.insurance_number') }}</label>
                                     <input type="text" id="e_insurance_number" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" 
-                                           name="insurance_number">
+                                           name="insurance_number" inputmode="numeric"
+                                           oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                                 </div>
                                 <div>
                                     <label class="inline-block mb-2 text-base font-medium">{{ __('messages.insurance_start_date') }}</label>
                                     <input type="text" id="e_insurance_start_date" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 datepicker" 
-                                           name="insurance_start_date">
+                                           name="insurance_start_date" placeholder="{{ __('messages.select_date') }}" readonly>
                                 </div>
                                 <div>
                                     <label class="inline-block mb-2 text-base font-medium">{{ __('messages.insurance_status') }} <span class="text-red-500">*</span></label>

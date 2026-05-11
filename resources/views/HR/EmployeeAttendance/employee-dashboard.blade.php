@@ -200,14 +200,35 @@ class="pf-container group-data-[sidebar-size=lg]:ltr:md:ml-vertical-menu group-d
 
         <!-- List View -->
         <div x-show="viewMode === 'list'" class="pf-calendar-card">
-            <div class="overflow-x-auto"><table class="w-full text-left"><thead class="bg-slate-50 dark:bg-zink-600 border-b border-slate-200 dark:border-zink-600"><tr><th class="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-slate-500">{{ __('messages.day_date') }}</th><th class="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-slate-500">{{ __('messages.start_end') }}</th><th class="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-slate-500">{{ __('messages.submitted_h') }}</th><th class="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-slate-500">{{ __('messages.expected') }}</th><th class="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-slate-500">{{ __('messages.difference') }}</th><th class="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-slate-500">{{ __('messages.status') }}</th><th class="px-6 py-5 text-right">{{ __('messages.action') }}</th></tr></thead><tbody class="divide-y divide-slate-100 dark:divide-zink-700">
-                @foreach($listData as $index => $day)
-                    <tr class="hover:bg-slate-50 dark:hover:bg-zink-600/30 transition-all" x-show="listPage === {{ ceil(($index + 1) / 10) }}">
-                        <td class="px-6 py-5"><span class="text-sm font-bold text-slate-800 dark:text-zink-50">{{ $day['date']->format('d M, l') }}</span>@if($day['is_today'])<span class="ml-2 px-2 py-0.5 rounded-full bg-blue-500 text-white text-[9px] font-black uppercase">{{ __('messages.today') }}</span>@endif</td>
-                        <td class="px-6 py-5 text-sm font-mono text-slate-500">{{ $day['attendance'] ? $day['attendance']->formatted_check_in . ' / ' . $day['attendance']->formatted_check_out : '--:-- / --:--' }}</td>
-                        <td class="px-6 py-5 text-base font-black text-slate-800 dark:text-zink-50">
-                            @if($day['attendance'] && $day['attendance']->working_hours)
-                                @php
+            <div class="overflow-x-auto"><table class="w-full text-left">
+                <thead class="bg-slate-50 dark:bg-zink-600 border-b border-slate-200 dark:border-zink-600">
+                    <tr>
+                        <th class="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-slate-500">{{ __('messages.day_date') }}</th>
+                        <th class="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-slate-500">{{ __('messages.start_end') }}</th>
+                        <th class="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-slate-500">{{ __('messages.submitted_h') }}</th>
+                        <th class="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-slate-500">{{ __('messages.expected') }}</th>
+                        <!-- <th class="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-slate-500">{{ __('messages.difference') }}</th> -->
+                        <th class="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-slate-500">{{ __('messages.status') }}</th>
+                        <th class="px-6 py-5 text-right">{{ __('messages.action') }}</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-zink-700">
+                    @foreach($listData as $index => $day)
+                        <tr class="hover:bg-slate-50 dark:hover:bg-zink-600/30 transition-all" x-show="listPage === {{ ceil(($index + 1) / 10) }}">
+                            <td class="px-6 py-5">
+                                <span class="text-sm font-bold text-slate-800 dark:text-zink-50">{{ $day['date']->format('d M, l') }}</span>
+                                @if($day['is_today'])
+                                    <span class="ml-2 px-2 py-0.5 rounded-full bg-blue-500 text-white text-[9px] font-black uppercase">
+                                        {{ __('messages.today') }}
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-5 text-sm font-mono text-slate-500">
+                                {{ $day['attendance'] ? $day['attendance']->formatted_check_in . ' / ' . $day['attendance']->formatted_check_out : '--:-- / --:--' }}
+                            </td>
+                            <td class="px-6 py-5 text-base font-black text-slate-800 dark:text-zink-50">
+                                @if($day['attendance'] && $day['attendance']->working_hours)
+                                    @php
                                     $workingHours = abs($day['attendance']->working_hours);
                                     $totalMinutes = round($workingHours * 60);
                                     $h = floor($totalMinutes / 60);
@@ -217,9 +238,9 @@ class="pf-container group-data-[sidebar-size=lg]:ltr:md:ml-vertical-menu group-d
                             @else
                                 00:00
                             @endif
-                        </td>
-                        <td class="px-6 py-5 text-sm font-bold text-slate-400">{{ ($day['status'] === 'weekend' || $day['status'] === 'holiday') ? '0:00' : '8:30' }}</td>
-                        <td class="px-6 py-5">
+                            </td>
+                            <td class="px-6 py-5 text-sm font-bold text-slate-400">{{ ($day['status'] === 'weekend' || $day['status'] === 'holiday') ? '0:00' : '8:30' }}</td>
+                            <!-- <td class="px-6 py-5">
                             @php 
                                 $dailyExpected = ($day['status'] === 'weekend' || $day['status'] === 'holiday') ? 0 : 8.5;
                                 $diff = ($day['attendance'] ? $day['attendance']->working_hours : 0) - $dailyExpected;
@@ -242,12 +263,12 @@ class="pf-container group-data-[sidebar-size=lg]:ltr:md:ml-vertical-menu group-d
                             <span class="font-black {{ $diff >= 0 ? 'text-[#3ab67d]' : 'text-[#e66c4c]' }}">
                                 {{ $label }} {{ $diffText }}
                             </span>
-                        </td>
-                        <td class="px-6 py-5">
-                            @if($day['attendance'])
-                                @if($day['attendance']->status == 'late' || $day['attendance']->status == 'late_early')
-                                    <span class="px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 text-[10px] font-bold">{{ __('messages.late') }}</span>
-                                @endif
+                            </td> -->
+                            <td class="px-6 py-5">
+                                @if($day['attendance'])
+                                    @if($day['attendance']->status == 'late' || $day['attendance']->status == 'late_early')
+                                        <span class="px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 text-[10px] font-bold">{{ __('messages.late') }}</span>
+                                    @endif
                                 @if($day['attendance']->status == 'early_departure' || $day['attendance']->status == 'late_early')
                                     <span class="px-2 py-1 rounded-full bg-orange-100 text-orange-700 text-[10px] font-bold ml-1">{{ __('messages.early_departure') }}</span>
                                 @endif
@@ -255,7 +276,7 @@ class="pf-container group-data-[sidebar-size=lg]:ltr:md:ml-vertical-menu group-d
                                     <span class="px-2 py-1 rounded-full bg-green-100 text-green-700 text-[10px] font-bold">{{ __('messages.present') }}</span>
                                 @endif
                             @else
-                                <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">{{ __('messages.' . $day['status']) ?? $day['status'] }}</span>
+                                <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">{{ __($day['status']) ?? $day['status'] }}</span>
                             @endif
                         </td>
                         <td class="px-6 py-5 text-right"><button @click="selectedDay = {{ json_encode($day) }}; showDrawer = true;" class="p-3 bg-slate-50 dark:bg-zink-600 text-slate-400 hover:text-blue-500 rounded-xl"><i data-lucide="eye" class="size-4"></i></button></td>
