@@ -1165,7 +1165,7 @@ class HRController extends Controller
     {
         try {
             // Increase execution time for this specific request as SMTP can be slow
-            // This prevents the 30-second timeout error
+            // This prevents the 30-second timeout error (3 min)
             set_time_limit(180);
 
             // Get all active users with a valid email
@@ -1182,7 +1182,7 @@ class HRController extends Controller
             }
 
             // Send using BCC(Blind Carbon Copy) to minimize SMTP connections and time
-            // We send it "To" the HR email and "BCC" all employees
+            // We send it "To" the HR email and "BCC" (Blind Carbon Copy) all employees
             Mail::to(config('mail.from.address'))->bcc($emails)->send(new HolidayNotificationMail($holiday));
 
         } catch (\Exception $e) {
