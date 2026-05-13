@@ -1164,20 +1164,27 @@ class HRController extends Controller
     private function sendHolidayNotificationToEmployees($holiday)
     {
         try {
-            // Get all active users with a valid email to notify them of the holiday
-        $employees = User::where('status', 'Active')->whereNotNull('email')->get();
-            if ($employees->isEmpty()) return;
+            // Increase execution time for this specific request as SMTP can be slow
+            // This prevents the 30-second timeout error
+            set_time_limit(180);
 
-            foreach ($employees as $employee) {
-                if ($employee->email && filter_var($employee->email, FILTER_VALIDATE_EMAIL)) {
-                    try {
-                        //Mail::to($employee->email)->send(new HolidayNotificationMail($holiday));
-                        Mail::to($employee->email)->queue(new HolidayNotificationMail($holiday));
-                    } catch (\Exception $e) {
-                        Log::error('Failed to send email to: ' . $employee->email . ' - ' . $e->getMessage());
-                    }
-                }
+            // Get all active users with a valid email
+            $emails = User::where('status', 'Active')
+                ->whereNotNull('email')
+                ->pluck('email')
+                ->filter(function ($email) {
+                    return filter_var($email, FILTER_VALIDATE_EMAIL);
+                })
+                ->toArray();
+
+            if (empty($emails)) {
+                return;
             }
+
+            // Send using BCC(Blind Carbon Copy) to minimize SMTP connections and time
+            // We send it "To" the HR email and "BCC" all employees
+            Mail::to(config('mail.from.address'))->bcc($emails)->send(new HolidayNotificationMail($holiday));
+
         } catch (\Exception $e) {
             Log::error('Error in sendHolidayNotificationToEmployees: ' . $e->getMessage());
         }
