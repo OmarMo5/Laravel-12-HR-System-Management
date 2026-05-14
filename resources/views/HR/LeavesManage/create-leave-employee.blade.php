@@ -50,6 +50,7 @@
                                             <input type="text" name="remaining_leave" id="remaining_leave"
                                                 class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
                                                 value="0" readonly="">
+                                            <p id="balance_hint" class="mt-1 text-xs text-slate-500 dark:text-zink-300"></p>
                                         </div>
                                     </div>
                                     <div class="xl:col-span-6">
@@ -181,11 +182,26 @@
                         dataType: 'json',
                         success: function(data) {
                             if (data.response_code == 200) {
-                                $('#remaining_leave').val(data.leave_type);
-                                if (data.leave_type < 0) {
+                                $('#remaining_leave').val(data.new_balance);
+                                
+                                if (data.current_balance !== undefined) {
+                                    $('#balance_hint').text('{{ __("messages.current_balance") }}: ' + data.current_balance);
+                                }
+
+                                if (data.new_balance < 0) {
                                     $('#apply_leave').prop('disabled', true);
+                                    $('#remaining_leave').addClass('border-red-500 text-red-500');
+                                    
+                                    Swal.fire({
+                                        title: '{{ __("messages.warning") }}',
+                                        text: '{{ __("messages.exceeded_leave_limit") }}',
+                                        icon: 'warning',
+                                        confirmButtonText: '{{ __("messages.ok") }}',
+                                        confirmButtonColor: '#3085d6',
+                                    });
                                 } else {
                                     $('#apply_leave').prop('disabled', false);
+                                    $('#remaining_leave').removeClass('border-red-500 text-red-500');
                                 }
                             }
                         },

@@ -1222,16 +1222,20 @@ class HRController extends Controller
 
             $leaveInfo = LeaveInformation::where('leave_type', $leaveType)->first();
 
-            $remainingDays = $leaveInfo
-                ? ($leaveInfo->leave_days >= 999 ? 'Unlimited' : $leaveInfo->leave_days - $usedLeaves - ($numberOfDay ?? 0))
+            $currentBalance = $leaveInfo
+                ? ($leaveInfo->leave_days >= 999 ? 9999 : $leaveInfo->leave_days - $usedLeaves)
                 : 0;
 
+            $newBalance = ($currentBalance >= 999) ? 9999 : ($currentBalance - ($numberOfDay ?? 0));
+
             return response()->json([
-                'response_code' => 200,
-                'status'        => 'success',
-                'message'       => 'Get success',
-                'leave_type'    => $remainingDays,
-                'number_of_day' => $numberOfDay,
+                'response_code'    => 200,
+                'status'           => 'success',
+                'message'          => 'Get success',
+                'current_balance'  => $currentBalance >= 999 ? 'Unlimited' : $currentBalance,
+                'new_balance'      => $newBalance >= 999 ? 'Unlimited' : $newBalance,
+                'leave_type'       => $newBalance >= 999 ? 'Unlimited' : $newBalance, // Keep for backward compatibility
+                'number_of_day'    => $numberOfDay,
             ]);
 
         } catch (\Exception $e) {

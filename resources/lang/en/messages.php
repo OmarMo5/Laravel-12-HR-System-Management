@@ -864,4 +864,6 @@ return [
     'password' => 'Password',
     'confirm_password' => 'Confirm Password',
     'new_password' => 'New Password',
+    'current_balance' => 'Current Balance',
+    'exceeded_leave_limit' => 'You have exceeded the maximum allowed leave limit!',
 ];

@@ -862,4 +862,6 @@ return [
     'password' => 'كلمة المرور',
     'confirm_password' => 'تأكيد كلمة المرور',
     'new_password' => 'كلمة المرور الجديدة',
+    'current_balance' => 'الرصيد الحالي',
+    'exceeded_leave_limit' => 'لقد تجاوزت الحد الأقصى المسموح به للإجازات!',
 ];
