@@ -22,6 +22,22 @@ class PermissionController extends Controller
 
         $query = Permission::with('user')->orderBy('date', 'desc');
 
+        $authUser = Auth::user();
+        $authUser->load('jobInfo');
+        if ($authUser->hasAnyRole('Manager')) {
+            $managerDeptId = $authUser->jobInfo?->department_id;
+            $currentUserId = $authUser->id;
+            
+            $query->whereHas('user', function ($q) use ($managerDeptId, $currentUserId) {
+                $q->whereHas('jobInfo', function($jq) use ($managerDeptId, $currentUserId) {
+                    $jq->where('department_id', $managerDeptId)
+                       ->orWhere('manager_id', $currentUserId);
+                })->whereNotIn('role_name', ['Admin', 'HR', 'CEO']);
+            });
+        }
+
+        $permissions = $query->paginate(10);
+        
         // Filter by employee
         if ($request->filled('user_id')) {
             $query->where('user_id', $request->user_id);
@@ -110,7 +126,16 @@ class PermissionController extends Controller
 
         // 1. Notify Manager (Skip if requester is HR)
         if (!$isHRRequester) {
-            $manager = User::where('role_name', 'Manager')->where('department', $employee->department)->first();
+            $employee->load('jobInfo');
+            $manager = null;
+            if ($employee->jobInfo && $employee->jobInfo->manager_id) {
+                $manager = User::find($employee->jobInfo->manager_id);
+            }
+
+            if (!$manager) {
+                $manager = User::where('role_name', 'Manager')->where('department', $employee->department)->first();
+            }
+
             if ($manager) {
                 \App\Models\Notification::create([
                     'user_id' => $manager->user_id,
@@ -164,6 +189,19 @@ class PermissionController extends Controller
         $newStatus = $request->status; // 'Approved' or 'Rejected'
 
         if ($user->role_name === 'Manager') {
+            $employee = $permission->user;
+            if (!$employee) {
+                return response()->json(['error' => 'Employee not found'], 404);
+            }
+            $employee->load('jobInfo');
+
+            $isDirectManager = ($employee->jobInfo && $employee->jobInfo->manager_id == $user->id);
+            $isDeptManager   = ($employee->department == $user->department);
+
+            if (!$isDirectManager && !$isDeptManager) {
+                return response()->json(['error' => 'Unauthorized: You are not authorized to manage this request.'], 403);
+            }
+
             $permission->manager_status = $newStatus;
             $permission->approved_by = $user->name;
 

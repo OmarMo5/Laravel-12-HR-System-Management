@@ -75,12 +75,16 @@ class HRController extends Controller
     {
         $search     = $request->input('search');
         $authUser   = Auth::user();
-        $isManager  = in_array($authUser->role_name, ['Manager', 'manager']);
-        $department = $authUser->department;
+        $authUser->load('jobInfo');
+        $isManager  = $authUser->hasAnyRole('Manager');
+        $managerDeptId = $authUser->jobInfo?->department_id;
 
         $query = User::query();
         if ($isManager) {
-            $query->where('department', $department);
+            $query->whereHas('jobInfo', function($q) use ($managerDeptId, $authUser) {
+                $q->where('department_id', $managerDeptId)
+                  ->orWhere('manager_id', $authUser->id);
+            })->whereNotIn('role_name', ['Admin', 'HR', 'CEO']);
         }
 
         $employeeList = $query->with(['profile', 'jobInfo', 'hiringInfo', 'salary', 'insurance', 'documents'])
@@ -1498,10 +1502,17 @@ class HRController extends Controller
 
         $query = Leave::with('user')->orderBy('created_at', 'desc');
 
-        if (Auth::user()->role_name === 'Manager') {
-            $dept = Auth::user()->department;
-            $query->whereHas('user', function ($q) use ($dept) {
-                $q->where('department', $dept);
+        $authUser = Auth::user();
+        $authUser->load('jobInfo');
+        if ($authUser->hasAnyRole('Manager')) {
+            $managerDeptId = $authUser->jobInfo?->department_id;
+            $currentUserId = $authUser->id;
+            
+            $query->whereHas('user', function ($q) use ($managerDeptId, $currentUserId) {
+                $q->whereHas('jobInfo', function($jq) use ($managerDeptId, $currentUserId) {
+                    $jq->where('department_id', $managerDeptId)
+                       ->orWhere('manager_id', $currentUserId);
+                })->whereNotIn('role_name', ['Admin', 'HR', 'CEO']);
             });
         }
 
@@ -1545,7 +1556,7 @@ class HRController extends Controller
     public function createLeaveHR()
     {
         $usersQuery = User::query();
-        if (Auth::user()->role_name === 'Manager') {
+        if (strcasecmp(Auth::user()->role_name, 'Manager') === 0) {
             $usersQuery->where('department', Auth::user()->department);
         }
         $users            = $usersQuery->get();
@@ -1716,6 +1727,19 @@ class HRController extends Controller
             $oldStatus = $leave->status;
 
             if ($user->role_name === 'Manager') {
+                $employee = User::where('user_id', $leave->staff_id)->first();
+                if (!$employee) {
+                    return response()->json(['response_code' => 404, 'status' => 'error', 'message' => 'Employee not found.']);
+                }
+                $employee->load('jobInfo');
+
+                $isDirectManager = ($employee->jobInfo && $employee->jobInfo->manager_id == $user->id);
+                $isDeptManager   = ($employee->department == $user->department);
+
+                if (!$isDirectManager && !$isDeptManager) {
+                    return response()->json(['response_code' => 403, 'status' => 'error', 'message' => 'Unauthorized: You are not authorized to manage this request.']);
+                }
+
                 $leave->manager_status = $newStatus;
                 $leave->approved_by    = $user->name;
 
@@ -1792,7 +1816,16 @@ class HRController extends Controller
             $employee = User::where('user_id', $leave->staff_id)->first();
             if (!$employee) return;
 
-            $manager = User::where('role_name', 'Manager')->where('department', $employee->department)->first();
+            $employee->load('jobInfo');
+            $manager = null;
+            if ($employee->jobInfo && $employee->jobInfo->manager_id) {
+                $manager = User::find($employee->jobInfo->manager_id);
+            }
+
+            if (!$manager) {
+                $manager = User::where('role_name', 'Manager')->where('department', $employee->department)->first();
+            }
+
             if ($manager) {
                 Notification::create([
                     'user_id'  => $manager->user_id,
@@ -1926,15 +1959,29 @@ class HRController extends Controller
     public function attendance(Request $request)
     {
         $selectedUserId = $request->user_id ?? Session::get('user_id');
-        $authUser       = Auth::user();
-        $isManager      = in_array($authUser->role_name, ['Manager', 'manager']);
+        $authUser = Auth::user();
+        $authUser->load('jobInfo');
+        $isManager = $authUser->hasAnyRole('Manager');
+        $managerDeptId = $authUser->jobInfo?->department_id;
 
         $usersQuery = User::query();
         if ($isManager) {
-            $usersQuery->where('department', $authUser->department);
-            if ($selectedUserId && !User::where('user_id', $selectedUserId)->where('department', $authUser->department)->exists()) {
-                flash()->error('Unauthorized access to employee record.');
-                $selectedUserId = $authUser->user_id;
+            $usersQuery->whereHas('jobInfo', function($q) use ($managerDeptId, $authUser) {
+                $q->where('department_id', $managerDeptId)
+                  ->orWhere('manager_id', $authUser->id);
+            })->whereNotIn('role_name', ['Admin', 'HR', 'CEO']);
+
+            if ($selectedUserId) {
+                $canView = User::where('user_id', $selectedUserId)
+                    ->whereHas('jobInfo', function($q) use ($managerDeptId, $authUser) {
+                        $q->where('department_id', $managerDeptId)
+                          ->orWhere('manager_id', $authUser->id);
+                    })->exists();
+
+                if (!$canView && $selectedUserId !== $authUser->user_id) {
+                    flash()->error('Unauthorized access to employee record.');
+                    $selectedUserId = $authUser->user_id;
+                }
             }
         }
         $users = $usersQuery->get();
@@ -2160,10 +2207,17 @@ class HRController extends Controller
 
         $today     = $now->toDateString();
         $authUser  = Auth::user();
-        $isManager = in_array($authUser->role_name, ['Manager', 'manager']);
+        $authUser->load('jobInfo');
+        $isManager = $authUser->hasAnyRole('Manager');
+        $managerDeptId = $authUser->jobInfo?->department_id;
 
         $activeUsersQuery = User::query();
-        if ($isManager) $activeUsersQuery->where('department', $authUser->department);
+        if ($isManager) {
+            $activeUsersQuery->whereHas('jobInfo', function($q) use ($managerDeptId, $authUser) {
+                $q->where('department_id', $managerDeptId)
+                  ->orWhere('manager_id', $authUser->id);
+            })->whereNotIn('role_name', ['Admin', 'HR', 'CEO']);
+        }
         $totalEmployees = $activeUsersQuery->count();
         $activeUserIds  = (clone $activeUsersQuery)->pluck('user_id');
 
@@ -2177,7 +2231,12 @@ class HRController extends Controller
         $workingDays = $this->getWorkingDaysInMonth($year, $month);
 
         $attendancesQuery = User::query();
-        if ($isManager) $attendancesQuery->where('department', $authUser->department);
+        if ($isManager) {
+            $attendancesQuery->whereHas('jobInfo', function($q) use ($managerDeptId, $authUser) {
+                $q->where('department_id', $managerDeptId)
+                  ->orWhere('manager_id', $authUser->id);
+            })->whereNotIn('role_name', ['Admin', 'HR', 'CEO']);
+        }
 
         $attendances = $attendancesQuery->when($search, function ($q) use ($search) {
                 return $q->where(fn ($inner) => $inner->where('name', 'like', "%{$search}%")->orWhere('user_id', 'like', "%{$search}%"));
@@ -2228,10 +2287,17 @@ class HRController extends Controller
             $daysInMonth = $endDate->day;
 
             $authUser  = Auth::user();
-            $isManager = in_array($authUser->role_name, ['Manager', 'manager']);
+            $authUser->load('jobInfo');
+            $isManager = $authUser->hasAnyRole('Manager');
+            $managerDeptId = $authUser->jobInfo?->department_id;
 
             $usersQuery = User::query();
-            if ($isManager) $usersQuery->where('department', $authUser->department);
+            if ($isManager) {
+                $usersQuery->whereHas('jobInfo', function($q) use ($managerDeptId, $authUser) {
+                    $q->where('department_id', $managerDeptId)
+                      ->orWhere('manager_id', $authUser->id);
+                })->whereNotIn('role_name', ['Admin', 'HR', 'CEO']);
+            }
 
             $users = $usersQuery->when($search, function ($q) use ($search) {
                     return $q->where(fn ($inner) => $inner->where('name', 'like', "%{$search}%")->orWhere('user_id', 'like', "%{$search}%"));
