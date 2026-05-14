@@ -285,11 +285,11 @@
                                                         </button>
                                                     @endif
 
-                                                    <button type="button" onclick="confirmDelete({{ $leaveItem->id }})"
+                                                    <!-- <button type="button" onclick="confirmDelete({{ $leaveItem->id }})"
                                                         class="flex items-center justify-center text-red-500 transition-all duration-200 ease-linear bg-red-100 rounded-md size-8 hover:text-white hover:bg-red-500 dark:bg-red-500/20 dark:hover:bg-red-500"
                                                         title="{{ __('messages.delete') }}">
                                                         <i data-lucide="trash-2" class="size-4"></i>
-                                                    </button>
+                                                    </button> -->
                                                 @endif
                                             </div>
                                         </td>

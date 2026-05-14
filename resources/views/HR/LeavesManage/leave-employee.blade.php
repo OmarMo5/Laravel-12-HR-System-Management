@@ -192,11 +192,11 @@
                                                         <i data-lucide="edit" class="size-4"></i>
                                                     </a>
                                                     
-                                                    <button type="button" onclick="confirmDelete({{ $item->id }})"
+                                                    <!-- <button type="button" onclick="confirmDelete({{ $item->id }})"
                                                         class="flex items-center justify-center text-red-500 transition-all duration-200 ease-linear bg-red-100 rounded-md size-8 hover:text-white hover:bg-red-500"
                                                         title="{{ __('messages.delete') }}">
                                                         <i data-lucide="trash-2" class="size-4"></i>
-                                                    </button>
+                                                    </button> -->
                                                 @endif
                                             </div>
                                         </td>
