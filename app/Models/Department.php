@@ -22,7 +22,14 @@ class Department extends Model
      */
     public function users()
     {
-        return $this->hasMany(User::class, 'department', 'department');
+        return $this->hasManyThrough(
+            User::class,
+            JobInformation::class,
+            'department_id', // Foreign key on the job_information table
+            'id',            // Foreign key on the users table
+            'id',            // Local key on the departments table
+            'user_id'        // Local key on the job_information table
+        );
     }
 
     /**
