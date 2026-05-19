@@ -1213,29 +1213,56 @@ class HRController extends Controller
     private function sendHolidayNotificationToEmployees($holiday)
     {
         try {
-            // Increase execution time for this specific request as SMTP can be slow
-            // This prevents the 30-second timeout error (3 min)
-            set_time_limit(180);
+            $phpPath = PHP_BINARY;
+            $holidayId = $holiday->id;
 
-            // Get all active users with a valid email
-            $emails = User::where('status', 'Active')
-                ->whereNotNull('email')
-                ->pluck('email')
-                ->filter(function ($email) {
-                    return filter_var($email, FILTER_VALIDATE_EMAIL);
-                })
-                ->toArray();
-
-            if (empty($emails)) {
-                return;
+            if (strncasecmp(PHP_OS, 'WIN', 3) === 0) {
+                // Windows background execution (using start /B)
+                // This spawns a background PHP CLI process that runs, sends the mail, and terminates by itself.
+                // NO queue:work command needs to be running.
+                $cmd = 'start /B "" ' . escapeshellarg($phpPath) . ' ' . escapeshellarg(base_path('artisan')) . ' email:send-holiday ' . escapeshellarg($holidayId) . ' > NUL 2>&1';
+                pclose(popen($cmd, "r"));
+                Log::info("Triggered background holiday notification command on Windows for holiday ID: " . $holidayId);
+            } else {
+                // Unix/Linux background execution (CPanel / Shared Linux Hosting)
+                $cmd = escapeshellarg($phpPath) . ' ' . escapeshellarg(base_path('artisan')) . ' email:send-holiday ' . escapeshellarg($holidayId) . ' > /dev/null 2>&1 &';
+                exec($cmd);
+                Log::info("Triggered background holiday notification command on Linux for holiday ID: " . $holidayId);
             }
-
-            // Send using BCC(Blind Carbon Copy) to minimize SMTP connections and time
-            // We send it "To" the HR email and "BCC" (Blind Carbon Copy) all employees
-            Mail::to(config('mail.from.address'))->bcc($emails)->send(new HolidayNotificationMail($holiday));
-
         } catch (\Exception $e) {
-            Log::error('Error in sendHolidayNotificationToEmployees: ' . $e->getMessage());
+            Log::error('Error triggering sendHolidayNotificationToEmployees background process: ' . $e->getMessage());
+            
+            // Fallback to safe synchronous sending if background process spawn fails
+            $this->sendHolidayNotificationToEmployeesFallback($holiday);
+        }
+    }
+
+    private function sendHolidayNotificationToEmployeesFallback($holiday)
+    {
+        try {
+            Log::info("Running synchronous fallback holiday email dispatch.");
+            $users = User::where('status', 'Active')->whereNotNull('email')->get();
+            
+            foreach ($users as $user) {
+                $email = trim($user->email);
+                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) continue;
+                
+                $parts = explode('@', $email);
+                if (count($parts) < 2) continue;
+                $domain = strtolower(trim($parts[1]));
+                if (in_array($domain, ['test.com', 'example.com', 'example.org', 'example.net', 'localhost', 'temp.com', 'mailinator.com'])) {
+                    continue;
+                }
+
+                try {
+                    Mail::to($email)->send(new HolidayNotificationMail($holiday));
+                    usleep(100000); // 0.1s delay to be gentle
+                } catch (\Exception $ex) {
+                    Log::error("Fallback send failed to {$email}: " . $ex->getMessage());
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('Error in sendHolidayNotificationToEmployeesFallback: ' . $e->getMessage());
         }
     }
 

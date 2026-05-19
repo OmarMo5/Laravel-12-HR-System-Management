@@ -152,9 +152,9 @@
                     </div>
                 @endif
                 
-                <div class="holiday-type">
+                <!-- <div class="holiday-type">
                     🏷️ نوع الإجازة: {{ $holiday->holiday_type }}
-                </div>
+                </div> -->
             </div>
 
             <div class="info-box">
