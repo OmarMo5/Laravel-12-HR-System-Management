@@ -253,9 +253,9 @@
                                         </td>
                                         <td class="px-3.5 py-2.5 border border-slate-200 dark:border-zink-500">
                                             <div class="flex gap-2">
-                                                <!-- <a href="javascript:void(0);" data-modal-target="editDepartmentModal"
+                                                <a href="javascript:void(0);" data-modal-target="editDepartmentModal"
                                                     class="update-record-btn flex items-center justify-center transition-all duration-200 ease-linear rounded-md size-8 bg-slate-100 dark:bg-zink-600 dark:text-zink-200 text-slate-500 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-100 dark:hover:bg-custom-500/20"><i
-                                                        data-lucide="pencil" class="size-4"></i></a> -->
+                                                        data-lucide="pencil" class="size-4"></i></a>
                                                 <a href="javascript:void(0);" data-modal-target="deleteModal"
                                                     class="delete-record-btn flex items-center justify-center transition-all duration-200 ease-linear rounded-md size-8 bg-slate-100 dark:bg-zink-600 dark:text-zink-200 text-slate-500 hover:text-red-500 dark:hover:text-red-500 hover:bg-red-100 dark:hover:bg-red-500/20"><i
                                                         data-lucide="trash-2" class="size-4"></i></a>
