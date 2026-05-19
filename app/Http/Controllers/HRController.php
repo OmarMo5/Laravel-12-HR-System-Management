@@ -262,6 +262,20 @@ class HRController extends Controller
                 return redirect()->back();
             }
             
+            // Detect delimiter (, or ;)
+            $firstLine = fgets($handle);
+            $delimiter = ',';
+            if ($firstLine !== false) {
+                $commaCount = substr_count($firstLine, ',');
+                $semicolonCount = substr_count($firstLine, ';');
+                if ($semicolonCount > $commaCount) {
+                    $delimiter = ';';
+                }
+            }
+            
+            // Rewind handle to beginning
+            rewind($handle);
+            
             // UTF-8 BOM handling
             $bom = fgets($handle, 4);
             if ($bom && substr($bom, 0, 3) === "\xEF\xBB\xBF") {
@@ -271,8 +285,8 @@ class HRController extends Controller
                 rewind($handle);
             }
             
-            // Read headers
-            $headers = fgetcsv($handle);
+            // Read headers with detected delimiter
+            $headers = fgetcsv($handle, 0, $delimiter);
             if (!$headers) {
                 fclose($handle);
                 flash()->error('The file appears to be empty or invalid.');
@@ -286,6 +300,7 @@ class HRController extends Controller
             
             // Map headers to indices - support both Export and Template formats
             $headerAliases = [
+                'employee_id'         => ['employee id', 'user id', 'user_id', 'employee_id'],
                 'name'                => ['name'],
                 'email'               => ['email'],
                 'company_email'       => ['company email'],
@@ -333,7 +348,7 @@ class HRController extends Controller
             $errors = [];
             $rowNumber = 1;
             
-            while (($row = fgetcsv($handle)) !== false) {
+            while (($row = fgetcsv($handle, 0, $delimiter)) !== false) {
                 $rowNumber++;
                 if (empty(array_filter($row))) continue;
                 
@@ -343,9 +358,10 @@ class HRController extends Controller
                 }
                 
                 // Basic Validation
+                $rowName = $data['name'] ?? 'Unknown';
                 if (empty($data['name']) || empty($data['email'])) {
                     $errorCount++;
-                    $errors[] = "Row {$rowNumber}: Name and Email are required.";
+                    $errors[] = "Row {$rowNumber} ({$rowName}): Name and Email are required.";
                     continue;
                 }
                 
@@ -358,28 +374,49 @@ class HRController extends Controller
                 DB::beginTransaction();
                 try {
                     // 1. Resolve IDs
-                    $roleId = DB::table('role_type_users')->where('role_type', $data['role'])->value('id') ?? 3;
-                    $deptId = DB::table('departments')->where('department', $data['department'])->value('id');
-                    $jobId  = DB::table('position_types')->where('position', $data['job_title'])->value('id');
-                    $mgrId  = !empty($data['manager_name']) ? User::where('name', $data['manager_name'])->value('id') : null;
+                    $roleNameClean = !empty($data['role']) ? trim($data['role']) : 'Employee';
+                    $roleId = DB::table('role_type_users')->where('role_type', 'like', $roleNameClean)->value('id') ?? 3;
+                    
+                    $deptId = null;
+                    if (!empty($data['department'])) {
+                        $deptNameClean = trim($data['department']);
+                        $deptId = DB::table('departments')->where('department', 'like', $deptNameClean)->value('id');
+                    }
 
-                    // 2. Generate Employee ID
-                    $newId = $this->generateEmployeeId();
+                    $jobId = null;
+                    if (!empty($data['job_title'])) {
+                        $jobTitleClean = trim($data['job_title']);
+                        $jobId = DB::table('position_types')->where('position', 'like', $jobTitleClean)->value('id');
+                    }
+
+                    $mgrId = null;
+                    if (!empty($data['manager_name'])) {
+                        $mgrNameClean = trim($data['manager_name']);
+                        $mgrId = User::where('name', 'like', $mgrNameClean)->value('id');
+                    }
+
+                    // 2. Generate/Use Employee ID
+                    $newId = !empty($data['employee_id']) ? trim($data['employee_id']) : $this->generateEmployeeId();
                     while (User::where('user_id', $newId)->exists()) {
                         $num = (int) substr($newId, strlen('ASC_')) + 1;
                         $newId = 'ASC_' . str_pad($num, 3, '0', STR_PAD_LEFT);
                     }
 
-                    // 3. Create User (set user_id after create to override boot())
+                    // Clean phone and national_id of any scientific notations or non-digits
+                    $phone = !empty($data['phone']) ? preg_replace('/\D/', '', $data['phone']) : null;
+                    $nationalId = !empty($data['national_id']) ? preg_replace('/\D/', '', $data['national_id']) : null;
+                    $insNum = !empty($data['insurance_number']) ? preg_replace('/\D/', '', $data['insurance_number']) : null;
+
+                    // 3. Create User
                     $user = new User();
                     $user->user_id      = $newId;
                     $user->name         = $data['name'];
                     $user->email        = $data['email'];
-                    $user->company_email = $data['company_email'];
-                    $user->phone_number = $data['phone'];
+                    $user->company_email = $data['company_email'] ?? $data['email'];
+                    $user->phone_number = $phone;
                     $user->password     = Hash::make($data['password'] ?? 'password123');
                     $user->role_id      = $roleId;
-                    $user->role_name    = $data['role'] ?? 'Employee';
+                    $user->role_name    = $roleNameClean;
                     $user->status       = 'Active';
                     $user->save();
                     
@@ -389,11 +426,11 @@ class HRController extends Controller
                     // 4. Employee Profile
                     EmployeeProfile::create([
                         'user_id'          => $user->id,
-                        'national_id'      => $data['national_id'],
-                        'address'          => $data['address'],
+                        'national_id'      => $nationalId,
+                        'address'          => $data['address'] ?? 'Default Address',
                         'gender'           => $data['gender'] ?? 'Male',
                         'experience_years' => $data['experience_years'] ?? 0,
-                        'location'         => $data['location'],
+                        'location'         => $data['location'] ?? 'Default Location',
                     ]);
 
                     // 5. Job Information
@@ -403,7 +440,7 @@ class HRController extends Controller
                         'department_id' => $deptId,
                         'manager_id'    => $mgrId,
                         'work_type'     => $data['work_type'] ?? 'Full-Time Onsite',
-                        'work_location' => $data['work_location'],
+                        'work_location' => $data['work_location'] ?? 'Default Location',
                     ]);
 
                     // 6. Hiring Information - Parse date flexibly
@@ -436,7 +473,7 @@ class HRController extends Controller
                     $insDate = $this->parseFlexibleDate($data['insurance_start_date']);
                     Insurance::create([
                         'user_id'              => $user->id,
-                        'insurance_number'     => $data['insurance_number'],
+                        'insurance_number'     => $insNum,
                         'insurance_start_date' => $insDate,
                         'insurance_status'     => $data['insurance_status'] ?? 'Not Insured',
                     ]);
@@ -446,7 +483,7 @@ class HRController extends Controller
                 } catch (\Exception $e) {
                     DB::rollBack();
                     $errorCount++;
-                    $errors[] = "Row {$rowNumber}: " . $e->getMessage();
+                    $errors[] = "Row {$rowNumber} ({$rowName}): " . $e->getMessage();
                     Log::error("Import Row {$rowNumber}: " . $e->getMessage());
                 }
             }
@@ -462,6 +499,7 @@ class HRController extends Controller
 
             if ($errorCount > 0) {
                 Log::warning('Import Errors: ', $errors);
+                session()->flash('import_errors', $errors);
                 flash()->warning($msg);
             } else {
                 flash()->success($msg);
@@ -759,12 +797,7 @@ class HRController extends Controller
         try {
             DB::beginTransaction();
 
-            // Auto-generate unique Employee ID
-            $newEmployeeId = $this->generateEmployeeId();
-            while (User::where('user_id', $newEmployeeId)->exists()) {
-                $num = (int) substr($newEmployeeId, strlen('ASC_')) + 1;
-                $newEmployeeId = 'ASC_' . str_pad($num, 3, '0', STR_PAD_LEFT);
-            }
+            $newEmployeeId = $request->user_id;
 
             // Handle avatar upload
             $avatarName = null;
@@ -887,7 +920,10 @@ class HRController extends Controller
 
             $user = User::findOrFail($request->id);
             
+            $oldUserId = $user->user_id;
+            
             // Update user basic info
+            $user->user_id = $request->user_id;
             $user->name = $request->name;
             $user->email = $request->email;
             $user->company_email = $request->company_email;
@@ -910,6 +946,15 @@ class HRController extends Controller
             }
             
             $user->save();
+
+            // Force correct user_id in database just in case there are boot overrides
+            DB::table('users')->where('id', $user->id)->update(['user_id' => $request->user_id]);
+
+            if ($oldUserId !== $request->user_id) {
+                DB::table('attendances')->where('user_id', $oldUserId)->update(['user_id' => $request->user_id]);
+                DB::table('leaves')->where('staff_id', $oldUserId)->update(['staff_id' => $request->user_id]);
+                DB::table('notifications')->where('user_id', $oldUserId)->update(['user_id' => $request->user_id]);
+            }
 
             // Update Profile
             EmployeeProfile::updateOrCreate(

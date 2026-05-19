@@ -62,6 +62,7 @@ class EmployeeRequest extends FormRequest
 
         return [
             // 1. Basic Information
+            'user_id'       => 'required|string|unique:users,user_id,' . $userId,
             'name'          => ['required', 'string', 'max:255', 'regex:/^[\p{L}\s]+$/u'], // letters & spaces only (Arabic + Latin)
             'phone_number'  => ['required', 'digits:11'],                                   // exactly 11 digits
             'email'         => 'required|email|unique:users,email,' . $userId,

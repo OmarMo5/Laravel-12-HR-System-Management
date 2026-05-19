@@ -20,6 +20,27 @@
                 </ul>
             </div>
 
+            @if (session('import_errors'))
+                <div class="p-4 mb-5 rounded-lg bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/30 text-red-800 dark:text-red-300">
+                    <div class="flex items-start gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-red-500 dark:text-red-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <div class="grow">
+                            <h6 class="text-sm font-bold mb-2">Import Status Notice / تنبيه حالة الاستيراد:</h6>
+                            <p class="text-xs mb-3 text-red-700 dark:text-red-400">Some rows failed to import. Please review the details below / بعض السطور فشل استيرادها، يرجى مراجعة التفاصيل أدناه:</p>
+                            <div class="max-h-60 overflow-y-auto pr-2">
+                                <ul class="list-disc pl-5 space-y-1 text-xs font-mono">
+                                    @foreach (session('import_errors') as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             <div class="card">
                 <div class="card-body">
                     <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
@@ -448,9 +469,10 @@
                                     @error('role_id') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
                                 </div>
                                 <div>
-                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.employee_id') }}</label>
-                                    <input type="text" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 bg-slate-100 dark:bg-zink-700" 
-                                           value="{{ $employeeId }}" disabled>
+                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.employee_id') }} <span class="text-red-500">*</span></label>
+                                    <input type="text" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" 
+                                           name="user_id" value="{{ old('user_id', $employeeId) }}" required>
+                                    @error('user_id') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
                                 </div>
                                 <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
@@ -833,9 +855,9 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.employee_id') }}</label>
-                                    <input type="text" id="e_employee_id" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 bg-slate-100 dark:bg-zink-700" 
-                                           readonly>
+                                    <label class="inline-block mb-2 text-base font-medium">{{ __('messages.employee_id') }} <span class="text-red-500">*</span></label>
+                                    <input type="text" id="e_employee_id" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" 
+                                           name="user_id" required>
                                 </div>
                                 <div class="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 p-3 rounded">
                                     <p class="text-xs text-amber-700 dark:text-amber-400">{{ __('messages.leave_password_empty') }}</p>
