@@ -123,9 +123,10 @@ class PermissionController extends Controller
         // Notify Manager, HR, and Admin
         $employee = Auth::user();
         $isHRRequester = ($employee->role_name === 'HR');
+        $isManagerRequester = ($employee->role_name === 'Manager');
 
-        // 1. Notify Manager (Skip if requester is HR)
-        if (!$isHRRequester) {
+        // 1. Notify Manager (Skip if requester is HR or Manager)
+        if (!$isHRRequester && !$isManagerRequester) {
             $employee->load('jobInfo');
             $manager = null;
             if ($employee->jobInfo && $employee->jobInfo->manager_id) {
@@ -160,13 +161,23 @@ class PermissionController extends Controller
         foreach ($recipients as $recipient) {
             if ($recipient->user_id === $employee->user_id) continue;
 
+            if ($isManagerRequester) {
+                $title = app()->getLocale() === 'ar' ? 'طلب إذن جديد من مدير' : 'New Permission Request from Manager';
+                $message = app()->getLocale() === 'ar' 
+                    ? "طلب إذن جديد من المدير: " . $employee->name 
+                    : "New permission request from Manager: " . $employee->name;
+            } else {
+                $title = app()->getLocale() === 'ar' ? 'طلب إذن جديد' : 'New Permission Request';
+                $message = app()->getLocale() === 'ar' 
+                    ? "طلب إذن جديد من الموظف: " . $employee->name 
+                    : "New permission request from: " . $employee->name;
+            }
+
             \App\Models\Notification::create([
                 'user_id' => $recipient->user_id,
                 'type' => 'permission_new',
-                'title' => app()->getLocale() === 'ar' ? 'طلب إذن جديد' : 'New Permission Request',
-                'message' => app()->getLocale() === 'ar' 
-                    ? "طلب إذن جديد من الموظف: " . $employee->name 
-                    : "New permission request from: " . $employee->name,
+                'title' => $title,
+                'message' => $message,
                 'leave_id' => $permission->id,
                 'is_read' => false,
             ]);
@@ -187,6 +198,39 @@ class PermissionController extends Controller
 
         $permission = Permission::with('user')->findOrFail($id);
         $newStatus = $request->status; // 'Approved' or 'Rejected'
+
+        // Check if the permission belongs to a Manager
+        $employee = $permission->user;
+        if ($employee && strcasecmp($employee->role_name, 'Manager') === 0) {
+            // Only Admin or CEO can approve/reject manager requests
+            if (!in_array($user->role_name, ['Admin', 'CEO'])) {
+                return redirect()->back()->with('error', app()->getLocale() === 'ar'
+                    ? 'غير مصرح: فقط الأدمن أو الرئيس التنفيذي يمكنه قبول أو رفض طلبات المدير.'
+                    : 'Unauthorized: Only Admin or CEO can approve/reject Manager requests.');
+            }
+
+            $permission->manager_status = $newStatus;
+            $permission->status = strtolower($newStatus);
+            $permission->approved_by = $user->name;
+            if ($request->filled('admin_notes')) {
+                $permission->admin_notes = $request->admin_notes;
+            }
+            $permission->save();
+
+            // Notify Manager of final decision
+            \App\Models\Notification::create([
+                'user_id' => $permission->user->user_id,
+                'type' => $permission->status === 'approved' ? 'permission_approved' : 'permission_rejected',
+                'title' => app()->getLocale() === 'ar' ? 'تحديث حالة الإذن' : 'Permission Status Update',
+                'message' => app()->getLocale() === 'ar' 
+                    ? "تم تحديث حالة طلب الإذن الخاص بك إلى: " . ($permission->status === 'approved' ? 'مقبول' : 'مرفوض') 
+                    : "Your permission request status has been updated to: " . ucfirst($permission->status),
+                'leave_id' => $permission->id,
+                'is_read' => false,
+            ]);
+
+            return redirect()->back()->with('success', __('messages.status_updated'));
+        }
 
         if ($user->role_name === 'Manager') {
             $employee = $permission->user;

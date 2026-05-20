@@ -256,18 +256,26 @@
                                                         <i data-lucide="edit" class="size-4"></i>
                                                     </a>
 
-                                                    @php
-                                                        $showApproveButtons = false;
-                                                        if (Auth::user()->role_name == 'Manager' && $leaveItem->manager_status == 'Pending') {
-                                                            $showApproveButtons = true;
-                                                        } elseif ((Auth::user()->role_name == 'HR' || Auth::user()->role_name == 'Admin' || Auth::user()->role_name == 'CEO') && $leaveItem->status == 'Pending') {
-                                                            // For HR employees, they don't have a manager, so they can be approved directly by Admin/HR/CEO
-                                                            $isHROwner = ($leaveItem->user && $leaveItem->user->role_name === 'HR');
-                                                            if ($isHROwner || $leaveItem->manager_status == 'Approved') {
-                                                                $showApproveButtons = true;
-                                                            }
-                                                        }
-                                                    @endphp
+                                                     @php
+                                                         $showApproveButtons = false;
+                                                         $isManagerOwner = ($leaveItem->user && strcasecmp($leaveItem->user->role_name, 'Manager') === 0);
+
+                                                         if ($isManagerOwner) {
+                                                             if ((Auth::user()->role_name == 'Admin' || Auth::user()->role_name == 'CEO') && $leaveItem->status == 'Pending') {
+                                                                 $showApproveButtons = true;
+                                                             }
+                                                         } else {
+                                                             if (Auth::user()->role_name == 'Manager' && $leaveItem->manager_status == 'Pending') {
+                                                                 $showApproveButtons = true;
+                                                             } elseif ((Auth::user()->role_name == 'HR' || Auth::user()->role_name == 'Admin' || Auth::user()->role_name == 'CEO') && $leaveItem->status == 'Pending') {
+                                                                 // For HR employees, they don't have a manager, so they can be approved directly by Admin/HR/CEO
+                                                                 $isHROwner = ($leaveItem->user && $leaveItem->user->role_name === 'HR');
+                                                                 if ($isHROwner || $leaveItem->manager_status == 'Approved') {
+                                                                     $showApproveButtons = true;
+                                                                 }
+                                                             }
+                                                         }
+                                                     @endphp
 
                                                     @if ($showApproveButtons)
                                                         <button type="button"

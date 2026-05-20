@@ -1798,6 +1798,30 @@ class HRController extends Controller
             $newStatus = $request->status;
             $oldStatus = $leave->status;
 
+            // Check if the leave belongs to a Manager
+            $employee = User::where('user_id', $leave->staff_id)->first();
+            if ($employee && strcasecmp($employee->role_name, 'Manager') === 0) {
+                // Only Admin or CEO can approve/reject manager requests
+                if (!in_array($user->role_name, ['Admin', 'CEO'])) {
+                    return response()->json([
+                        'response_code' => 403,
+                        'status' => 'error',
+                        'message' => app()->getLocale() === 'ar'
+                            ? 'غير مصرح: فقط الأدمن أو الرئيس التنفيذي يمكنه قبول أو رفض طلبات المدير.'
+                            : 'Unauthorized: Only Admin or CEO can approve/reject Manager requests.'
+                    ], 403);
+                }
+
+                $leave->manager_status = $newStatus;
+                $leave->status         = $newStatus;
+                $leave->approved_by    = $user->name;
+                $leave->save();
+
+                $this->sendLeaveStatusNotification($leave, $oldStatus, $newStatus);
+
+                return response()->json(['response_code' => 200, 'status' => 'success', 'message' => 'Leave status updated successfully']);
+            }
+
             if ($user->role_name === 'Manager') {
                 $employee = User::where('user_id', $leave->staff_id)->first();
                 if (!$employee) {
@@ -1888,41 +1912,59 @@ class HRController extends Controller
             $employee = User::where('user_id', $leave->staff_id)->first();
             if (!$employee) return;
 
-            $employee->load('jobInfo');
-            $manager = null;
-            if ($employee->jobInfo && $employee->jobInfo->manager_id) {
-                $manager = User::find($employee->jobInfo->manager_id);
-            }
+            $isManagerRequester = ($employee->role_name === 'Manager');
 
-            if (!$manager) {
-                $manager = User::where('role_name', 'Manager')->where('department', $employee->department)->first();
-            }
+            // Skip manager notification if the requester is already a Manager
+            if (!$isManagerRequester) {
+                $employee->load('jobInfo');
+                $manager = null;
+                if ($employee->jobInfo && $employee->jobInfo->manager_id) {
+                    $manager = User::find($employee->jobInfo->manager_id);
+                }
 
-            if ($manager) {
-                Notification::create([
-                    'user_id'  => $manager->user_id,
-                    'type'     => 'new_leave_request',
-                    'title'    => app()->getLocale() === 'ar' ? '🆕 طلب إجازة جديد' : '🆕 New Leave Request',
-                    'message'  => app()->getLocale() === 'ar'
-                        ? "قدم {$employee->name} طلب إجازة جديد ({$leave->leave_type}) يحتاج لموافقتك."
-                        : "{$employee->name} submitted a new {$leave->leave_type} leave request that requires your approval.",
-                    'leave_id' => $leave->id,
-                    'is_read'  => false,
-                ]);
+                if (!$manager) {
+                    $manager = User::where('role_name', 'Manager')->where('department', $employee->department)->first();
+                }
+
+                if ($manager) {
+                    Notification::create([
+                        'user_id'  => $manager->user_id,
+                        'type'     => 'new_leave_request',
+                        'title'    => app()->getLocale() === 'ar' ? '🆕 طلب إجازة جديد' : '🆕 New Leave Request',
+                        'message'  => app()->getLocale() === 'ar'
+                            ? "قدم {$employee->name} طلب إجازة جديد ({$leave->leave_type}) يحتاج لموافقتك."
+                            : "{$employee->name} submitted a new {$leave->leave_type} leave request that requires your approval.",
+                        'leave_id' => $leave->id,
+                        'is_read'  => false,
+                    ]);
+                }
             }
 
             $hrAdmins = User::whereIn('role_name', ['HR', 'Admin','CEO'])->get();
             foreach ($hrAdmins as $u) {
-                Notification::create([
-                    'user_id'  => $u->user_id,
-                    'type'     => 'new_leave_request',
-                    'title'    => app()->getLocale() === 'ar' ? '🆕 طلب إجازة جديد' : '🆕 New Leave Request',
-                    'message'  => app()->getLocale() === 'ar'
-                        ? "قدم {$employee->name} طلب إجازة جديد ({$leave->leave_type})."
-                        : "{$employee->name} submitted a new {$leave->leave_type} leave request.",
-                    'leave_id' => $leave->id,
-                    'is_read'  => false,
-                ]);
+                if ($isManagerRequester) {
+                    Notification::create([
+                        'user_id'  => $u->user_id,
+                        'type'     => 'new_leave_request',
+                        'title'    => app()->getLocale() === 'ar' ? '🆕 طلب إجازة جديد من مدير' : '🆕 New Leave Request from Manager',
+                        'message'  => app()->getLocale() === 'ar'
+                            ? "قدم المدير {$employee->name} طلب إجازة جديد ({$leave->leave_type})."
+                            : "Manager {$employee->name} submitted a new {$leave->leave_type} leave request.",
+                        'leave_id' => $leave->id,
+                        'is_read'  => false,
+                    ]);
+                } else {
+                    Notification::create([
+                        'user_id'  => $u->user_id,
+                        'type'     => 'new_leave_request',
+                        'title'    => app()->getLocale() === 'ar' ? '🆕 طلب إجازة جديد' : '🆕 New Leave Request',
+                        'message'  => app()->getLocale() === 'ar'
+                            ? "قدم {$employee->name} طلب إجازة جديد ({$leave->leave_type})."
+                            : "{$employee->name} submitted a new {$leave->leave_type} leave request.",
+                        'leave_id' => $leave->id,
+                        'is_read'  => false,
+                    ]);
+                }
             }
         } catch (\Exception $e) {
             \Log::error('Error notifying new leave: ' . $e->getMessage());

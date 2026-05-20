@@ -213,19 +213,27 @@
                                             </td>
                                             <td class="px-3.5 py-2.5">
                                                 <div class="flex gap-2">
-                                                    @php
-                                                        $userRole = Auth::user()->role_name;
-                                                        $canApprove = false;
-                                                        if ($userRole === 'Manager' && $permission->manager_status === 'Pending' && $permission->status === 'pending') {
-                                                            $canApprove = true;
-                                                        } elseif (($userRole === 'HR' || $userRole === 'Admin' || $userRole === 'CEO') && $permission->status === 'pending') {
-                                                            // For HR employees, they don't have a manager, so they can be approved directly by Admin/HR/CEO
-                                                            $isHROwner = ($permission->user && $permission->user->role_name === 'HR');
-                                                            if ($isHROwner || $permission->manager_status === 'Approved') {
-                                                                $canApprove = true;
-                                                            }
-                                                        }
-                                                    @endphp
+                                                     @php
+                                                         $userRole = Auth::user()->role_name;
+                                                         $canApprove = false;
+                                                         $isManagerOwner = ($permission->user && strcasecmp($permission->user->role_name, 'Manager') === 0);
+
+                                                         if ($isManagerOwner) {
+                                                             if (($userRole === 'Admin' || $userRole === 'CEO') && $permission->status === 'pending') {
+                                                                 $canApprove = true;
+                                                             }
+                                                         } else {
+                                                             if ($userRole === 'Manager' && $permission->manager_status === 'Pending' && $permission->status === 'pending') {
+                                                                 $canApprove = true;
+                                                             } elseif (($userRole === 'HR' || $userRole === 'Admin' || $userRole === 'CEO') && $permission->status === 'pending') {
+                                                                 // For HR employees, they don't have a manager, so they can be approved directly by Admin/HR/CEO
+                                                                 $isHROwner = ($permission->user && $permission->user->role_name === 'HR');
+                                                                 if ($isHROwner || $permission->manager_status === 'Approved') {
+                                                                     $canApprove = true;
+                                                                 }
+                                                             }
+                                                         }
+                                                     @endphp
 
                                                     @if($canApprove)
                                                         <form action="{{ route('permissions.update-status', $permission->id) }}" method="POST" class="inline-flex gap-1">
