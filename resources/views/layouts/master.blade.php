@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" class="light scroll-smooth group" data-layout="vertical" data-sidebar="light" data-sidebar-size="lg"
-    data-mode="light" data-topbar="light" data-skin="default" data-navbar="sticky" data-content="fluid" dir="ltr">
+<html lang="{{ app()->getLocale() }}" class="light scroll-smooth group" data-layout="vertical" data-sidebar="light" data-sidebar-size="lg"
+    data-mode="light" data-topbar="light" data-skin="default" data-navbar="sticky" data-content="fluid" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 
 <head>
     <meta charset="utf-8">
@@ -12,6 +12,11 @@
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ URL::to('assets/images/favicon.ico') }}">
     <!-- Layout config Js -->
+    <script>
+        // Sync sessionStorage 'dir' with Laravel locale before layout.js loads
+        var currentLocale = "{{ app()->getLocale() }}";
+        sessionStorage.setItem('dir', currentLocale === 'ar' ? 'rtl' : 'ltr');
+    </script>
     <script src="{{ URL::to('assets/js/layout.js') }}"></script>
     <!-- StarCode CSS -->
     <link rel="stylesheet" href="{{ URL::to('assets/css/starcode2.css') }}">
@@ -172,6 +177,7 @@
                                         </h6>
 
                                     </a>
+                                    
 
                                 </div>
                             </div>
