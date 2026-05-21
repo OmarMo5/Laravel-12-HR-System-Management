@@ -219,7 +219,7 @@
                                                          $isManagerOwner = ($permission->user && strcasecmp($permission->user->role_name, 'Manager') === 0);
 
                                                          if ($isManagerOwner) {
-                                                             if (($userRole === 'Admin' || $userRole === 'CEO') && $permission->status === 'pending') {
+                                                             if (($userRole === 'Admin' || $userRole === 'CEO' || $userRole === 'HR') && $permission->status === 'pending') {
                                                                  $canApprove = true;
                                                              }
                                                          } else {

@@ -138,6 +138,12 @@
                         <div class="flex gap-3 ms-auto">
                             @php
                                 $lang = app()->getLocale();
+                                $flagMap = [
+                                    'en' => 'assets/images/flag/us.svg',
+                                    'ar' => 'assets/images/flag/Flag_of_Egypt.svg',
+                                    'fr' => 'assets/images/flag/fr.svg'
+                                ];
+                                $currentFlag = $flagMap[$lang] ?? 'assets/images/flag/us.svg';
                             @endphp
 
                             <div class="relative flex items-center dropdown h-header">
@@ -146,38 +152,55 @@
                                     class="inline-flex justify-center items-center p-0 text-topbar-item transition-all w-[37.5px] h-[37.5px] duration-200 ease-linear bg-topbar rounded-md dropdown-toggle btn"
                                     id="flagsDropdown" data-bs-toggle="dropdown">
 
-                                    <img src="{{ $lang == 'ar' ? URL::to('assets/images/flag/Flag_of_Egypt.svg') : URL::to('assets/images/flag/Flag_of_Egypt.svg') }}"
+                                    <img src="{{ URL::to($currentFlag) }}"
                                         id="header-lang-img" class="h-5 rounded-sm">
 
                                 </button>
 
                                 <div
-                                    class="absolute z-50 hidden p-4 bg-white rounded-md shadow-md !top-4 dropdown-menu min-w-[10rem] flex flex-col gap-4 dark:bg-zink-600">
+                                    class="absolute z-50 hidden p-3 bg-white rounded-md shadow-md !top-4 dropdown-menu min-w-[11rem] flex flex-col gap-1 dark:bg-zink-600 border border-slate-100 dark:border-zink-500">
 
                                     <a href="{{ route('change.lang', 'en') }}"
-                                        class="flex items-center gap-3 group/items">
-
-                                        <img src="{{ URL::to('assets/images/flag/us.svg') }}"
-                                            class="object-cover h-4 rounded-full">
-
-                                        <h6 class="text-slate-600 dark:text-zink-200">
-                                            English
-                                        </h6>
-
+                                        class="flex items-center justify-between p-2 rounded-md hover:bg-slate-50 dark:hover:bg-zink-500/50 transition-colors {{ $lang == 'en' ? 'bg-slate-100 dark:bg-zink-500 font-semibold' : '' }}">
+                                        <div class="flex items-center gap-3">
+                                            <img src="{{ URL::to('assets/images/flag/us.svg') }}"
+                                                class="object-cover size-5 rounded-full">
+                                            <span class="text-slate-700 dark:text-zink-100 text-sm">
+                                                English
+                                            </span>
+                                        </div>
+                                        @if($lang == 'en')
+                                            <i data-lucide="check" class="size-4 text-green-500 shrink-0"></i>
+                                        @endif
                                     </a>
 
                                     <a href="{{ route('change.lang', 'ar') }}"
-                                        class="flex items-center gap-3 group/items">
-
-                                        <img src="{{ URL::to('assets/images/flag/Flag_of_Egypt.svg') }}"
-                                            class="object-cover h-4 rounded-full">
-
-                                        <h6 class="text-slate-600 dark:text-zink-200">
-                                            العربية
-                                        </h6>
-
+                                        class="flex items-center justify-between p-2 rounded-md hover:bg-slate-50 dark:hover:bg-zink-500/50 transition-colors {{ $lang == 'ar' ? 'bg-slate-100 dark:bg-zink-500 font-semibold' : '' }}">
+                                        <div class="flex items-center gap-3">
+                                            <img src="{{ URL::to('assets/images/flag/Flag_of_Egypt.svg') }}"
+                                                class="object-cover size-5 rounded-full">
+                                            <span class="text-slate-700 dark:text-zink-100 text-sm">
+                                                العربية
+                                            </span>
+                                        </div>
+                                        @if($lang == 'ar')
+                                            <i data-lucide="check" class="size-4 text-green-500 shrink-0"></i>
+                                        @endif
                                     </a>
-                                    
+
+                                    <a href="{{ route('change.lang', 'fr') }}"
+                                        class="flex items-center justify-between p-2 rounded-md hover:bg-slate-50 dark:hover:bg-zink-500/50 transition-colors {{ $lang == 'fr' ? 'bg-slate-100 dark:bg-zink-500 font-semibold' : '' }}">
+                                        <div class="flex items-center gap-3">
+                                            <img src="{{ URL::to('assets/images/flag/fr.svg') }}"
+                                                class="object-cover size-5 rounded-full">
+                                            <span class="text-slate-700 dark:text-zink-100 text-sm">
+                                                Français
+                                            </span>
+                                        </div>
+                                        @if($lang == 'fr')
+                                            <i data-lucide="check" class="size-4 text-green-500 shrink-0"></i>
+                                        @endif
+                                    </a>
 
                                 </div>
                             </div>

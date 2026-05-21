@@ -34,7 +34,7 @@ class HRController extends Controller
 {
     public function changeLang($lang)
     {
-        if (in_array($lang, ['en', 'ar'])) {
+        if (in_array($lang, ['en', 'ar','fr'])) {
             session()->put('locale', $lang);
             App::setLocale($lang);
             if (Auth::check()) {
@@ -1801,14 +1801,14 @@ class HRController extends Controller
             // Check if the leave belongs to a Manager
             $employee = User::where('user_id', $leave->staff_id)->first();
             if ($employee && strcasecmp($employee->role_name, 'Manager') === 0) {
-                // Only Admin or CEO can approve/reject manager requests
-                if (!in_array($user->role_name, ['Admin', 'CEO'])) {
+                // Admin, CEO or HR can approve/reject manager requests
+                if (!in_array($user->role_name, ['Admin', 'CEO', 'HR'])) {
                     return response()->json([
                         'response_code' => 403,
                         'status' => 'error',
                         'message' => app()->getLocale() === 'ar'
-                            ? 'غير مصرح: فقط الأدمن أو الرئيس التنفيذي يمكنه قبول أو رفض طلبات المدير.'
-                            : 'Unauthorized: Only Admin or CEO can approve/reject Manager requests.'
+                            ? 'غير مصرح: فقط الأدمن أو الرئيس التنفيذي أو الموارد البشرية يمكنه قبول أو رفض طلبات المدير.'
+                            : 'Unauthorized: Only Admin, CEO or HR can approve/reject Manager requests.'
                     ], 403);
                 }
 

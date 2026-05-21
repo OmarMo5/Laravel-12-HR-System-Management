@@ -202,11 +202,11 @@ class PermissionController extends Controller
         // Check if the permission belongs to a Manager
         $employee = $permission->user;
         if ($employee && strcasecmp($employee->role_name, 'Manager') === 0) {
-            // Only Admin or CEO can approve/reject manager requests
-            if (!in_array($user->role_name, ['Admin', 'CEO'])) {
+            // Admin, CEO or HR can approve/reject manager requests
+            if (!in_array($user->role_name, ['Admin', 'CEO', 'HR'])) {
                 return redirect()->back()->with('error', app()->getLocale() === 'ar'
-                    ? 'غير مصرح: فقط الأدمن أو الرئيس التنفيذي يمكنه قبول أو رفض طلبات المدير.'
-                    : 'Unauthorized: Only Admin or CEO can approve/reject Manager requests.');
+                    ? 'غير مصرح: فقط الأدمن أو الرئيس التنفيذي أو الموارد البشرية يمكنه قبول أو رفض طلبات المدير.'
+                    : 'Unauthorized: Only Admin, CEO or HR can approve/reject Manager requests.');
             }
 
             $permission->manager_status = $newStatus;

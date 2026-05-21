@@ -12,7 +12,8 @@ var navbarMenuHTML = document.querySelector(".app-menu").innerHTML;
 var moreMenuWidth = 150;
 let scrollbarElement = '';
 var default_lang = "en"; // set Default Language
-var language = localStorage.getItem("language") ? localStorage.getItem("language") : default_lang;
+var htmlLang = document.documentElement.getAttribute("lang");
+var language = htmlLang ? htmlLang : (localStorage.getItem("language") ? localStorage.getItem("language") : default_lang);
 
 function initLanguage() {
     // Set new language
@@ -29,6 +30,10 @@ function setLanguage(lang) {
     if (document.getElementById("header-lang-img")) {
         if (lang == "en") {
             document.getElementById("header-lang-img").src = "/assets/images/flag/us.svg";
+        } else if (lang == "ar") {
+            document.getElementById("header-lang-img").src = "/assets/images/flag/Flag_of_Egypt.svg";
+        } else if (lang == "fr") {
+            document.getElementById("header-lang-img").src = "/assets/images/flag/fr.svg";
         } else if (lang == "kh") {
             document.getElementById("header-lang-img").src = "/assets/images/flag/kh.png";
         }

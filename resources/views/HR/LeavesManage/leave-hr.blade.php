@@ -261,7 +261,7 @@
                                                          $isManagerOwner = ($leaveItem->user && strcasecmp($leaveItem->user->role_name, 'Manager') === 0);
 
                                                          if ($isManagerOwner) {
-                                                             if ((Auth::user()->role_name == 'Admin' || Auth::user()->role_name == 'CEO') && $leaveItem->status == 'Pending') {
+                                                             if ((Auth::user()->role_name == 'Admin' || Auth::user()->role_name == 'CEO' || Auth::user()->role_name == 'HR') && $leaveItem->status == 'Pending') {
                                                                  $showApproveButtons = true;
                                                              }
                                                          } else {
